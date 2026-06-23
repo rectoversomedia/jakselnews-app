@@ -33,7 +33,7 @@ export function BottomNav() {
               >
                 <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg overflow-hidden border-[3px] border-white relative">
                   <Image
-                    src="/lapor.png"
+                    src="/logo-button.png"
                     alt="Jakselnews"
                     width={56}
                     height={56}

@@ -22,9 +22,9 @@ export function Header() {
             <Image
               src="/logo-utama.png"
               alt="Jakselnews"
-              width={160}
-              height={40}
-              className="h-9 md:h-11 w-auto object-contain"
+              width={80}
+              height={20}
+              className="h-5 md:h-6 w-auto object-contain"
               priority
             />
           </Link>
