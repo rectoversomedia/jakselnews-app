@@ -20,14 +20,9 @@ const trendingReports = [
     color: 'bg-red-500',
     status: 'TRENDING',
     detail: {
-      description: 'Laporan meningkat tentang aksi begal di kawasan Kemang. Korban mengalami perampasan 핸드폰 dan tas.',
+      description: 'Laporan meningkat tentang aksi begal di kawasan Kemang. Korban kehilangan ponsel dan tas.',
       cause: 'Pelemahan patroli keamanan di jalan-jalan sepi.',
       impact: 'Warga dan pengguna jalan merasa tidak aman, terutama malam hari.',
-      actions: [
-        { icon: '🚔', text: 'Polisi increasing patroli di titik rawan' },
-        { icon: '👥', text: 'Siskamling ditingkatkan warga' },
-        { icon: '📱', text: 'Hubungi 110 jika melihat suspects' }
-      ],
       hotline: '110',
       related: ['Jl. Kemang Raya', 'Jl. Ampera', 'Jl. TB Simatupang']
     }
@@ -43,14 +38,9 @@ const trendingReports = [
     color: 'bg-orange-500',
     status: 'TRENDING',
     detail: {
-      description: 'Serangkaian kasus pencurian摩托车 dan properti dilaporkan di kawasan Cilandak.',
+      description: 'Serangkaian kasus pencurian motor dan properti dilaporkan di kawasan Cilandak.',
       cause: 'Operasi kelompok pencuri terorganisir.',
       impact: 'Kerugian finansial warga, kekuatiran masyarakat.',
-      actions: [
-        { icon: '🔒', text: 'Pastikan kendaraan selalu dikunci' },
-        { icon: '📹', text: 'Aktifkan CCTV rumah/warga' },
-        { icon: '🚓', text: 'Tim keamanan increased sweep area' }
-      ],
       hotline: '110',
       related: ['Jl. Cilandak', 'Jl. MRT Cilandak', 'Pasar Cilandak']
     }
@@ -68,12 +58,7 @@ const trendingReports = [
     detail: {
       description: 'Jalan berlubang di berbagai titik Lenteng Agung menyebabkan kecelakaan dan kemacetan.',
       cause: 'Kerusakan infrastruktur jalan akibat hujan dan beban kendaraan.',
-      impact: 'Kecelakaan摩托车, kerusakan kendaraan, kemacetan panjang.',
-      actions: [
-        { icon: '🚧', text: 'Dinas Bina Marga preparing perbaikan' },
-        { icon: '⚠️', text: 'Marking lubang dengan rambu sementara' },
-        { icon: '📞', text: 'Lapor ke 112 untuk perbaikan cepat' }
-      ],
+      impact: 'Kecelakaan motor, kerusakan kendaraan, kemacetan panjang.',
       hotline: '112',
       related: ['Jl. Lenteng Agung', 'Jl. Sirnak', 'Jl. Universitas']
     }
@@ -365,14 +350,51 @@ export default function HomeContent() {
   const [breakingPosts, setBreakingPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Fallback data if API fails
+  const fallbackPosts = [
+    {
+      id: 1,
+      slug: 'artikel',
+      title: { rendered: 'Rectoverso Media Perkenalkan Narriv, Platform AI untuk Membantu Organisasi Mengelola Narasi Publik' },
+      date: new Date().toISOString(),
+      _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/jaksel1/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/jaksel1/800/500' } } } }] }
+    },
+    {
+      id: 2,
+      slug: 'artikel',
+      title: { rendered: 'Festival Jaksel 2026: Menyatu dalam Keberagaman Budaya Jakarta Selatan' },
+      date: new Date(Date.now() - 3600000).toISOString(),
+      _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/jaksel2/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/jaksel2/800/500' } } } }] }
+    },
+    {
+      id: 3,
+      slug: 'artikel',
+      title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju Kawasan Timur' },
+      date: new Date(Date.now() - 7200000).toISOString(),
+      _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/jaksel3/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/jaksel3/800/500' } } } }] }
+    }
+  ];
+
   useEffect(() => {
     async function fetchBreakingNews() {
       try {
-        const { posts } = await wpAPI.getLatestPosts(3);
-        setBreakingPosts(posts);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_WP_API_URL}/posts?per_page=3&_embed`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const posts = await response.json();
+          setBreakingPosts(posts.length > 0 ? posts : fallbackPosts);
+        } else {
+          setBreakingPosts(fallbackPosts);
+        }
       } catch (error) {
         console.error('Failed to fetch breaking news:', error);
-        setBreakingPosts([]);
+        setBreakingPosts(fallbackPosts);
       } finally {
         setLoading(false);
       }
