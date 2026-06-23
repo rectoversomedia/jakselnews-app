@@ -2,17 +2,13 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Home, BookOpen, Newspaper, Wrench } from 'lucide-react';
 
 const navItems = [
   { href: '/', icon: Home, label: 'Beranda' },
   { href: '/artikel', icon: BookOpen, label: 'Artikel' },
-  {
-    href: '/lapor',
-    icon: 'J',
-    label: 'Lapor',
-    isSpecial: true
-  },
+  { href: '/lapor', label: 'Lapor', isSpecial: true },
   { href: '/breaking-news', icon: Newspaper, label: 'Info Terkini' },
   { href: '/layanan', icon: Wrench, label: 'Layanan' },
 ];
@@ -22,7 +18,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
-      <div className="flex items-center justify-around h-16">
+      <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
             (item.href !== '/' && pathname.startsWith(item.href));
@@ -33,10 +29,16 @@ export function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center gap-0.5 px-2 py-1 -mt-6"
+                className="flex flex-col items-center justify-center px-2 -mt-5"
               >
-                <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg border-4 border-white">
-                  <span className="text-white font-bold text-lg">J</span>
+                <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg border-[3px] border-white">
+                  <Image
+                    src="/logo-button.png"
+                    alt="Jakselnews"
+                    width={32}
+                    height={32}
+                    className="w-8 h-8"
+                  />
                 </div>
                 <span className="text-[10px] font-medium text-gray-600 mt-0.5">
                   {item.label}
@@ -58,7 +60,7 @@ export function BottomNav() {
                 }
               `}
             >
-              <item.icon size={22} />
+              {item.icon && <item.icon size={22} />}
               <span className={`text-[10px] font-medium ${isActive ? 'font-semibold' : ''}`}>
                 {item.label}
               </span>
