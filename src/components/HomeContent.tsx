@@ -32,7 +32,7 @@ const mockBreakingNews = [
   {
     id: 3,
     slug: 'mrt-jakarta-rute-baru',
-    title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju东区 ke Kawasan Timur' },
+    title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju Kawasan Timur' },
     date: new Date(Date.now() - 7200000).toISOString(),
     _embedded: {
       'wp:featuredmedia': [{
@@ -50,7 +50,7 @@ const mockPeringatan = [
   { id: 3, title: 'Potensi Banjir Rendah di Cilandak', location: 'Cilandak', time: '1 jam lalu' }
 ];
 
-// Mock UGC data for Info Terkini (citizen reports) - using Jaksel neighborhood names
+// Mock UGC data for Info Terkini (citizen reports) - text-based social media style
 const ugcReports = [
   {
     id: 1,
@@ -58,7 +58,6 @@ const ugcReports = [
     location: 'Kemang',
     time: '10 menit lalu',
     content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
-    image: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=600&q=80',
     likes: 24,
     comments: 8,
     shares: 5
@@ -69,7 +68,6 @@ const ugcReports = [
     location: 'Blok M',
     time: '25 menit lalu',
     content: 'Jalanan di Jl Radio Dalam mulai ramai nih, ada lampu merah mati. Hati-hati ya! 🚦',
-    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&q=80',
     likes: 15,
     comments: 3,
     shares: 2
@@ -80,7 +78,6 @@ const ugcReports = [
     location: 'Pasar Minggu',
     time: '1 jam lalu',
     content: 'Baru lihat mobil ambulance lewat cepat banget. Semoga bukan hal yang buruk ya 🙏',
-    image: null,
     likes: 8,
     comments: 1,
     shares: 0
@@ -91,7 +88,6 @@ const ugcReports = [
     location: 'Cilandak',
     time: '2 jam lalu',
     content: 'Enaknya makan siang di mana ya? Yang open space gitu, bisa kerja sambil makan. Ada rekomendasi? 🍜',
-    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80',
     likes: 42,
     comments: 12,
     shares: 3
@@ -239,75 +235,7 @@ function PeringatanSection({ posts }: { posts: any[] }) {
   );
 }
 
-function UGCCard({ report }: { report: typeof ugcReports[0] }) {
-  return (
-    <Link href="/breaking-news" className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      {/* Author */}
-      <div className="flex items-center gap-3 p-3">
-        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-          <User size={20} className="text-gray-500" />
-        </div>
-        <div className="flex-1">
-          <p className="font-semibold text-gray-900 text-sm">{report.authorName}</p>
-          <p className="text-xs text-gray-500 flex items-center gap-1">
-            <MapPin size={10} />
-            {report.location} • {report.time}
-          </p>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="px-3 pb-2">
-        <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">{report.content}</p>
-      </div>
-
-      {/* Image */}
-      {report.image && (
-        <div className="aspect-[4/3]">
-          <img
-            src={report.image}
-            alt=""
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
-
-      {/* Actions */}
-      <div className="flex items-center justify-around py-3 px-3 border-t border-gray-100">
-        <button className="flex items-center gap-1.5 text-gray-500 hover:text-red-500 transition-colors">
-          <Heart size={16} />
-          <span className="text-xs">{report.likes}</span>
-        </button>
-        <button className="flex items-center gap-1.5 text-gray-500 hover:text-blue-500 transition-colors">
-          <MessageCircle size={16} />
-          <span className="text-xs">{report.comments}</span>
-        </button>
-        <button className="flex items-center gap-1.5 text-gray-500 hover:text-green-500 transition-colors">
-          <Share2 size={16} />
-          <span className="text-xs">{report.shares}</span>
-        </button>
-      </div>
-    </Link>
-  );
-}
-
 function InfoTerkiniSection() {
-  // Add more reports to have 5 items
-  const allReports = [
-    ...ugcReports,
-    {
-      id: 5,
-      authorName: 'Warga Lebak Bulus',
-      location: 'Lebak Bulus',
-      time: '3 jam lalu',
-      content: 'MRT Lebak Bulus hari ini rame banget! Kayaknya karena ada event nih. 🎉',
-      image: 'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=600&q=80',
-      likes: 31,
-      comments: 5,
-      shares: 8
-    }
-  ];
-
   return (
     <section className="px-4 py-4">
       <div className="flex items-center justify-between mb-3">
@@ -316,33 +244,49 @@ function InfoTerkiniSection() {
           Lihat Semua <ChevronRight size={14} />
         </Link>
       </div>
-      <div className="overflow-x-auto scrollbar-hide flex gap-3 -mx-4 px-4">
-        {allReports.map((report) => (
+      <div className="grid grid-cols-1 gap-3">
+        {ugcReports.map((report) => (
           <Link
             key={report.id}
             href="/breaking-news"
-            className="shrink-0 w-64 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow"
           >
-            {/* Image */}
-            {report.image && (
-              <div className="aspect-[4/3]">
-                <img
-                  src={report.image}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
+            <div className="flex items-start gap-3">
+              {/* Avatar */}
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                <User size={20} className="text-gray-500" />
               </div>
-            )}
-            {/* Content */}
-            <div className="p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                  <User size={12} className="text-gray-500" />
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="font-semibold text-gray-900 text-sm">{report.authorName}</span>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                    <MapPin size={10} />
+                    {report.location}
+                  </span>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-xs text-gray-400">{report.time}</span>
                 </div>
-                <span className="text-xs font-semibold text-gray-700">{report.authorName}</span>
+                <p className="text-sm text-gray-700 leading-relaxed">{report.content}</p>
+
+                {/* Actions */}
+                <div className="flex items-center gap-4 mt-3">
+                  <button className="flex items-center gap-1.5 text-gray-400 hover:text-red-500 transition-colors">
+                    <Heart size={16} />
+                    <span className="text-xs">{report.likes}</span>
+                  </button>
+                  <button className="flex items-center gap-1.5 text-gray-400 hover:text-blue-500 transition-colors">
+                    <MessageCircle size={16} />
+                    <span className="text-xs">{report.comments}</span>
+                  </button>
+                  <button className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 transition-colors">
+                    <Share2 size={16} />
+                    <span className="text-xs">{report.shares}</span>
+                  </button>
+                </div>
               </div>
-              <p className="text-xs text-gray-500 mb-2">{report.location} • {report.time}</p>
-              <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{report.content}</p>
             </div>
           </Link>
         ))}
