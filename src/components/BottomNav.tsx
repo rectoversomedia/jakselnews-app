@@ -29,14 +29,14 @@ export function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center px-1 -mt-5"
+                className="flex flex-col items-center justify-center px-1 -mt-4"
               >
-                <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg overflow-hidden border-[3px] border-white relative">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg overflow-hidden border-[2px] border-white relative">
                   <Image
                     src="/logo-button.png"
                     alt="Jakselnews"
-                    width={56}
-                    height={56}
+                    width={48}
+                    height={48}
                     className="w-full h-full object-cover"
                   />
                 </div>
