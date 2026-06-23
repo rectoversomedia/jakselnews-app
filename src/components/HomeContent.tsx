@@ -127,7 +127,7 @@ function PeringatanPopup({ report, onClose }: { report: typeof trendingReports[0
           <div>
             <h2 className="text-lg font-bold text-gray-900 mb-1">{report.title}</h2>
             <p className="text-sm text-gray-500 flex items-center gap-2">
-              <MapPinIcon size={14} />
+              <MapPin size={14} />
               {report.location} • {report.time}
             </p>
           </div>
