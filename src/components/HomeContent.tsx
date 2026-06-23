@@ -347,10 +347,7 @@ function NotificationBanner() {
 }
 
 export default function HomeContent() {
-  const [breakingPosts, setBreakingPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Real fallback data from jakselnews.com
+  // Real fallback data from jakselnews.com - show immediately
   const realFallbackPosts = [
     {
       id: 522,
@@ -390,51 +387,41 @@ export default function HomeContent() {
     }
   ];
 
+  const [breakingPosts, setBreakingPosts] = useState<any[]>(realFallbackPosts);
+
   useEffect(() => {
     async function fetchBreakingNews() {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+
         const response = await fetch(`${apiUrl}/posts?per_page=3&_embed&status=publish`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         if (response.ok) {
           const posts = await response.json();
           if (posts && posts.length > 0) {
             setBreakingPosts(posts);
-          } else {
-            setBreakingPosts(realFallbackPosts);
           }
-        } else {
-          console.error('API returned:', response.status);
-          setBreakingPosts(realFallbackPosts);
         }
       } catch (error) {
-        console.error('Fetch error:', error);
-        setBreakingPosts(realFallbackPosts);
-      } finally {
-        setLoading(false);
+        // Keep fallback data on error
       }
     }
     fetchBreakingNews();
-  }, []);
+	}, []);
 
-  if (loading) {
-    return (
-      <div className="px-4 py-4">
-        <div className="h-48 bg-gray-200 rounded-2xl animate-pulse" />
-      </div>
-    );
-  }
-
-  return (
-    <>
-      {breakingPosts.length > 0 && <BreakingNewsHero posts={breakingPosts} />}
-      <PeringatanSection />
-      <InfoTerkiniSection />
-      <LayananPopulerSection />
-      <NotificationBanner />
-    </>
-  );
+	return (
+		<>
+			{breakingPosts.length > 0 && <BreakingNewsHero posts={breakingPosts} />}
+			<PeringatanSection />
+			<InfoTerkiniSection />
+			<LayananPopulerSection />
+			<NotificationBanner />
+		</>
+	);
 }
