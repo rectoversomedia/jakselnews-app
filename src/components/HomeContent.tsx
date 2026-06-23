@@ -1,35 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { wpAPI, getFeaturedImage, formatPostDate, stripHtml } from '@/lib/wordpress';
 import { Clock, MapPin, ChevronRight, AlertCircle, X, Phone } from 'lucide-react';
 import { UGCPostCard } from './UGCPost';
-
-const mockBreakingNews = [
-  {
-    id: 1,
-    slug: 'rectoverso-narriv-ai',
-    title: { rendered: 'Rectoverso Media Perkenalkan Narriv, Platform AI untuk Membantu Organisasi Mengelola Narasi Publik' },
-    date: new Date().toISOString(),
-    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/news1/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/news1/800/500' } } } }] }
-  },
-  {
-    id: 2,
-    slug: 'festival-jaksel-2026',
-    title: { rendered: 'Festival Jaksel 2026: Menyatu dalam Keberagaman Budaya Jakarta Selatan' },
-    date: new Date(Date.now() - 3600000).toISOString(),
-    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/news2/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/news2/800/500' } } } }] }
-  },
-  {
-    id: 3,
-    slug: 'mrt-jakarta-rute-baru',
-    title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju Kawasan Timur' },
-    date: new Date(Date.now() - 7200000).toISOString(),
-    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/news3/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/news3/800/500' } } } }] }
-  }
-];
 
 // Trending citizen reports - grouped by category, top 3 most viral
 const trendingReports = [
@@ -390,9 +366,35 @@ function LayananPopulerSection() {
 }
 
 export default function HomeContent() {
+  const [breakingPosts, setBreakingPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchBreakingNews() {
+      try {
+        const { posts } = await wpAPI.getLatestPosts(3);
+        setBreakingPosts(posts);
+      } catch (error) {
+        console.error('Failed to fetch breaking news:', error);
+        setBreakingPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBreakingNews();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="px-4 py-4">
+        <div className="h-48 bg-gray-200 rounded-2xl animate-pulse" />
+      </div>
+    );
+  }
+
   return (
     <>
-      <BreakingNewsHero posts={mockBreakingNews} />
+      {breakingPosts.length > 0 && <BreakingNewsHero posts={breakingPosts} />}
       <PeringatanSection />
       <InfoTerkiniSection />
       <LayananPopulerSection />
