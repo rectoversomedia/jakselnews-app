@@ -1,207 +1,194 @@
-import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
-import { Clock, MapPin, AlertTriangle, ChevronRight, FileText, RefreshCw } from "lucide-react";
-import Link from "next/link";
+import Link from 'next/link';
+import { Clock, MapPin, Heart, MessageCircle, Share2, Plus, Image as ImageIcon } from 'lucide-react';
 
-interface PageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
-export const metadata = {
-  title: "Breaking News | Jakselnews",
-  description: "Berita terkini dan breaking news dari Jakarta Selatan",
-};
-
-async function getBreakingNewsPosts(perPage: number = 20) {
-  try {
-    const result = await wpAPI.getPosts({
-      page: 1,
-      perPage,
-      orderBy: "date",
-      order: "desc",
-    });
-    return result;
-  } catch (error) {
-    console.error("Error fetching breaking news:", error);
-    return { posts: [], totalPages: 0, totalPosts: 0 };
+// Full UGC data for Info Terkini page
+const allUGCReports = [
+  {
+    id: 1,
+    authorName: 'Budi Santoso',
+    authorAvatar: 'https://i.pravatar.cc/100?img=1',
+    location: 'Kemang',
+    time: '10 menit lalu',
+    content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
+    image: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&q=80',
+    likes: 24,
+    comments: 8,
+    shares: 5
+  },
+  {
+    id: 2,
+    authorName: 'Siti Rahayu',
+    authorAvatar: 'https://i.pravatar.cc/100?img=5',
+    location: 'Blok M',
+    time: '25 menit lalu',
+    content: 'Jalanan di Jl Radio Dalam mulai ramai nih, ada lampu merah mati. Hati-hati ya! 🚦',
+    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
+    likes: 15,
+    comments: 3,
+    shares: 2
+  },
+  {
+    id: 3,
+    authorName: 'Ahmad Fauzi',
+    authorAvatar: 'https://i.pravatar.cc/100?img=3',
+    location: 'Pasar Minggu',
+    time: '1 jam lalu',
+    content: 'Baru lihat mobil ambulance lewat cepat banget. Semoga bukan hal yang buruk ya 🙏',
+    image: null,
+    likes: 8,
+    comments: 1,
+    shares: 0
+  },
+  {
+    id: 4,
+    authorName: 'Dewi Lestari',
+    authorAvatar: 'https://i.pravatar.cc/100?img=9',
+    location: 'Cilandak',
+    time: '2 jam lalu',
+    content: 'Enaknya makan siang di mana ya? Yang open space gitu, bisa kerja sambil makan. Ada rekomendasi? 🍜',
+    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80',
+    likes: 42,
+    comments: 12,
+    shares: 3
+  },
+  {
+    id: 5,
+    authorName: 'Rizky Pratama',
+    authorAvatar: 'https://i.pravatar.cc/100?img=11',
+    location: 'Lebak Bulus',
+    time: '3 jam lalu',
+    content: 'MRT Lebak Bulus hari ini rame banget! Kayaknya karena ada event di ICE BSD nih. 🎉',
+    image: 'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=800&q=80',
+    likes: 31,
+    comments: 5,
+    shares: 8
+  },
+  {
+    id: 6,
+    authorName: 'Maya Sari',
+    authorAvatar: 'https://i.pravatar.cc/100?img=16',
+    location: 'Tebet',
+    time: '4 jam lalu',
+    content: 'Kafe baru di Tebet ini recommend banget! Suasananya cozy, kopi-nya enak, WiFi kenceng. Perfect buat kerja remote ☕💻',
+    image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80',
+    likes: 56,
+    comments: 9,
+    shares: 4
+  },
+  {
+    id: 7,
+    authorName: 'Hendra Wijaya',
+    authorAvatar: 'https://i.pravatar.cc/100?img=7',
+    location: 'SCBD',
+    time: '5 jam lalu',
+    content: 'Lampu jalan di area SCBD mati dari kemarin. Semoga segera diperbaiki ya! 🌃',
+    image: 'https://images.unsplash.com/photo-1517732306149-e8f829eb588a?w=800&q=80',
+    likes: 19,
+    comments: 4,
+    shares: 2
+  },
+  {
+    id: 8,
+    authorName: 'Lisa Permata',
+    authorAvatar: 'https://i.pravatar.cc/100?img=20',
+    location: 'Kuningan',
+    time: '6 jam lalu',
+    content: 'Festival Jaksel 2026 hari ini rame banget! Banyak makanan enak dan budaya menarik. Worth it untuk dikunjungi! 🎪✨',
+    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80',
+    likes: 78,
+    comments: 15,
+    shares: 22
   }
-}
+];
 
-function BreakingBadge() {
+function UGCCard({ report }: { report: typeof allUGCReports[0] }) {
   return (
-    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded-full animate-pulse">
-      <AlertTriangle size={14} />
-      <span>Breaking</span>
+    <div className="bg-white rounded-xl overflow-hidden shadow-sm mb-4">
+      {/* Author */}
+      <div className="flex items-center gap-3 p-4">
+        <img
+          src={report.authorAvatar}
+          alt={report.authorName}
+          className="w-12 h-12 rounded-full object-cover"
+        />
+        <div className="flex-1">
+          <p className="font-semibold text-gray-900">{report.authorName}</p>
+          <p className="text-sm text-gray-500 flex items-center gap-1">
+            <MapPin size={14} />
+            {report.location} • {report.time}
+          </p>
+        </div>
+        <button className="p-2 hover:bg-gray-100 rounded-full">
+          <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="px-4 pb-3">
+        <p className="text-gray-700 leading-relaxed">{report.content}</p>
+      </div>
+
+      {/* Image */}
+      {report.image && (
+        <div className="aspect-video">
+          <img
+            src={report.image}
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex items-center justify-around py-4 px-4 border-t border-gray-100">
+        <button className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
+          <Heart size={22} />
+          <span className="text-sm font-medium">{report.likes}</span>
+        </button>
+        <button className="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors">
+          <MessageCircle size={22} />
+          <span className="text-sm font-medium">{report.comments}</span>
+        </button>
+        <button className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors">
+          <Share2 size={22} />
+          <span className="text-sm font-medium">{report.shares}</span>
+        </button>
+      </div>
     </div>
   );
 }
 
-export default async function BreakingNewsPage() {
-  const { posts, totalPages, totalPosts } = await getBreakingNewsPosts(20);
-
+function FloatingActionButton() {
   return (
-    <div className="pb-safe">
-      <div className="container py-4 md:py-6">
-        <div className="flex items-center gap-3 mb-2">
-          <BreakingBadge />
-        </div>
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
-          Breaking News
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          {totalPosts} berita terkini dari Jakarta Selatan
-        </p>
+    <Link
+      href="/lapor"
+      className="fixed bottom-24 right-4 w-14 h-14 bg-primary rounded-full shadow-lg flex items-center justify-center z-40 hover:bg-primary/90 transition-colors"
+    >
+      <Plus size={24} className="text-white" />
+    </Link>
+  );
+}
+
+export default function BreakingNewsPage() {
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
+      {/* Header */}
+      <div className="bg-white px-4 py-4 border-b border-gray-100 sticky top-0 z-30">
+        <h1 className="text-xl font-bold text-gray-900">Info Terkini</h1>
+        <p className="text-sm text-gray-500">Laporan dari warga Jakarta Selatan</p>
       </div>
 
-      <div className="container">
-        <div className="flex items-center justify-between bg-red-50 border border-red-100 rounded-xl px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-red-700">LIVE UPDATE</span>
-          </div>
-          <button className="flex items-center gap-1.5 text-xs text-red-600 hover:text-red-700 font-medium">
-            <RefreshCw size={14} className="animate-spin" style={{ animationDuration: "3s" }} />
-            Refresh
-          </button>
-        </div>
+      {/* UGC Feed */}
+      <div className="px-4 py-4">
+        {allUGCReports.map((report) => (
+          <UGCCard key={report.id} report={report} />
+        ))}
       </div>
 
-      <div className="container py-4 md:py-6">
-        {posts.length > 0 ? (
-          <div className="space-y-4">
-            {posts[0] && (
-              <Link href={`/artikel/${posts[0].slug}`} className="block">
-                <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="relative aspect-video md:aspect-[21/9]">
-                    {getFeaturedImage(posts[0]) ? (
-                      <img
-                        src={getFeaturedImage(posts[0])!}
-                        alt={stripHtml(posts[0].title.rendered)}
-                        className="w-full h-full object-cover"
-                        loading="eager"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-                        <span className="text-red-300 font-bold text-6xl">J</span>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                      <div className="flex items-center gap-2 mb-2">
-                        <BreakingBadge />
-                        {getPostCategory(posts[0]) && (
-                          <span className="px-2.5 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            {getPostCategory(posts[0])?.name}
-                          </span>
-                        )}
-                      </div>
-                      <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
-                        {stripHtml(posts[0].title.rendered)}
-                      </h2>
-                      <div className="flex items-center gap-3 mt-3 text-white/80 text-xs">
-                        <span className="flex items-center gap-1">
-                          <MapPin size={12} />
-                          Jakarta Selatan
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock size={12} />
-                          {formatPostDate(posts[0].date)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            )}
-
-            <div className="space-y-3">
-              {posts.slice(1).map((post) => {
-                const featuredImage = getFeaturedImage(post);
-                const category = getPostCategory(post);
-                const title = stripHtml(post.title.rendered);
-                const date = formatPostDate(post.date);
-
-                return (
-                  <Link key={post.id} href={`/artikel/${post.slug}`} className="block">
-                    <article className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="flex">
-                        <div className="relative w-28 h-24 sm:w-36 sm:h-28 md:w-44 md:h-32 shrink-0">
-                          {featuredImage ? (
-                            <img
-                              src={featuredImage}
-                              alt={title}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                              <span className="text-gray-400 font-bold text-2xl">J</span>
-                            </div>
-                          )}
-                          <div className="absolute top-2 left-2">
-                            <span className="px-2 py-0.5 bg-red-600 text-white text-[10px] font-bold uppercase rounded">
-                              News
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex-1 p-3 sm:p-4 flex flex-col justify-between min-w-0">
-                          <div>
-                            {category && (
-                              <span className={`category-badge ${category.slug} text-[10px] mb-1.5`}>
-                                {category.name}
-                              </span>
-                            )}
-                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base line-clamp-2 leading-snug">
-                              {title}
-                            </h3>
-                          </div>
-                          <div className="flex items-center justify-between mt-2">
-                            <span className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500">
-                              <MapPin size={10} className="sm:size-3" />
-                              Jaksel
-                            </span>
-                            <span className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500">
-                              <Clock size={10} className="sm:size-3" />
-                              {date}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-                  </Link>
-                );
-              })}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-6">
-                <span className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm font-medium">
-                  1 / {totalPages}
-                </span>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <FileText size={64} className="mx-auto text-gray-200 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Tidak Ada Berita</h3>
-            <p className="text-sm text-gray-500">Tidak ada breaking news yang ditemukan</p>
-          </div>
-        )}
-      </div>
-
-      <div className="container py-6">
-        <Link
-          href="/artikel"
-          className="flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <FileText size={20} className="text-primary" />
-            <span className="font-medium text-gray-700">Lihat Semua Artikel</span>
-          </div>
-          <ChevronRight size={20} className="text-gray-400" />
-        </Link>
-      </div>
+      {/* Floating Action Button */}
+      <FloatingActionButton />
     </div>
   );
 }
