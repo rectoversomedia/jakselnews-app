@@ -87,7 +87,7 @@ export default async function KategoriPage({ params }: PageProps) {
         <div className="container py-6 md:py-8">
           <div className="flex items-center gap-2 text-sm text-white/80 mb-2">
             <Link href="/" className="hover:text-white transition-colors">Beranda</Link>
-            <CaretRight size={14} />
+            <ChevronRight size={14} />
             <span>Kategori</span>
           </div>
           <div className="flex items-center gap-3">
@@ -116,7 +116,7 @@ export default async function KategoriPage({ params }: PageProps) {
               href="/artikel"
               className="inline-flex items-center gap-1 text-primary text-sm font-medium mt-3 hover:underline"
             >
-              Lihat semua berita <CaretRight size={14} />
+              Lihat semua berita <ChevronRight size={14} />
             </Link>
           </div>
         )}
