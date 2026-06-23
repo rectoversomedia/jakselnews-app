@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Home, BookOpen, Newspaper, Wrench } from 'lucide-react';
 
 const navItems = [
@@ -30,11 +31,14 @@ export function BottomNav() {
                 href={item.href}
                 className="flex flex-col items-center justify-center px-1 -mt-5"
               >
-                <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg border-[3px] border-white relative">
-                  <span className="relative">
-                    <span className="text-xl font-black text-white">J</span>
-                    <span className="absolute -top-0.5 -right-1.5 w-1 h-1 bg-white rounded-full"></span>
-                  </span>
+                <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg overflow-hidden border-[3px] border-white relative">
+                  <Image
+                    src="/lapor.png"
+                    alt="Jakselnews"
+                    width={56}
+                    height={56}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span className="text-[10px] font-medium text-gray-600 mt-0.5">
                   {item.label}

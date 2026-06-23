@@ -2,6 +2,7 @@
 
 import { Bell, Menu } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Header() {
   return (
@@ -18,14 +19,14 @@ export function Header() {
 
           {/* Center - Logo */}
           <Link href="/" className="flex items-center">
-            <div className="flex items-center gap-1">
-              <div className="relative">
-                <span className="text-2xl md:text-3xl font-black text-red-600">J</span>
-                <span className="absolute -top-0.5 -right-1.5 w-1.5 h-1.5 bg-red-600 rounded-full"></span>
-              </div>
-              <span className="font-black text-lg md:text-xl text-gray-900">akselnews</span>
-              <span className="font-medium text-xs md:text-sm text-gray-400">.com</span>
-            </div>
+            <Image
+              src="/logo-utama.png"
+              alt="Jakselnews"
+              width={160}
+              height={40}
+              className="h-9 md:h-11 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Right - Notification Bell */}
