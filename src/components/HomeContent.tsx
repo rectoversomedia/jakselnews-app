@@ -31,73 +31,75 @@ const mockBreakingNews = [
   }
 ];
 
-// Trending citizen reports - viral complaints
+// Trending citizen reports - grouped by category, top 3 most viral
 const trendingReports = [
   {
     id: 1,
-    author: 'Warga Kemang',
-    title: 'Genangan Air ±20cm di Jl. Kemang Raya',
-    location: 'Jl. Kemang Raya',
+    warningType: 'Waspada Begal',
+    location: 'Kawasan Kemang',
+    reportCount: 47,
     reports: 47,
     time: '15 menit lalu',
-    icon: '🌊',
-    color: 'bg-blue-500',
-    status: 'SEDANG DIPROSES',
+    icon: '⚠️',
+    color: 'bg-red-500',
+    status: 'TRENDING',
     detail: {
-      description: 'Air mulai pasang dan menggenang di Jl. Kemang Raya arah Blok M. Tinggi genangan sudah mencapai ±20cm dan terus meningkat.',
-      cause: 'Hujan deras sejak pukul 14.00 WIB dan drainase yang tersumbat sampah.',
-      impact: 'Kendaraan roda dua dan empat sulit melintas. Kemacetan sepanjang 500m.',
+      description: 'Laporan meningkat tentang aksi begal di kawasan Kemang. Korban mengalami perampasan 핸드폰 dan tas.',
+      cause: 'Pelemahan patroli keamanan di jalan-jalan sepi.',
+      impact: 'Warga dan pengguna jalan merasa tidak aman, terutama malam hari.',
       actions: [
-        { icon: '🚗', text: 'Kendaraan dialihkan via Jl.Ampera' },
-        { icon: '🚑', text: 'Posko pengungsian di Balaidesa Kemang' },
-        { icon: '🏊', text: 'Tim SAR siaga di lokasi' }
+        { icon: '🚔', text: 'Polisi increasing patroli di titik rawan' },
+        { icon: '👥', text: 'Siskamling ditingkatkan warga' },
+        { icon: '📱', text: 'Hubungi 110 jika melihat suspects' }
       ],
-      hotline: '021-112',
-      related: ['Jl.Ampera', 'Jl.Tebbenu', 'JlRadio Dalam']
+      hotline: '110',
+      related: ['Jl. Kemang Raya', 'Jl. Ampera', 'Jl. TB Simatupang']
     }
   },
   {
     id: 2,
-    author: 'Warga Ragunan',
-    title: 'Jalan Ditutup - Drainase Meluap',
-    location: 'Jl. Ragunan',
-    reports: 32,
-    time: '30 menit lalu',
-    icon: '🚧',
+    warningType: 'Waspada Maling',
+    location: 'Kawasan Cilandak',
+    reportCount: 38,
+    reports: 38,
+    time: '45 menit lalu',
+    icon: '🚨',
     color: 'bg-orange-500',
-    status: 'VERIFIKASI',
+    status: 'TRENDING',
     detail: {
-      description: 'Drainase di Jl. Ragunan meluap akibat hujan deras. Jalan ditutup total untuk kendaraan roda empat.',
-      cause: 'Saluran air tersumbat dan kapasitas tidak memadai.',
-      impact: 'Akses ke Pasar Minggu dan direction ke TB Simatupang terganggu.',
+      description: 'Serangkaian kasus pencurian摩托车 dan properti dilaporkan di kawasan Cilandak.',
+      cause: 'Operasi kelompok pencuri terorganisir.',
+      impact: 'Kerugian finansial warga, kekuatiran masyarakat.',
       actions: [
-        { icon: '🔄', text: 'Rute alternatif via Jl.Cilandak' },
-        { icon: '🏢', text: 'Posko bantuan di Balaidesa Ragunan' }
+        { icon: '🔒', text: 'Pastikan kendaraan selalu dikunci' },
+        { icon: '📹', text: 'Aktifkan CCTV rumah/warga' },
+        { icon: '🚓', text: 'Tim keamanan increased sweep area' }
       ],
-      hotline: '021-114',
-      related: ['Jl.Cilandak', 'Jl.TBS', 'Pasar Minggu']
+      hotline: '110',
+      related: ['Jl. Cilandak', 'Jl. MRT Cilandak', 'Pasar Cilandak']
     }
   },
   {
     id: 3,
-    author: 'Warga Cilandak',
-    title: 'Tanah Longsor di Tebing Kali',
-    location: 'Kali Pesanggrahan',
-    reports: 18,
+    warningType: 'Waspada Jalan Berlubang',
+    location: 'Kawasan Lenteng Agung',
+    reportCount: 29,
+    reports: 29,
     time: '1 jam lalu',
-    icon: '⚠️',
-    color: 'bg-yellow-500',
-    status: 'WASPADA',
+    icon: '🕳️',
+    color: 'bg-amber-500',
+    status: 'TRENDING',
     detail: {
-      description: 'Tanah longsor terjadi di tebing Kali Pesanggrahan. Area sekitar berbahaya untuk dilalui.',
-      cause: 'Curah hujan tinggi dan tanah tidak stabil.',
-      impact: 'Jalan inspeksi ditutup sementara. Warga diimbau menjauhi area sungai.',
+      description: 'Jalan berlubang di berbagai titik Lenteng Agung menyebabkan kecelakaan dan kemacetan.',
+      cause: 'Kerusakan infrastruktur jalan akibat hujan dan beban kendaraan.',
+      impact: 'Kecelakaan摩托车, kerusakan kendaraan, kemacetan panjang.',
       actions: [
-        { icon: '🚧', text: 'Area ditutup radius 50m' },
-        { icon: '📢', text: 'Pengumuman evacuation jika diperlukan' }
+        { icon: '🚧', text: 'Dinas Bina Marga preparing perbaikan' },
+        { icon: '⚠️', text: 'Marking lubang dengan rambu sementara' },
+        { icon: '📞', text: 'Lapor ke 112 untuk perbaikan cepat' }
       ],
-      hotline: '021-113',
-      related: ['Kali Pesanggrahan', 'Tebet', 'Ps Minggu']
+      hotline: '112',
+      related: ['Jl. Lenteng Agung', 'Jl. Sirnak', 'Jl. Universitas']
     }
   }
 ];
@@ -125,7 +127,7 @@ function PeringatanPopup({ report, onClose }: { report: typeof trendingReports[0
 
         <div className="p-4 space-y-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">{report.title}</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-1">{report.warningType}</h2>
             <p className="text-sm text-gray-500 flex items-center gap-2">
               <MapPin size={14} />
               {report.location} • {report.time}
@@ -202,7 +204,7 @@ function PeringatanSection() {
           <div className="flex items-center gap-2 mb-3">
             <AlertCircle size={20} className="text-red-600" />
             <h2 className="text-base font-bold text-red-700">PERINGATAN</h2>
-            <span className="ml-auto text-xs text-red-500">🔥 Virall</span>
+            <span className="ml-auto text-xs text-red-500">🔥 Top Laporan</span>
           </div>
           <div className="space-y-2">
             {trendingReports.map((report) => (
@@ -216,12 +218,14 @@ function PeringatanSection() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h4 className="font-semibold text-gray-900 text-sm line-clamp-1">{report.title}</h4>
-                    <span className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-600 rounded-full shrink-0">{report.reports}x</span>
+                    <h4 className="font-semibold text-gray-900 text-sm line-clamp-1">
+                      {report.warningType} - {report.location}
+                    </h4>
+                    <span className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-600 rounded-full shrink-0">{report.reportCount}x</span>
                   </div>
                   <p className="text-xs text-gray-500 flex items-center gap-1">
                     <MapPin size={10} />
-                    {report.location}
+                    {report.location} • {report.time}
                   </p>
                 </div>
                 <ChevronRight size={16} className="text-gray-400 shrink-0" />
@@ -279,6 +283,17 @@ function BreakingNewsHero({ posts }: { posts: any[] }) {
 }
 
 function InfoTerkiniSection() {
+  const mockReport = {
+    id: 1,
+    authorName: 'Warga Kemang',
+    location: 'Kemang',
+    time: '10 menit lalu',
+    content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
+    likes: 24,
+    comments: 8,
+    shares: 5
+  };
+
   return (
     <section className="px-4 py-4">
       <div className="flex items-center justify-between mb-3">
@@ -288,7 +303,7 @@ function InfoTerkiniSection() {
         </Link>
       </div>
       <div className="grid grid-cols-1 gap-3">
-        <UGCPostCard />
+        <UGCPostCard report={mockReport} />
       </div>
     </section>
   );

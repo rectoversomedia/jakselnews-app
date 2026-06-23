@@ -3,23 +3,14 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Home, BookOpen, Newspaper } from 'lucide-react';
-
-const GridIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-    <rect x="3" y="3" width="7" height="7" rx="1" />
-    <rect x="14" y="3" width="7" height="7" rx="1" />
-    <rect x="3" y="14" width="7" height="7" rx="1" />
-    <rect x="14" y="14" width="7" height="7" rx="1" />
-  </svg>
-);
+import { Home, BookOpen, Newspaper, Building } from 'lucide-react';
 
 const navItems = [
   { href: '/', icon: Home, label: 'Beranda' },
   { href: '/artikel', icon: BookOpen, label: 'Artikel' },
   { href: '/lapor', label: 'Lapor', isSpecial: true },
   { href: '/breaking-news', icon: Newspaper, label: 'Info Terkini' },
-  { href: '/layanan', label: 'Layanan', useGrid: true },
+  { href: '/layanan', icon: Building, label: 'Layanan' },
 ];
 
 export function BottomNav() {
@@ -68,7 +59,7 @@ export function BottomNav() {
                 }
               `}
             >
-              {item.useGrid ? <GridIcon /> : item.icon && <item.icon size={22} />}
+              {item.icon && <item.icon size={22} />}
               <span className={`text-[10px] font-medium ${isActive ? 'font-semibold' : ''}`}>
                 {item.label}
               </span>
