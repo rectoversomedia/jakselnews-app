@@ -8,15 +8,27 @@ const categories = [
   { id: 1, name: 'Banjir', icon: '🌊', color: 'bg-blue-500' },
   { id: 2, name: 'Kemacetan', icon: '🚗', color: 'bg-orange-500' },
   { id: 3, name: 'Kriminal', icon: '🚨', color: 'bg-red-500' },
-  { id: 4, name: 'Infrastruktur', icon: '🛠️', color: 'bg-gray-500' },
-  { id: 5, name: 'Listrik', icon: '💡', color: 'bg-yellow-500' },
-  { id: 6, name: 'Air', icon: '🚰', color: 'bg-cyan-500' },
-  { id: 7, name: 'Gas', icon: '🔥', color: 'bg-orange-400' },
-  { id: 8, name: 'Internet', icon: '📶', color: 'bg-indigo-500' },
-  { id: 9, name: 'Kesehatan', icon: '🏥', color: 'bg-green-500' },
-  { id: 10, name: 'Kebersihan', icon: '🗑️', color: 'bg-emerald-500' },
-  { id: 11, name: 'Keamanan', icon: '🔒', color: 'bg-purple-500' },
-  { id: 12, name: 'Lainnya', icon: '📝', color: 'bg-gray-400', isOther: true },
+  { id: 4, name: 'Begal', icon: '⚠️', color: 'bg-red-600' },
+  { id: 5, name: 'Infrastruktur', icon: '🛠️', color: 'bg-gray-500' },
+  { id: 6, name: 'Jalan Rusak', icon: '🕳️', color: 'bg-amber-500' },
+  { id: 7, name: 'Listrik', icon: '💡', color: 'bg-yellow-500' },
+  { id: 8, name: 'Air Bersih', icon: '🚰', color: 'bg-cyan-500' },
+  { id: 9, name: 'Gas Bocor', icon: '🔥', color: 'bg-orange-400' },
+  { id: 10, name: 'Internet', icon: '📶', color: 'bg-indigo-500' },
+  { id: 11, name: 'Kesehatan', icon: '🏥', color: 'bg-green-500' },
+  { id: 12, name: 'Ambulans', icon: '🚑', color: 'bg-red-400' },
+  { id: 13, name: 'Kebersihan', icon: '🗑️', color: 'bg-emerald-500' },
+  { id: 14, name: 'Sampah', icon: '🍂', color: 'bg-green-600' },
+  { id: 15, name: 'Keamanan', icon: '🔒', color: 'bg-purple-500' },
+  { id: 16, name: 'Kebisingan', icon: '🔊', color: 'bg-violet-500' },
+  { id: 17, name: 'Parkir Liar', icon: '🅿️', color: 'bg-gray-600' },
+  { id: 18, name: 'PKL Liar', icon: '🏪', color: 'bg-amber-600' },
+  { id: 19, name: 'Pohon Tumbang', icon: '🌳', color: 'bg-green-500' },
+  { id: 20, name: 'Banjir', icon: '🌧️', color: 'bg-blue-400' },
+  { id: 21, name: 'Lahan Terbuka', icon: '🏞️', color: 'bg-teal-500' },
+  { id: 22, name: 'Hewan Liar', icon: '🐕', color: 'bg-amber-700' },
+  { id: 23, name: 'Fecebook', icon: '📘', color: 'bg-blue-300' },
+  { id: 24, name: 'Lainnya', icon: '📝', color: 'bg-gray-400', isOther: true },
 ];
 
 export default function LaporPage() {
@@ -220,17 +232,17 @@ export default function LaporPage() {
       {/* Categories */}
       <div className="px-4 py-4">
         <h2 className="text-sm font-medium text-gray-700 mb-3">Pilih Kategori Laporan</h2>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-6 gap-2">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className="bg-white rounded-xl p-3 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl p-2 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className={`w-12 h-12 ${category.color} rounded-xl flex items-center justify-center text-2xl mb-2`}>
+              <div className={`w-10 h-10 ${category.color} rounded-lg flex items-center justify-center text-xl mb-1`}>
                 {category.icon}
               </div>
-              <span className="text-xs font-medium text-gray-700">{category.name}</span>
+              <span className="text-[10px] font-medium text-gray-700 leading-tight">{category.name}</span>
             </button>
           ))}
         </div>
