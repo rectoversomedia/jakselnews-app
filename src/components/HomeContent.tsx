@@ -350,36 +350,11 @@ export default function HomeContent() {
   const [breakingPosts, setBreakingPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fallback data if API fails
-  const fallbackPosts = [
-    {
-      id: 1,
-      slug: 'artikel',
-      title: { rendered: 'Rectoverso Media Perkenalkan Narriv, Platform AI untuk Membantu Organisasi Mengelola Narasi Publik' },
-      date: new Date().toISOString(),
-      _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/jaksel1/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/jaksel1/800/500' } } } }] }
-    },
-    {
-      id: 2,
-      slug: 'artikel',
-      title: { rendered: 'Festival Jaksel 2026: Menyatu dalam Keberagaman Budaya Jakarta Selatan' },
-      date: new Date(Date.now() - 3600000).toISOString(),
-      _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/jaksel2/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/jaksel2/800/500' } } } }] }
-    },
-    {
-      id: 3,
-      slug: 'artikel',
-      title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju Kawasan Timur' },
-      date: new Date(Date.now() - 7200000).toISOString(),
-      _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/jaksel3/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/jaksel3/800/500' } } } }] }
-    }
-  ];
-
   useEffect(() => {
     async function fetchBreakingNews() {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_WP_API_URL}/posts?per_page=3&_embed`, {
           signal: controller.signal
@@ -388,13 +363,13 @@ export default function HomeContent() {
 
         if (response.ok) {
           const posts = await response.json();
-          setBreakingPosts(posts.length > 0 ? posts : fallbackPosts);
+          setBreakingPosts(posts || []);
         } else {
-          setBreakingPosts(fallbackPosts);
+          setBreakingPosts([]);
         }
       } catch (error) {
         console.error('Failed to fetch breaking news:', error);
-        setBreakingPosts(fallbackPosts);
+        setBreakingPosts([]);
       } finally {
         setLoading(false);
       }
