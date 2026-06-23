@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Home, BookOpen, Newspaper, Wrench } from 'lucide-react';
 
 const navItems = [
@@ -18,7 +17,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
-      <div className="flex items-center justify-around h-16 px-2">
+      <div className="flex items-center justify-around h-16 px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
             (item.href !== '/' && pathname.startsWith(item.href));
@@ -29,16 +28,13 @@ export function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center px-2 -mt-5"
+                className="flex flex-col items-center justify-center px-1 -mt-5"
               >
-                <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg border-[3px] border-white">
-                  <Image
-                    src="/logo-button.png"
-                    alt="Jakselnews"
-                    width={32}
-                    height={32}
-                    className="w-8 h-8"
-                  />
+                <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg border-[3px] border-white relative">
+                  <span className="relative">
+                    <span className="text-xl font-black text-white">J</span>
+                    <span className="absolute -top-0.5 -right-1.5 w-1 h-1 bg-white rounded-full"></span>
+                  </span>
                 </div>
                 <span className="text-[10px] font-medium text-gray-600 mt-0.5">
                   {item.label}

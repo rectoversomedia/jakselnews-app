@@ -107,8 +107,8 @@ const layananPopuler = [
 
 function BreakingNewsHero() {
   return (
-    <section className="container py-3">
-      <div className="relative overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-3 -mx-4 px-4">
+    <section className="px-4 py-3">
+      <div className="relative overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-3">
         {breakingNews.map((item) => (
           <div
             key={item.id}
@@ -151,7 +151,7 @@ function BreakingNewsHero() {
 
 function PeringatanSection() {
   return (
-    <section className="container py-4">
+    <section className="px-4 py-4">
       <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <AlertCircle size={20} className="text-red-600" />
@@ -189,14 +189,14 @@ function PeringatanSection() {
 
 function InfoTerkiniSection() {
   return (
-    <section className="container py-4">
+    <section className="px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-base md:text-lg font-bold text-gray-900">INFO TERKINI</h2>
         <Link href="/artikel" className="text-xs text-primary font-medium flex items-center gap-0.5">
           Lihat Semua <ChevronRight size={14} />
         </Link>
       </div>
-      <div className="overflow-x-auto scrollbar-hide flex gap-3 -mx-4 px-4 pb-2">
+      <div className="overflow-x-auto scrollbar-hide flex gap-3">
         {infoTerkiniItems.map((item) => (
           <Link
             key={item.id}
@@ -228,7 +228,7 @@ function InfoTerkiniSection() {
 
 function LayananPopulerSection() {
   return (
-    <section className="container py-4">
+    <section className="px-4 py-4 mb-20">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-base md:text-lg font-bold text-gray-900">LAYANAN POPULER</h2>
         <Link href="/layanan" className="text-xs text-primary font-medium flex items-center gap-0.5">
