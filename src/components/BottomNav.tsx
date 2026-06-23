@@ -3,14 +3,23 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Home, BookOpen, Newspaper, Wrench } from 'lucide-react';
+import { Home, BookOpen, Newspaper } from 'lucide-react';
+
+const GridIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <rect x="3" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="3" width="7" height="7" rx="1" />
+    <rect x="3" y="14" width="7" height="7" rx="1" />
+    <rect x="14" y="14" width="7" height="7" rx="1" />
+  </svg>
+);
 
 const navItems = [
   { href: '/', icon: Home, label: 'Beranda' },
   { href: '/artikel', icon: BookOpen, label: 'Artikel' },
   { href: '/lapor', label: 'Lapor', isSpecial: true },
   { href: '/breaking-news', icon: Newspaper, label: 'Info Terkini' },
-  { href: '/layanan', icon: Wrench, label: 'Layanan' },
+  { href: '/layanan', label: 'Layanan', useGrid: true },
 ];
 
 export function BottomNav() {
@@ -23,7 +32,6 @@ export function BottomNav() {
           const isActive = pathname === item.href ||
             (item.href !== '/' && pathname.startsWith(item.href));
 
-          // Special "Lapor" button - bulat dengan logo J
           if (item.isSpecial) {
             return (
               <Link
@@ -31,7 +39,7 @@ export function BottomNav() {
                 href={item.href}
                 className="flex flex-col items-center justify-center px-1 -mt-3"
               >
-                <div className="w-11 h-11 rounded-full flex items-center justify-center shadow-lg overflow-hidden border-[2px] border-white relative">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center shadow-lg overflow-hidden border-[2px] border-white">
                   <Image
                     src="/logo-button.png"
                     alt="Jakselnews"
@@ -60,7 +68,7 @@ export function BottomNav() {
                 }
               `}
             >
-              {item.icon && <item.icon size={22} />}
+              {item.useGrid ? <GridIcon /> : item.icon && <item.icon size={22} />}
               <span className={`text-[10px] font-medium ${isActive ? 'font-semibold' : ''}`}>
                 {item.label}
               </span>
