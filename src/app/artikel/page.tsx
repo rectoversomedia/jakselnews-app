@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from '@/lib/wordpress';
-import { Clock, MapPin, ChevronRight, AlertTriangle, Newspaper } from 'lucide-react';
+import { wpAPI, getFeaturedImage, formatPostDate, stripHtml } from '@/lib/wordpress';
+import { Clock, MapPin, ChevronRight } from 'lucide-react';
 
 // Mock data fallback
 const mockPosts = [
@@ -59,30 +59,41 @@ const mockPosts = [
 ];
 
 const mockCategories = [
-  { id: 1, name: 'Semua', slug: 'all' },
-  { id: 2, name: 'Breaking News', slug: 'breaking' },
-  { id: 3, name: 'Event', slug: 'event' },
-  { id: 4, name: 'Transportasi', slug: 'transportasi' },
-  { id: 5, name: 'Ekonomi', slug: 'ekonomi' },
+  { id: 0, name: 'Semua', slug: 'semua' },
+  { id: 1, name: 'Event', slug: 'event' },
+  { id: 2, name: 'Hiburan', slug: 'hiburan' },
+  { id: 3, name: 'Kuliner', slug: 'kuliner' },
+  { id: 4, name: 'Lifestyle', slug: 'lifestyle' },
+  { id: 5, name: 'Teknologi', slug: 'teknologi' },
+  { id: 6, name: 'Transportasi', slug: 'transportasi' },
 ];
 
 export const metadata = {
   title: 'Semua Berita | Jakselnews',
-  description: 'Berita terbaru dari Jakarta Selatan',
+  description: 'Berita terbaru dan terlengkap dari Jakarta Selatan',
 };
 
-async function getArticlesData(perPage: number = 12) {
+async function getPostsByCategory(categorySlug?: string) {
   try {
     const result = await wpAPI.getPosts({
-      perPage,
+      perPage: 10,
+      order: 'desc',
     });
     if (result.posts.length > 0) {
-      return result;
+      // Filter by category if specified
+      if (categorySlug && categorySlug !== 'semua') {
+        const filtered = result.posts.filter(post => {
+          const category = post._embedded?.['wp:term']?.[0]?.[0];
+          return category?.slug === categorySlug;
+        });
+        return filtered.length > 0 ? filtered : result.posts;
+      }
+      return result.posts;
     }
-    return { posts: mockPosts, totalPages: 1, totalPosts: mockPosts.length };
+    return mockPosts;
   } catch (error) {
     console.error('WP API Error:', error);
-    return { posts: mockPosts, totalPages: 1, totalPosts: mockPosts.length };
+    return mockPosts;
   }
 }
 
@@ -90,7 +101,7 @@ async function getCategories() {
   try {
     const categories = await wpAPI.getCategories();
     if (categories.length > 0) {
-      return [{ id: 0, name: 'Semua', slug: 'all' }, ...categories.slice(0, 4)];
+      return [{ id: 0, name: 'Semua', slug: 'semua' }, ...categories.slice(0, 5)];
     }
     return mockCategories;
   } catch {
@@ -125,13 +136,14 @@ function ArticleCard({ post }: { post: any }) {
           </span>
         )}
       </div>
-      <div className="p-3">
-        <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm">{title}</h3>
-        <div className="flex items-center justify-between text-[10px] text-gray-500 mt-2">
+      <div className="p-3 text-center">
+        <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm mb-2">{title}</h3>
+        <div className="flex items-center justify-center gap-3 text-[10px] text-gray-500">
           <span className="flex items-center gap-1">
             <MapPin size={10} />
             Jakarta Selatan
           </span>
+          <span>•</span>
           <span className="flex items-center gap-1">
             <Clock size={10} />
             {date}
@@ -142,49 +154,42 @@ function ArticleCard({ post }: { post: any }) {
   );
 }
 
-export default async function ArtikelPage() {
-  const [{ posts }, categories] = await Promise.all([
-    getArticlesData(12),
+export default async function ArtikelPage({ searchParams }: { searchParams: { kategori?: string } }) {
+  const selectedCategory = searchParams.kategori || 'semua';
+  const [posts, categories] = await Promise.all([
+    getPostsByCategory(selectedCategory),
     getCategories()
   ]);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Header */}
-      <div className="bg-white px-4 py-4 border-b border-gray-100">
-        <h1 className="text-xl font-bold text-gray-900">Semua Berita</h1>
+      {/* Header - Centered */}
+      <div className="bg-white px-4 py-6 border-b border-gray-100 text-center">
+        <h1 className="text-xl font-bold text-gray-900 mb-1">Semua Berita</h1>
         <p className="text-sm text-gray-500">Berita terbaru dari Jakarta Selatan</p>
       </div>
 
-      {/* Breaking News Quick Access */}
-      <div className="px-4 py-3">
-        <Link
-          href="/breaking-news"
-          className="flex items-center justify-between px-4 py-3 bg-red-50 border border-red-100 rounded-xl hover:bg-red-100 transition-colors"
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-red-700">Breaking News</span>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-red-600">
-            Lihat
-            <ChevronRight size={14} />
-          </div>
-        </Link>
-      </div>
-
-      {/* Category Tabs */}
-      <div className="bg-white px-4 py-3 border-b border-gray-100 overflow-x-auto">
+      {/* Category Tabs - Horizontal Scroll */}
+      <div className="bg-white px-4 py-3 border-b border-gray-100 sticky top-0 z-10 overflow-x-auto">
         <div className="flex gap-2 min-w-max">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={cat.slug === 'all' ? '/artikel' : `/kategori/${cat.slug}`}
-              className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-gray-100 text-gray-600 hover:bg-primary hover:text-white"
-            >
-              {cat.name}
-            </Link>
-          ))}
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat.slug || (selectedCategory === 'semua' && cat.slug === 'semua');
+            return (
+              <Link
+                key={cat.id}
+                href={cat.slug === 'semua' ? '/artikel' : `/artikel?kategori=${cat.slug}`}
+                className={`
+                  px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors
+                  ${isActive
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }
+                `}
+              >
+                {cat.name}
+              </Link>
+            );
+          })}
         </div>
       </div>
 
@@ -199,15 +204,17 @@ export default async function ArtikelPage() {
         ) : (
           <div className="text-center py-12">
             <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <Newspaper size={32} className="text-gray-400" />
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
             </div>
             <h3 className="text-gray-900 font-semibold mb-1">Tidak ada berita ditemukan</h3>
-            <p className="text-gray-500 text-sm mb-4">Coba pilih kategori lain</p>
+            <p className="text-gray-500 text-sm mb-4">Pilih kategori lain</p>
             <Link
-              href="/breaking-news"
-              className="inline-block px-6 py-3 bg-red-600 text-white font-medium rounded-xl"
+              href="/artikel"
+              className="inline-block px-6 py-3 bg-primary text-white font-medium rounded-xl"
             >
-              ▲ Lihat Semua Breaking News
+              Lihat Semua Berita
             </Link>
           </div>
         )}
