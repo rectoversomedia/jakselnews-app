@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from '@/lib/wordpress';
-import { Clock, MapPin, ChevronRight, AlertCircle, Heart, MessageCircle, Share2, User } from 'lucide-react';
+import { Clock, MapPin, ChevronRight, AlertCircle } from 'lucide-react';
+import { UGCPostCard } from './UGCPost';
 
 // Mock Breaking News data - fallback if WP API fails
 const mockBreakingNews = [
@@ -45,12 +46,12 @@ const mockBreakingNews = [
 
 // Mock Peringatan data
 const mockPeringatan = [
-  { id: 1, title: 'Genangan Air ±20cm di Jl. Kemang Raya', location: 'Kemang', time: '12 menit lalu' },
-  { id: 2, title: 'Jalan Ditutup Sementara di Jl. Ragunan', location: 'Ragunan', time: '45 menit lalu' },
-  { id: 3, title: 'Potensi Banjir Rendah di Cilandak', location: 'Cilandak', time: '1 jam lalu' }
+  { id: 1, title: 'Genangan Air ±20cm di Jl. Kemang Raya', location: 'Kemang', time: 'Baru saja' },
+  { id: 2, title: 'Jalan Ditutup Sementara di Jl. Ragunan', location: 'Ragunan', time: 'Baru saja' },
+  { id: 3, title: 'Potensi Banjir Rendah di Cilandak', location: 'Cilandak', time: 'Baru saja' }
 ];
 
-// Mock UGC data for Info Terkini (citizen reports) - text-based social media style
+// Mock UGC data for Info Terkini
 const ugcReports = [
   {
     id: 1,
@@ -146,10 +147,13 @@ function BreakingNewsCard({ post }: { post: any }) {
   return (
     <Link href={`/artikel/${post.slug}`} className="block relative rounded-2xl overflow-hidden aspect-[16/10]">
       {featuredImage ? (
-        <img
+        <Image
           src={featuredImage}
           alt={title}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 85vw, 45vw"
+          priority={post.id === mockBreakingNews[0]?.id}
         />
       ) : (
         <div className="w-full h-full bg-gradient-to-br from-red-400 to-red-600" />
@@ -246,49 +250,7 @@ function InfoTerkiniSection() {
       </div>
       <div className="grid grid-cols-1 gap-3">
         {ugcReports.map((report) => (
-          <Link
-            key={report.id}
-            href="/breaking-news"
-            className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-start gap-3">
-              {/* Avatar */}
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                <User size={20} className="text-gray-500" />
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="font-semibold text-gray-900 text-sm">{report.authorName}</span>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-xs text-gray-500 flex items-center gap-1">
-                    <MapPin size={10} />
-                    {report.location}
-                  </span>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-xs text-gray-400">{report.time}</span>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed">{report.content}</p>
-
-                {/* Actions */}
-                <div className="flex items-center gap-4 mt-3">
-                  <button className="flex items-center gap-1.5 text-gray-400 hover:text-red-500 transition-colors">
-                    <Heart size={16} />
-                    <span className="text-xs">{report.likes}</span>
-                  </button>
-                  <button className="flex items-center gap-1.5 text-gray-400 hover:text-blue-500 transition-colors">
-                    <MessageCircle size={16} />
-                    <span className="text-xs">{report.comments}</span>
-                  </button>
-                  <button className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 transition-colors">
-                    <Share2 size={16} />
-                    <span className="text-xs">{report.shares}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </Link>
+          <UGCPostCard key={report.id} report={report} />
         ))}
       </div>
     </section>

@@ -1,8 +1,22 @@
-import Link from 'next/link';
-import { MapPin, Heart, MessageCircle, Share2, User } from 'lucide-react';
+'use client';
 
-// Full UGC data for Info Terkini page - with Jaksel neighborhood names
-const allUGCReports = [
+import { useState } from 'react';
+import Link from 'next/link';
+import { MapPin, Heart, MessageCircle, Share2, X, User } from 'lucide-react';
+
+interface UGCReport {
+  id: number;
+  authorName: string;
+  location: string;
+  time: string;
+  content: string;
+  image?: string | null;
+  likes: number;
+  comments: number;
+  shares: number;
+}
+
+const allUGCReports: UGCReport[] = [
   {
     id: 1,
     authorName: 'Warga Kemang',
@@ -93,60 +107,116 @@ const allUGCReports = [
   }
 ];
 
-function UGCCard({ report }: { report: typeof allUGCReports[0] }) {
+function SharePopup({ isOpen, onClose, url, title }: { isOpen: boolean; onClose: () => void; url: string; title: string }) {
+  if (!isOpen) return null;
+
+  const encodedUrl = encodeURIComponent(url);
+  const encodedTitle = encodeURIComponent(title + ' - Jakselnews');
+
+  const shareLinks = [
+    { name: 'WhatsApp', icon: '💬', color: 'bg-green-500', url: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}` },
+    { name: 'Instagram', icon: '📷', color: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500', url: `https://instagram.com/sharer/sharer.php?u=${encodedUrl}` },
+    { name: 'TikTok', icon: '🎵', color: 'bg-black', url: `https://www.tiktok.com/share?url=${encodedUrl}` },
+    { name: 'Facebook', icon: '📘', color: 'bg-blue-600', url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
+    { name: 'X', icon: '🐦', color: 'bg-black', url: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}` },
+    { name: 'LinkedIn', icon: '💼', color: 'bg-blue-700', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` }
+  ];
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(url);
+    alert('Link berhasil disalin!');
+  };
+
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-sm mb-4">
-      {/* Author */}
-      <div className="flex items-center gap-3 p-4">
-        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-          <User size={24} className="text-gray-500" />
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
+      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 z-50">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-gray-900">Bagikan ke</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <X size={20} className="text-gray-500" />
+          </button>
         </div>
-        <div className="flex-1">
-          <p className="font-semibold text-gray-900">{report.authorName}</p>
-          <p className="text-sm text-gray-500 flex items-center gap-1">
-            <MapPin size={14} />
-            {report.location} • {report.time}
-          </p>
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          {shareLinks.map((link) => (
+            <button key={link.name} onClick={() => window.open(link.url, '_blank')} className="flex flex-col items-center gap-2">
+              <div className={`w-14 h-14 ${link.color} rounded-2xl flex items-center justify-center text-2xl`}>
+                {link.icon}
+              </div>
+              <span className="text-xs text-gray-600">{link.name}</span>
+            </button>
+          ))}
         </div>
-        <button className="p-2 hover:bg-gray-100 rounded-full">
-          <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-          </svg>
+        <button onClick={copyToClipboard} className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
+          Salin Link
         </button>
       </div>
+    </>
+  );
+}
 
-      {/* Content */}
-      <div className="px-4 pb-3">
-        <p className="text-gray-700 leading-relaxed">{report.content}</p>
-      </div>
+function UGCCard({ report }: { report: UGCReport }) {
+  const [likes, setLikes] = useState(report.likes);
+  const [isLiked, setIsLiked] = useState(false);
+  const [comments, setComments] = useState(report.comments);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
-      {/* Image */}
-      {report.image && (
-        <div className="aspect-video">
-          <img
-            src={report.image}
-            alt=""
-            className="w-full h-full object-cover"
-          />
+  const handleLike = () => {
+    setLikes(prev => isLiked ? prev - 1 : prev + 1);
+    setIsLiked(!isLiked);
+  };
+
+  const shareUrl = `https://jakselnews.com/breaking-news/${report.id}`;
+  const shareTitle = `${report.authorName}: ${report.content.substring(0, 50)}...`;
+
+  return (
+    <>
+      <div className="bg-white rounded-xl overflow-hidden shadow-sm mb-4">
+        {/* Author */}
+        <div className="flex items-center gap-3 p-4">
+          <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+            <User size={24} className="text-gray-500" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold text-gray-900">{report.authorName}</p>
+            <p className="text-sm text-gray-500 flex items-center gap-1">
+              <MapPin size={14} />
+              {report.location} • {report.time}
+            </p>
+          </div>
         </div>
-      )}
 
-      {/* Actions */}
-      <div className="flex items-center justify-around py-4 px-4 border-t border-gray-100">
-        <button className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
-          <Heart size={22} />
-          <span className="text-sm font-medium">{report.likes}</span>
-        </button>
-        <button className="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors">
-          <MessageCircle size={22} />
-          <span className="text-sm font-medium">{report.comments}</span>
-        </button>
-        <button className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors">
-          <Share2 size={22} />
-          <span className="text-sm font-medium">{report.shares}</span>
-        </button>
+        {/* Content */}
+        <div className="px-4 pb-3">
+          <p className="text-gray-700 leading-relaxed">{report.content}</p>
+        </div>
+
+        {/* Image */}
+        {report.image && (
+          <div className="aspect-video">
+            <img src={report.image} alt="" className="w-full h-full object-cover" />
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center justify-around py-4 px-4 border-t border-gray-100">
+          <button onClick={handleLike} className={`flex items-center gap-2 transition-colors ${isLiked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
+            <Heart size={22} fill={isLiked ? 'currentColor' : 'none'} />
+            <span className="text-sm font-medium">{likes}</span>
+          </button>
+          <button className="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors">
+            <MessageCircle size={22} />
+            <span className="text-sm font-medium">{comments}</span>
+          </button>
+          <button onClick={() => setIsShareOpen(true)} className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors">
+            <Share2 size={22} />
+            <span className="text-sm font-medium">{report.shares}</span>
+          </button>
+        </div>
       </div>
-    </div>
+
+      <SharePopup isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} url={shareUrl} title={shareTitle} />
+    </>
   );
 }
 
