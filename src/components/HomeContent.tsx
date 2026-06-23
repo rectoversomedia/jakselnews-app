@@ -1,17 +1,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from '@/lib/wordpress';
-import { Clock, MapPin, ChevronRight, AlertCircle } from 'lucide-react';
+import { Clock, MapPin, ChevronRight, AlertCircle, Heart, MessageCircle, Share2, User } from 'lucide-react';
 
-// Mock UGC data for Info Terkini (citizen reports)
+// Mock UGC data for Info Terkini (citizen reports) - using Jaksel neighborhood names
 const ugcReports = [
   {
     id: 1,
-    authorName: 'Budi Santoso',
-    authorAvatar: 'https://i.pravatar.cc/100?img=1',
+    authorName: 'Warga Kemang',
     location: 'Kemang',
     time: '10 menit lalu',
-    content: 'Air mulai pasang diJl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
+    content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
     image: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=600&q=80',
     likes: 24,
     comments: 8,
@@ -19,11 +18,10 @@ const ugcReports = [
   },
   {
     id: 2,
-    authorName: 'Siti Rahayu',
-    authorAvatar: 'https://i.pravatar.cc/100?img=5',
+    authorName: 'Warga Blok M',
     location: 'Blok M',
     time: '25 menit lalu',
-    content: 'Jalanan di Jlradio Dalam mulai ramai nih, ada lampu merah mati. Hati-hati ya! 🚦',
+    content: 'Jalanan di Jl Radio Dalam mulai ramai nih, ada lampu merah mati. Hati-hati ya! 🚦',
     image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&q=80',
     likes: 15,
     comments: 3,
@@ -31,11 +29,10 @@ const ugcReports = [
   },
   {
     id: 3,
-    authorName: 'Ahmad Fauzi',
-    authorAvatar: 'https://i.pravatar.cc/100?img=3',
+    authorName: 'Warga Pasar Minggu',
     location: 'Pasar Minggu',
     time: '1 jam lalu',
-    content: 'Baru lihat mobil ambulance lewat Cepat banget. Semoga bukan hal yang buruk ya 🙏',
+    content: 'Baru lihat mobil ambulance lewat cepat banget. Semoga bukan hal yang buruk ya 🙏',
     image: null,
     likes: 8,
     comments: 1,
@@ -43,8 +40,7 @@ const ugcReports = [
   },
   {
     id: 4,
-    authorName: 'Dewi Lestari',
-    authorAvatar: 'https://i.pravatar.cc/100?img=9',
+    authorName: 'Warga Cilandak',
     location: 'Cilandak',
     time: '2 jam lalu',
     content: 'Enaknya makan siang di mana ya? Yang open space gitu, bisa kerja sambil makan. Ada rekomendasi? 🍜',
@@ -196,11 +192,9 @@ function UGCCard({ report }: { report: typeof ugcReports[0] }) {
     <Link href="/breaking-news" className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       {/* Author */}
       <div className="flex items-center gap-3 p-3">
-        <img
-          src={report.authorAvatar}
-          alt={report.authorName}
-          className="w-10 h-10 rounded-full object-cover"
-        />
+        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+          <User size={20} className="text-gray-500" />
+        </div>
         <div className="flex-1">
           <p className="font-semibold text-gray-900 text-sm">{report.authorName}</p>
           <p className="text-xs text-gray-500 flex items-center gap-1">
@@ -212,7 +206,7 @@ function UGCCard({ report }: { report: typeof ugcReports[0] }) {
 
       {/* Content */}
       <div className="px-3 pb-2">
-        <p className="text-gray-700 text-sm leading-relaxed">{report.content}</p>
+        <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">{report.content}</p>
       </div>
 
       {/* Image */}
@@ -227,23 +221,17 @@ function UGCCard({ report }: { report: typeof ugcReports[0] }) {
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-around py-3 border-t border-gray-100">
+      <div className="flex items-center justify-around py-3 px-3 border-t border-gray-100">
         <button className="flex items-center gap-1.5 text-gray-500 hover:text-red-500 transition-colors">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
+          <Heart size={16} />
           <span className="text-xs">{report.likes}</span>
         </button>
         <button className="flex items-center gap-1.5 text-gray-500 hover:text-blue-500 transition-colors">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
+          <MessageCircle size={16} />
           <span className="text-xs">{report.comments}</span>
         </button>
         <button className="flex items-center gap-1.5 text-gray-500 hover:text-green-500 transition-colors">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-          </svg>
+          <Share2 size={16} />
           <span className="text-xs">{report.shares}</span>
         </button>
       </div>

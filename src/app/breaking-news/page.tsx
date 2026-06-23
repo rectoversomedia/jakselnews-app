@@ -1,12 +1,11 @@
 import Link from 'next/link';
-import { Clock, MapPin, Heart, MessageCircle, Share2, Plus, Image as ImageIcon } from 'lucide-react';
+import { MapPin, Heart, MessageCircle, Share2, User } from 'lucide-react';
 
-// Full UGC data for Info Terkini page
+// Full UGC data for Info Terkini page - with Jaksel neighborhood names
 const allUGCReports = [
   {
     id: 1,
-    authorName: 'Budi Santoso',
-    authorAvatar: 'https://i.pravatar.cc/100?img=1',
+    authorName: 'Warga Kemang',
     location: 'Kemang',
     time: '10 menit lalu',
     content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
@@ -17,8 +16,7 @@ const allUGCReports = [
   },
   {
     id: 2,
-    authorName: 'Siti Rahayu',
-    authorAvatar: 'https://i.pravatar.cc/100?img=5',
+    authorName: 'Warga Blok M',
     location: 'Blok M',
     time: '25 menit lalu',
     content: 'Jalanan di Jl Radio Dalam mulai ramai nih, ada lampu merah mati. Hati-hati ya! 🚦',
@@ -29,8 +27,7 @@ const allUGCReports = [
   },
   {
     id: 3,
-    authorName: 'Ahmad Fauzi',
-    authorAvatar: 'https://i.pravatar.cc/100?img=3',
+    authorName: 'Warga Pasar Minggu',
     location: 'Pasar Minggu',
     time: '1 jam lalu',
     content: 'Baru lihat mobil ambulance lewat cepat banget. Semoga bukan hal yang buruk ya 🙏',
@@ -41,8 +38,7 @@ const allUGCReports = [
   },
   {
     id: 4,
-    authorName: 'Dewi Lestari',
-    authorAvatar: 'https://i.pravatar.cc/100?img=9',
+    authorName: 'Warga Cilandak',
     location: 'Cilandak',
     time: '2 jam lalu',
     content: 'Enaknya makan siang di mana ya? Yang open space gitu, bisa kerja sambil makan. Ada rekomendasi? 🍜',
@@ -53,8 +49,7 @@ const allUGCReports = [
   },
   {
     id: 5,
-    authorName: 'Rizky Pratama',
-    authorAvatar: 'https://i.pravatar.cc/100?img=11',
+    authorName: 'Warga Lebak Bulus',
     location: 'Lebak Bulus',
     time: '3 jam lalu',
     content: 'MRT Lebak Bulus hari ini rame banget! Kayaknya karena ada event di ICE BSD nih. 🎉',
@@ -65,8 +60,7 @@ const allUGCReports = [
   },
   {
     id: 6,
-    authorName: 'Maya Sari',
-    authorAvatar: 'https://i.pravatar.cc/100?img=16',
+    authorName: 'Warga Tebet',
     location: 'Tebet',
     time: '4 jam lalu',
     content: 'Kafe baru di Tebet ini recommend banget! Suasananya cozy, kopi-nya enak, WiFi kenceng. Perfect buat kerja remote ☕💻',
@@ -77,8 +71,7 @@ const allUGCReports = [
   },
   {
     id: 7,
-    authorName: 'Hendra Wijaya',
-    authorAvatar: 'https://i.pravatar.cc/100?img=7',
+    authorName: 'Warga SCBD',
     location: 'SCBD',
     time: '5 jam lalu',
     content: 'Lampu jalan di area SCBD mati dari kemarin. Semoga segera diperbaiki ya! 🌃',
@@ -89,8 +82,7 @@ const allUGCReports = [
   },
   {
     id: 8,
-    authorName: 'Lisa Permata',
-    authorAvatar: 'https://i.pravatar.cc/100?img=20',
+    authorName: 'Warga Kuningan',
     location: 'Kuningan',
     time: '6 jam lalu',
     content: 'Festival Jaksel 2026 hari ini rame banget! Banyak makanan enak dan budaya menarik. Worth it untuk dikunjungi! 🎪✨',
@@ -106,11 +98,9 @@ function UGCCard({ report }: { report: typeof allUGCReports[0] }) {
     <div className="bg-white rounded-xl overflow-hidden shadow-sm mb-4">
       {/* Author */}
       <div className="flex items-center gap-3 p-4">
-        <img
-          src={report.authorAvatar}
-          alt={report.authorName}
-          className="w-12 h-12 rounded-full object-cover"
-        />
+        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+          <User size={24} className="text-gray-500" />
+        </div>
         <div className="flex-1">
           <p className="font-semibold text-gray-900">{report.authorName}</p>
           <p className="text-sm text-gray-500 flex items-center gap-1">
@@ -160,17 +150,6 @@ function UGCCard({ report }: { report: typeof allUGCReports[0] }) {
   );
 }
 
-function FloatingActionButton() {
-  return (
-    <Link
-      href="/lapor"
-      className="fixed bottom-24 right-4 w-14 h-14 bg-primary rounded-full shadow-lg flex items-center justify-center z-40 hover:bg-primary/90 transition-colors"
-    >
-      <Plus size={24} className="text-white" />
-    </Link>
-  );
-}
-
 export default function BreakingNewsPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -186,9 +165,6 @@ export default function BreakingNewsPage() {
           <UGCCard key={report.id} report={report} />
         ))}
       </div>
-
-      {/* Floating Action Button */}
-      <FloatingActionButton />
     </div>
   );
 }
