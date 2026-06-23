@@ -204,7 +204,6 @@ function PeringatanSection() {
           <div className="flex items-center gap-2 mb-3">
             <AlertCircle size={20} className="text-red-600" />
             <h2 className="text-base font-bold text-red-700">PERINGATAN</h2>
-            <span className="ml-auto text-xs text-red-500">🔥 Top Laporan</span>
           </div>
           <div className="space-y-2">
             {trendingReports.map((report) => (
@@ -242,7 +241,7 @@ function PeringatanSection() {
   );
 }
 
-function BreakingNewsCard({ post }: { post: any }) {
+function BreakingNewsCard({ post, isFirst }: { post: any; isFirst?: boolean }) {
   const featuredImage = getFeaturedImage(post);
   const title = stripHtml(post.title?.rendered || '');
   const date = formatPostDate(post.date);
@@ -255,9 +254,11 @@ function BreakingNewsCard({ post }: { post: any }) {
         <div className="w-full h-full bg-gradient-to-br from-red-400 to-red-600" />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-      <div className="absolute top-3 left-3">
-        <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">BREAKING</span>
-      </div>
+      {isFirst && (
+        <div className="absolute top-3 left-3">
+          <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">BREAKING</span>
+        </div>
+      )}
       <div className="absolute bottom-0 left-0 right-0 p-4">
         <h3 className="text-white font-bold text-sm line-clamp-2 mb-2">{title}</h3>
         <div className="flex items-center gap-3 text-white/80 text-xs">
@@ -272,9 +273,9 @@ function BreakingNewsHero({ posts }: { posts: any[] }) {
   return (
     <section className="px-4 py-3">
       <div className="relative overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-3">
-        {posts.slice(0, 3).map((post) => (
+        {posts.slice(0, 3).map((post, index) => (
           <div key={post.id} className="snap-start shrink-0 w-[85%]">
-            <BreakingNewsCard post={post} />
+            <BreakingNewsCard post={post} isFirst={index === 0} />
           </div>
         ))}
       </div>
