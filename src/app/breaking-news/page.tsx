@@ -1,5 +1,5 @@
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
-import { Clock, MapPin, AlertTriangle, ChevronRight, FileText, RefreshCw, CaretRight } from "lucide-react";
+import { Clock, MapPin, AlertTriangle, ChevronRight, FileText, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
 interface PageProps {
@@ -199,7 +199,7 @@ export default async function BreakingNewsPage() {
             <FileText size={20} className="text-primary" />
             <span className="font-medium text-gray-700">Lihat Semua Artikel</span>
           </div>
-          <CaretRight size={20} className="text-gray-400" />
+          <ChevronRight size={20} className="text-gray-400" />
         </Link>
       </div>
     </div>
