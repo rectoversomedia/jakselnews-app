@@ -292,6 +292,22 @@ function UGCCard({ report }: { report: typeof ugcReports[0] }) {
 }
 
 function InfoTerkiniSection() {
+  // Add more reports to have 5 items
+  const allReports = [
+    ...ugcReports,
+    {
+      id: 5,
+      authorName: 'Warga Lebak Bulus',
+      location: 'Lebak Bulus',
+      time: '3 jam lalu',
+      content: 'MRT Lebak Bulus hari ini rame banget! Kayaknya karena ada event nih. 🎉',
+      image: 'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=600&q=80',
+      likes: 31,
+      comments: 5,
+      shares: 8
+    }
+  ];
+
   return (
     <section className="px-4 py-4">
       <div className="flex items-center justify-between mb-3">
@@ -300,9 +316,35 @@ function InfoTerkiniSection() {
           Lihat Semua <ChevronRight size={14} />
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {ugcReports.map((report) => (
-          <UGCCard key={report.id} report={report} />
+      <div className="overflow-x-auto scrollbar-hide flex gap-3 -mx-4 px-4">
+        {allReports.map((report) => (
+          <Link
+            key={report.id}
+            href="/breaking-news"
+            className="shrink-0 w-64 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+          >
+            {/* Image */}
+            {report.image && (
+              <div className="aspect-[4/3]">
+                <img
+                  src={report.image}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            {/* Content */}
+            <div className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                  <User size={12} className="text-gray-500" />
+                </div>
+                <span className="text-xs font-semibold text-gray-700">{report.authorName}</span>
+              </div>
+              <p className="text-xs text-gray-500 mb-2">{report.location} • {report.time}</p>
+              <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{report.content}</p>
+            </div>
+          </Link>
         ))}
       </div>
     </section>
