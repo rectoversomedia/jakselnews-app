@@ -114,55 +114,28 @@ function PeringatanPopup({ report, onClose }: { report: typeof trendingReports[0
             <p className="text-sm text-gray-700 leading-relaxed">{report.detail.description}</p>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">📍 Penyebab</h3>
-            <p className="text-sm text-gray-600">{report.detail.cause}</p>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">⚠️ Dampak</h3>
-            <p className="text-sm text-gray-600">{report.detail.impact}</p>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">✅ Tindakan</h3>
-            <div className="space-y-2">
-              {report.detail.actions.map((action, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                  <span className="text-lg">{action.icon}</span>
-                  <span className="text-sm text-gray-700">{action.text}</span>
-                </div>
-              ))}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-red-50 rounded-xl p-3">
+              <h3 className="text-xs font-semibold text-red-600 mb-1">📍 Penyebab</h3>
+              <p className="text-xs text-gray-600">{report.detail.cause}</p>
+            </div>
+            <div className="bg-amber-50 rounded-xl p-3">
+              <h3 className="text-xs font-semibold text-amber-600 mb-1">⚠️ Dampak</h3>
+              <p className="text-xs text-gray-600">{report.detail.impact}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3 bg-red-50 rounded-xl">
-            <Phone size={20} className="text-red-600" />
-            <div>
-              <p className="text-xs text-gray-500">Hotline Darurat</p>
-              <p className="text-sm font-bold text-red-600">{report.detail.hotline}</p>
-            </div>
+          <div className="bg-red-50 rounded-xl p-3">
+            <h3 className="text-xs font-semibold text-red-600 mb-2">📞 Hotline Darurat</h3>
+            <p className="text-lg font-bold text-red-600">{report.detail.hotline}</p>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">🔗 Area Terkait</h3>
-            <div className="flex flex-wrap gap-2">
-              {report.detail.related.map((area) => (
-                <span key={area} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                  {area}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex gap-2 pt-2">
-            <button className="flex-1 py-3 bg-primary text-white font-medium rounded-xl flex items-center justify-center gap-2">
-              <Phone size={18} />
-              Hubungi
-            </button>
-            <button className="flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl">
-              Laporkan Update
-            </button>
+          <div className="flex flex-wrap gap-2">
+            {report.detail.related.map((area) => (
+              <span key={area} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                {area}
+              </span>
+            ))}
           </div>
         </div>
       </div>
@@ -365,6 +338,29 @@ function LayananPopulerSection() {
   );
 }
 
+function NotificationBanner() {
+  return (
+    <section className="px-4 pb-6">
+      <div className="bg-gradient-to-r from-white to-red-50 border border-red-100 rounded-2xl p-5 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-md">
+            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-900 text-sm">Aktifkan Notifikasi</h3>
+            <p className="text-xs text-gray-500">Dapatkan info terbaru dari Jakselnews</p>
+          </div>
+        </div>
+        <button className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold rounded-full shadow-md hover:shadow-lg transition-shadow">
+          Aktifkan
+        </button>
+      </div>
+    </section>
+  );
+}
+
 export default function HomeContent() {
   const [breakingPosts, setBreakingPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -398,6 +394,7 @@ export default function HomeContent() {
       <PeringatanSection />
       <InfoTerkiniSection />
       <LayananPopulerSection />
+      <NotificationBanner />
     </>
   );
 }

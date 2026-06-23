@@ -55,7 +55,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <article className="pb-safe">
-      <div className="container py-3">
+      <div className="px-4 py-3">
         <Link
           href="/artikel"
           className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-primary transition-colors"
@@ -83,7 +83,7 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="container py-4 md:py-6">
+      <div className="px-4 py-4 md:py-6">
         <div className="max-w-3xl mx-auto">
           {category && (
             <Link
