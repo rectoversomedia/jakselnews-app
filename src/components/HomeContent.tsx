@@ -3,6 +3,53 @@ import Image from 'next/image';
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from '@/lib/wordpress';
 import { Clock, MapPin, ChevronRight, AlertCircle, Heart, MessageCircle, Share2, User } from 'lucide-react';
 
+// Mock Breaking News data - fallback if WP API fails
+const mockBreakingNews = [
+  {
+    id: 1,
+    slug: 'rectoverso-narriv-ai',
+    title: { rendered: 'Rectoverso Media Perkenalkan Narriv, Platform AI untuk Membantu Organisasi Mengelola Narasi Publik' },
+    date: new Date().toISOString(),
+    _embedded: {
+      'wp:featuredmedia': [{
+        source_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80',
+        media_details: { sizes: { medium_large: { source_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80' } } }
+      }]
+    }
+  },
+  {
+    id: 2,
+    slug: 'festival-jaksel-2026',
+    title: { rendered: 'Festival Jaksel 2026: Menyatu dalam Keberagaman Budaya Jakarta Selatan' },
+    date: new Date(Date.now() - 3600000).toISOString(),
+    _embedded: {
+      'wp:featuredmedia': [{
+        source_url: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80',
+        media_details: { sizes: { medium_large: { source_url: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80' } } }
+      }]
+    }
+  },
+  {
+    id: 3,
+    slug: 'mrt-jakarta-rute-baru',
+    title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju东区 ke Kawasan Timur' },
+    date: new Date(Date.now() - 7200000).toISOString(),
+    _embedded: {
+      'wp:featuredmedia': [{
+        source_url: 'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=800&q=80',
+        media_details: { sizes: { medium_large: { source_url: 'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=800&q=80' } } }
+      }]
+    }
+  }
+];
+
+// Mock Peringatan data
+const mockPeringatan = [
+  { id: 1, title: 'Genangan Air ±20cm di Jl. Kemang Raya', location: 'Kemang', time: '12 menit lalu' },
+  { id: 2, title: 'Jalan Ditutup Sementara di Jl. Ragunan', location: 'Ragunan', time: '45 menit lalu' },
+  { id: 3, title: 'Potensi Banjir Rendah di Cilandak', location: 'Cilandak', time: '1 jam lalu' }
+];
+
 // Mock UGC data for Info Terkini (citizen reports) - using Jaksel neighborhood names
 const ugcReports = [
   {
@@ -55,12 +102,15 @@ async function getBreakingNews() {
   try {
     const result = await wpAPI.getPosts({
       perPage: 5,
-      categories: [], // Will use first 5 posts as breaking
       order: 'desc'
     });
-    return result.posts;
-  } catch {
-    return [];
+    if (result.posts.length > 0) {
+      return result.posts;
+    }
+    return mockBreakingNews;
+  } catch (error) {
+    console.error('WP API Error:', error);
+    return mockBreakingNews;
   }
 }
 
@@ -70,9 +120,25 @@ async function getPeringatan() {
       perPage: 3,
       order: 'desc'
     });
-    return result.posts;
-  } catch {
-    return [];
+    if (result.posts.length > 0) {
+      return result.posts;
+    }
+    return mockPeringatan.map(p => ({
+      id: p.id,
+      slug: 'peringatan',
+      title: { rendered: p.title },
+      date: new Date().toISOString(),
+      _embedded: { 'wp:featuredmedia': [] }
+    }));
+  } catch (error) {
+    console.error('WP API Error:', error);
+    return mockPeringatan.map(p => ({
+      id: p.id,
+      slug: 'peringatan',
+      title: { rendered: p.title },
+      date: new Date().toISOString(),
+      _embedded: { 'wp:featuredmedia': [] }
+    }));
   }
 }
 
@@ -114,16 +180,6 @@ function BreakingNewsCard({ post }: { post: any }) {
 }
 
 function BreakingNewsHero({ posts }: { posts: any[] }) {
-  if (posts.length === 0) {
-    return (
-      <section className="px-4 py-3">
-        <div className="rounded-2xl overflow-hidden aspect-[16/10] bg-gray-200 flex items-center justify-center">
-          <p className="text-gray-500">Loading breaking news...</p>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="px-4 py-3">
       <div className="relative overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-3">
@@ -141,14 +197,8 @@ function BreakingNewsHero({ posts }: { posts: any[] }) {
 }
 
 function PeringatanSection({ posts }: { posts: any[] }) {
-  const peringatanItems = posts.slice(0, 3).map((post, idx) => ({
-    id: post.id,
-    title: stripHtml(post.title?.rendered || 'Peringatan'),
-    location: 'Jakarta Selatan',
-    time: formatPostDate(post.date),
-    icon: idx === 0 ? '🌊' : idx === 1 ? '🚧' : '⚠️',
-    color: idx === 0 ? 'bg-blue-500' : idx === 1 ? 'bg-orange-500' : 'bg-yellow-500'
-  }));
+  const peringatanIcons = ['🌊', '🚧', '⚠️'];
+  const peringatanColors = ['bg-blue-500', 'bg-orange-500', 'bg-yellow-500'];
 
   return (
     <section className="px-4 py-4">
@@ -158,24 +208,26 @@ function PeringatanSection({ posts }: { posts: any[] }) {
           <h2 className="text-base font-bold text-red-700">PERINGATAN</h2>
         </div>
         <div className="space-y-2">
-          {peringatanItems.map((item) => (
+          {posts.slice(0, 3).map((item, idx) => (
             <Link
               key={item.id}
               href="/artikel"
               className="flex items-center gap-3 bg-white p-3 rounded-xl hover:bg-red-50 transition-colors"
             >
-              <div className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center text-xl shrink-0`}>
-                {item.icon}
+              <div className={`w-10 h-10 ${peringatanColors[idx] || 'bg-yellow-500'} rounded-full flex items-center justify-center text-xl shrink-0`}>
+                {peringatanIcons[idx] || '⚠️'}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-gray-900 text-sm line-clamp-1">{item.title}</h4>
+                <h4 className="font-semibold text-gray-900 text-sm line-clamp-1">
+                  {stripHtml(item.title?.rendered || item.title || 'Peringatan')}
+                </h4>
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <span className="flex items-center gap-1">
                     <MapPin size={10} />
-                    {item.location}
+                    Jakarta Selatan
                   </span>
                   <span>•</span>
-                  <span>{item.time}</span>
+                  <span>{formatPostDate(item.date)}</span>
                 </div>
               </div>
               <ChevronRight size={16} className="text-gray-400" />
