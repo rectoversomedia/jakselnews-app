@@ -1,5 +1,5 @@
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
-import { Clock, MapPin, AlertTriangle, ChevronRight, FileText, RefreshCw } from "lucide-react";
+import { Clock, MapPin, AlertTriangle, ChevronRight, FileText, RefreshCw, CaretRight } from "lucide-react";
 import Link from "next/link";
 
 interface PageProps {
