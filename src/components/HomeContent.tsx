@@ -13,21 +13,21 @@ const mockBreakingNews = [
     slug: 'rectoverso-narriv-ai',
     title: { rendered: 'Rectoverso Media Perkenalkan Narriv, Platform AI untuk Membantu Organisasi Mengelola Narasi Publik' },
     date: new Date().toISOString(),
-    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80', media_details: { sizes: { medium_large: { source_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80' } } } }] }
+    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/news1/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/news1/800/500' } } } }] }
   },
   {
     id: 2,
     slug: 'festival-jaksel-2026',
     title: { rendered: 'Festival Jaksel 2026: Menyatu dalam Keberagaman Budaya Jakarta Selatan' },
     date: new Date(Date.now() - 3600000).toISOString(),
-    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80', media_details: { sizes: { medium_large: { source_url: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80' } } } }] }
+    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/news2/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/news2/800/500' } } } }] }
   },
   {
     id: 3,
     slug: 'mrt-jakarta-rute-baru',
     title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju Kawasan Timur' },
     date: new Date(Date.now() - 7200000).toISOString(),
-    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=800&q=80', media_details: { sizes: { medium_large: { source_url: 'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=800&q=80' } } } }] }
+    _embedded: { 'wp:featuredmedia': [{ source_url: 'https://picsum.photos/seed/news3/800/500', media_details: { sizes: { medium_large: { source_url: 'https://picsum.photos/seed/news3/800/500' } } } }] }
   }
 ];
 
@@ -284,16 +284,58 @@ function BreakingNewsHero({ posts }: { posts: any[] }) {
 }
 
 function InfoTerkiniSection() {
-  const mockReport = {
-    id: 1,
-    authorName: 'Warga Kemang',
-    location: 'Kemang',
-    time: '10 menit lalu',
-    content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
-    likes: 24,
-    comments: 8,
-    shares: 5
-  };
+  const mockReports = [
+    {
+      id: 1,
+      authorName: 'Warga Kemang',
+      location: 'Kemang',
+      time: '10 menit lalu',
+      content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
+      likes: 24,
+      comments: 8,
+      shares: 5
+    },
+    {
+      id: 2,
+      authorName: 'Warga Blok M',
+      location: 'Blok M',
+      time: '25 menit lalu',
+      content: 'Kemacetan parah di Jl. Melawai arah flyover. Estimated delay 30 menit. 🚗💨',
+      likes: 18,
+      comments: 12,
+      shares: 3
+    },
+    {
+      id: 3,
+      authorName: 'Warga Cilandak',
+      location: 'Cilandak',
+      time: '45 menit lalu',
+      content: 'Listrik padam di kawasan TB Simatupang. PLN sedang melakukan perbaikan. ⚡',
+      likes: 15,
+      comments: 6,
+      shares: 2
+    },
+    {
+      id: 4,
+      authorName: 'Warga Kebayoran',
+      location: 'Kebayoran',
+      time: '1 jam lalu',
+      content: 'Pohon tumbang di Jl. Trunojoyo. Arvodi dan tim kebersihan sudah di lokasi. 🌳',
+      likes: 32,
+      comments: 15,
+      shares: 8
+    },
+    {
+      id: 5,
+      authorName: 'Warga Pasar Minggu',
+      location: 'Pasar Minggu',
+      time: '2 jam lalu',
+      content: 'Jalan berlubang di Jl. RM. Soedirdja. Mohon perhatian khusus untuk pengendara motor. 🏍️',
+      likes: 20,
+      comments: 9,
+      shares: 4
+    }
+  ];
 
   return (
     <section className="px-4 py-4">
@@ -303,8 +345,12 @@ function InfoTerkiniSection() {
           Lihat Semua <ChevronRight size={14} />
         </Link>
       </div>
-      <div className="grid grid-cols-1 gap-3">
-        <UGCPostCard report={mockReport} />
+      <div className="overflow-x-auto scrollbar-hide flex gap-3 -mx-4 px-4">
+        {mockReports.map((report) => (
+          <div key={report.id} className="shrink-0 w-[280px]">
+            <UGCPostCard report={report} />
+          </div>
+        ))}
       </div>
     </section>
   );
