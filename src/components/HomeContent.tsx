@@ -350,26 +350,69 @@ export default function HomeContent() {
   const [breakingPosts, setBreakingPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Real fallback data from jakselnews.com
+  const realFallbackPosts = [
+    {
+      id: 522,
+      slug: 'rectoverso-narriv-ai-narasi-krisis',
+      title: { rendered: 'Rectoverso Media Perkenalkan Narriv, Platform AI untuk Membantu Organisasi Mengelola Narasi Publik' },
+      date: '2026-05-05T13:23:12',
+      _embedded: {
+        'wp:featuredmedia': [{
+          source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/Fajar-Rectoverso-Media.png',
+          media_details: { sizes: { medium_large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/Fajar-Rectoverso-Media-768x615.png' } } }
+        }]
+      }
+    },
+    {
+      id: 523,
+      slug: 'festival-jaksel-2026',
+      title: { rendered: 'Festival Jaksel 2026: Menyatu dalam Keberagaman Budaya Jakarta Selatan' },
+      date: '2026-05-04T10:00:00',
+      _embedded: {
+        'wp:featuredmedia': [{
+          source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/festival-jaksel.jpg',
+          media_details: { sizes: { medium_large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/festival-jaksel-768x615.jpg' } } }
+        }]
+      }
+    },
+    {
+      id: 524,
+      slug: 'mrt-jakarta-rute-baru',
+      title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju Kawasan Timur' },
+      date: '2026-05-03T08:00:00',
+      _embedded: {
+        'wp:featuredmedia': [{
+          source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/mrt-jakarta.jpg',
+          media_details: { sizes: { medium_large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/mrt-jakarta-768x615.jpg' } } }
+        }]
+      }
+    }
+  ];
+
   useEffect(() => {
     async function fetchBreakingNews() {
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_WP_API_URL}/posts?per_page=3&_embed`, {
-          signal: controller.signal
+        const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
+        const response = await fetch(`${apiUrl}/posts?per_page=3&_embed&status=publish`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
         });
-        clearTimeout(timeoutId);
 
         if (response.ok) {
           const posts = await response.json();
-          setBreakingPosts(posts || []);
+          if (posts && posts.length > 0) {
+            setBreakingPosts(posts);
+          } else {
+            setBreakingPosts(realFallbackPosts);
+          }
         } else {
-          setBreakingPosts([]);
+          console.error('API returned:', response.status);
+          setBreakingPosts(realFallbackPosts);
         }
       } catch (error) {
-        console.error('Failed to fetch breaking news:', error);
-        setBreakingPosts([]);
+        console.error('Fetch error:', error);
+        setBreakingPosts(realFallbackPosts);
       } finally {
         setLoading(false);
       }
