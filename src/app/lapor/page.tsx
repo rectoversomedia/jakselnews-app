@@ -232,17 +232,17 @@ export default function LaporPage() {
       {/* Categories */}
       <div className="px-4 py-4">
         <h2 className="text-sm font-medium text-gray-700 mb-3">Pilih Kategori Laporan</h2>
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className="bg-white rounded-xl p-2 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl p-3 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className={`w-10 h-10 ${category.color} rounded-lg flex items-center justify-center text-xl mb-1`}>
+              <div className={`w-14 h-14 ${category.color} rounded-xl flex items-center justify-center text-2xl mb-2`}>
                 {category.icon}
               </div>
-              <span className="text-[10px] font-medium text-gray-700 leading-tight">{category.name}</span>
+              <span className="text-xs font-medium text-gray-700 leading-tight">{category.name}</span>
             </button>
           ))}
         </div>
