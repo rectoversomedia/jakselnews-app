@@ -1,10 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Heart, MessageCircle, Share2 } from 'lucide-react';
-import { UGCPostCard } from './UGCPost';
 import { SharePopup } from './SharePopup';
 
 // Social Media Icons as SVG components
