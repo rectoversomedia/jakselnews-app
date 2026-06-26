@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from '@/lib/wordpress';
 import Link from 'next/link';
 import { Clock, MapPin, ChevronRight, FileText } from 'lucide-react';
@@ -31,12 +32,12 @@ function CategoryCard({ post }: { post: any }) {
     <Link href={`/artikel/${post.slug}`} className="card overflow-hidden block">
       <div className="relative aspect-[16/10]">
         {featuredImage ? (
-          <img
+          <Image
             src={featuredImage}
             alt={title}
-            className="w-full h-full object-cover"
-            width={400}
-            height={250}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">

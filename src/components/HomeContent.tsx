@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { wpAPI, getFeaturedImage, formatPostDate, stripHtml } from '@/lib/wordpress';
-import { Clock, MapPin, ChevronRight, AlertCircle, X, Phone } from 'lucide-react';
+import { Clock, MapPin, ChevronRight, AlertCircle, X } from 'lucide-react';
 import { UGCPostCard } from './UGCPost';
 
 // Trending citizen reports - grouped by category, top 3 most viral

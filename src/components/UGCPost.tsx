@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Heart, MessageCircle, Share2, X, Send, CornerDownLeft, ChevronDown, ChevronUp } from 'lucide-react';
+import { MapPin, Heart, MessageCircle, Share2 } from 'lucide-react';
+import { UGCPostCard } from './UGCPost';
+import { SharePopup } from './SharePopup';
 
 // Social Media Icons as SVG components
 const WhatsAppIcon = () => (
@@ -59,61 +61,6 @@ interface Comment {
   replies?: Comment[];
 }
 
-interface SharePopupProps {
-  isOpen: boolean;
-  onClose: () => void;
-  url: string;
-  title: string;
-}
-
-function SharePopup({ isOpen, onClose, url, title }: SharePopupProps) {
-  if (!isOpen) return null;
-
-  const encodedUrl = encodeURIComponent(url);
-  const encodedTitle = encodeURIComponent(title + ' - Jakselnews');
-
-  const shareLinks = [
-    { name: 'WhatsApp', icon: <WhatsAppIcon />, url: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}` },
-    { name: 'Instagram', icon: <InstagramIcon />, url: `https://instagram.com/sharer/sharer.php?u=${encodedUrl}` },
-    { name: 'TikTok', icon: <TikTokIcon />, url: `https://www.tiktok.com/share?url=${encodedUrl}` },
-    { name: 'Facebook', icon: <FacebookIcon />, url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
-    { name: 'X', icon: <TwitterIcon />, url: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}` },
-    { name: 'LinkedIn', icon: <LinkedInIcon />, url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` }
-  ];
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(url);
-    alert('Link berhasil disalin!');
-  };
-
-  return (
-    <>
-      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
-      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 z-50 animate-slide-up">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900">Bagikan ke</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
-          </button>
-        </div>
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {shareLinks.map((link) => (
-            <button key={link.name} onClick={() => window.open(link.url, '_blank')} className="flex flex-col items-center gap-2">
-              <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center text-2xl">
-                {link.icon}
-              </div>
-              <span className="text-xs text-gray-600">{link.name}</span>
-            </button>
-          ))}
-        </div>
-        <button onClick={copyToClipboard} className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
-          Salin Link
-        </button>
-      </div>
-    </>
-  );
-}
-
 interface CommentsSectionProps {
   isOpen: boolean;
   onClose: () => void;
@@ -158,7 +105,9 @@ function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-gray-900">Komentar ({comments.length})</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
+            <svg viewBox="0 0 24 24" className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
@@ -176,7 +125,7 @@ function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
                   </div>
                   <div className="flex items-center gap-3 mt-1 ml-1">
                     <span className="text-xs text-gray-400">{comment.time}</span>
-                    <button onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)} className="text-xs text-gray-500 hover:text-primary">
+                    <button onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)} className="text-xs text-gray-500 hover:text-red-500">
                       Balas
                     </button>
                   </div>
@@ -207,10 +156,12 @@ function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Tulis balasan..."
-                    className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
-                  <button onClick={() => handleReply(comment.id)} className="p-2 bg-primary text-white rounded-full">
-                    <Send size={16} />
+                  <button onClick={() => handleReply(comment.id)} className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600">
+                    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7" />
+                    </svg>
                   </button>
                 </div>
               )}
@@ -224,10 +175,12 @@ function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Tulis komentar..."
-            className="flex-1 px-4 py-3 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 px-4 py-3 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
           />
-          <button onClick={handleSubmitComment} className="p-3 bg-primary text-white rounded-full">
-            <Send size={18} />
+          <button onClick={handleSubmitComment} className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600">
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7" />
+            </svg>
           </button>
         </div>
       </div>
@@ -249,7 +202,6 @@ interface UGCReport {
 function UGCPostCard({ report }: { report: UGCReport }) {
   const [likes, setLikes] = useState(report.likes);
   const [isLiked, setIsLiked] = useState(false);
-  const [comments, setComments] = useState(report.comments);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
@@ -258,7 +210,7 @@ function UGCPostCard({ report }: { report: UGCReport }) {
     setIsLiked(!isLiked);
   };
 
-  const shareUrl = `https://jakselnews.com/breaking-news/${report.id}`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com'}/breaking-news/${report.id}`;
   const shareTitle = `${report.authorName}: ${report.content.substring(0, 50)}...`;
 
   return (
@@ -288,7 +240,7 @@ function UGCPostCard({ report }: { report: UGCReport }) {
               </button>
               <button onClick={() => setIsCommentsOpen(true)} className="flex items-center gap-1.5 text-gray-400 hover:text-blue-500 transition-colors">
                 <MessageCircle size={16} />
-                <span className="text-xs">{comments}</span>
+                <span className="text-xs">{report.comments}</span>
               </button>
               <button onClick={() => setIsShareOpen(true)} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 transition-colors">
                 <Share2 size={16} />
@@ -305,4 +257,4 @@ function UGCPostCard({ report }: { report: UGCReport }) {
   );
 }
 
-export { UGCPostCard, SharePopup, CommentsSection };
+export { UGCPostCard, CommentsSection };

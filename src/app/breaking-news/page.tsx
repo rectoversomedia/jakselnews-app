@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { MapPin, Heart, MessageCircle, Share2, X, User } from 'lucide-react';
+import Image from 'next/image';
+import { MapPin, Heart, MessageCircle, Share2, User } from 'lucide-react';
+import { SharePopup } from '@/components/SharePopup';
 
 interface UGCReport {
   id: number;
@@ -107,58 +109,9 @@ const allUGCReports: UGCReport[] = [
   }
 ];
 
-function SharePopup({ isOpen, onClose, url, title }: { isOpen: boolean; onClose: () => void; url: string; title: string }) {
-  if (!isOpen) return null;
-
-  const encodedUrl = encodeURIComponent(url);
-  const encodedTitle = encodeURIComponent(title + ' - Jakselnews');
-
-  const shareLinks = [
-    { name: 'WhatsApp', icon: '💬', color: 'bg-green-500', url: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}` },
-    { name: 'Instagram', icon: '📷', color: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500', url: `https://instagram.com/sharer/sharer.php?u=${encodedUrl}` },
-    { name: 'TikTok', icon: '🎵', color: 'bg-black', url: `https://www.tiktok.com/share?url=${encodedUrl}` },
-    { name: 'Facebook', icon: '📘', color: 'bg-blue-600', url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
-    { name: 'X', icon: '🐦', color: 'bg-black', url: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}` },
-    { name: 'LinkedIn', icon: '💼', color: 'bg-blue-700', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` }
-  ];
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(url);
-    alert('Link berhasil disalin!');
-  };
-
-  return (
-    <>
-      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
-      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 z-50">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900">Bagikan ke</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
-          </button>
-        </div>
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {shareLinks.map((link) => (
-            <button key={link.name} onClick={() => window.open(link.url, '_blank')} className="flex flex-col items-center gap-2">
-              <div className={`w-14 h-14 ${link.color} rounded-2xl flex items-center justify-center text-2xl`}>
-                {link.icon}
-              </div>
-              <span className="text-xs text-gray-600">{link.name}</span>
-            </button>
-          ))}
-        </div>
-        <button onClick={copyToClipboard} className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
-          Salin Link
-        </button>
-      </div>
-    </>
-  );
-}
-
 function UGCCard({ report }: { report: UGCReport }) {
   const [likes, setLikes] = useState(report.likes);
   const [isLiked, setIsLiked] = useState(false);
-  const [comments, setComments] = useState(report.comments);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
   const handleLike = () => {
@@ -166,7 +119,7 @@ function UGCCard({ report }: { report: UGCReport }) {
     setIsLiked(!isLiked);
   };
 
-  const shareUrl = `https://jakselnews.com/breaking-news/${report.id}`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com'}/breaking-news/${report.id}`;
   const shareTitle = `${report.authorName}: ${report.content.substring(0, 50)}...`;
 
   return (
@@ -191,10 +144,16 @@ function UGCCard({ report }: { report: UGCReport }) {
           <p className="text-gray-700 leading-relaxed">{report.content}</p>
         </div>
 
-        {/* Image */}
+        {/* Image - Using Next.js Image */}
         {report.image && (
-          <div className="aspect-video">
-            <img src={report.image} alt="" className="w-full h-full object-cover" />
+          <div className="aspect-video relative">
+            <Image
+              src={report.image}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
           </div>
         )}
 
@@ -206,7 +165,7 @@ function UGCCard({ report }: { report: UGCReport }) {
           </button>
           <button className="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors">
             <MessageCircle size={22} />
-            <span className="text-sm font-medium">{comments}</span>
+            <span className="text-sm font-medium">{report.comments}</span>
           </button>
           <button onClick={() => setIsShareOpen(true)} className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors">
             <Share2 size={22} />

@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { wpAPI, getFeaturedImage, formatPostDate, stripHtml } from '@/lib/wordpress';
-import { Clock, MapPin, ChevronRight } from 'lucide-react';
+import { Clock, MapPin } from 'lucide-react';
 
 // Mock data fallback
 const mockPosts = [
@@ -119,11 +120,12 @@ function ArticleCard({ post }: { post: any }) {
     <Link href={`/artikel/${post.slug}`} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="relative aspect-[16/10]">
         {featuredImage ? (
-          <img
+          <Image
             src={featuredImage}
             alt={title}
-            className="w-full h-full object-cover"
-            loading="lazy"
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, 50vw"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">

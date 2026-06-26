@@ -24,11 +24,10 @@ const categories = [
   { id: 17, name: 'Parkir Liar', icon: '🅿️', color: 'bg-gray-600' },
   { id: 18, name: 'PKL Liar', icon: '🏪', color: 'bg-amber-600' },
   { id: 19, name: 'Pohon Tumbang', icon: '🌳', color: 'bg-green-500' },
-  { id: 20, name: 'Banjir', icon: '🌧️', color: 'bg-blue-400' },
-  { id: 21, name: 'Lahan Terbuka', icon: '🏞️', color: 'bg-teal-500' },
-  { id: 22, name: 'Hewan Liar', icon: '🐕', color: 'bg-amber-700' },
-  { id: 23, name: 'Fecebook', icon: '📘', color: 'bg-blue-300' },
-  { id: 24, name: 'Lainnya', icon: '📝', color: 'bg-gray-400', isOther: true },
+  { id: 20, name: 'Lahan Terbuka', icon: '🏞️', color: 'bg-teal-500' },
+  { id: 21, name: 'Hewan Liar', icon: '🐕', color: 'bg-amber-700' },
+  { id: 22, name: 'Facebook', icon: '📘', color: 'bg-blue-600' },
+  { id: 23, name: 'Lainnya', icon: '📝', color: 'bg-gray-400', isOther: true },
 ];
 
 export default function LaporPage() {

@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Metadata } from "next";
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
-import { Clock, MapPin, Bookmark, ChevronLeft, ChevronRight, Newspaper } from "lucide-react";
+import { Clock, MapPin, Bookmark, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PageProps {
   params: { slug: string };
@@ -68,12 +69,12 @@ export default async function ArticlePage({ params }: PageProps) {
       <div className="relative w-full bg-gray-100">
         <div className="aspect-video md:aspect-[21/9] max-h-[500px]">
           {featuredImage ? (
-            <img
+            <Image
               src={featuredImage}
               alt={title}
-              className="w-full h-full object-cover"
-              width={1200}
-              height={675}
+              fill
+              className="object-cover"
+              priority
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
