@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-// Colorful SVG Icons with white background boxes
+// Colorful Phosphor-style SVG Icons with white background boxes
 const MenuIcon = () => (
   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
     <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-gray-600" stroke="currentColor" strokeWidth={2}>
@@ -73,7 +73,6 @@ const FileTextIcon = () => (
       <polyline points="14,2 14,8 20,8" />
       <line x1="16" y1="13" x2="8" y2="13" />
       <line x1="16" y1="17" x2="8" y2="17" />
-      <polyline points="10,9 9,9 8,9" />
     </svg>
   </div>
 );
@@ -175,12 +174,15 @@ export function Header() {
         <>
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setIsMenuOpen(false)} />
           <div className="fixed top-0 left-0 w-80 max-w-[85vw] h-full bg-white z-50 shadow-2xl">
-            {/* Header */}
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Image src="/logo-utama.png" alt="Jakselnews" width={100} height={25} className="h-6 w-auto" />
+            {/* Header - Centered Logo */}
+            <div className="p-4 border-b border-gray-100">
+              <div className="flex items-center justify-center mb-2">
+                <Image src="/logo-utama.png" alt="Jakselnews" width={120} height={30} className="h-8 w-auto" />
               </div>
-              <button onClick={() => setIsMenuOpen(false)} className="transition-transform active:scale-95">
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="absolute top-4 right-4 transition-transform active:scale-95"
+              >
                 <CloseIcon />
               </button>
             </div>

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Heart, User } from 'lucide-react';
+import { MapPin, Heart } from 'lucide-react';
 import { SharePopup } from '@/components/SharePopup';
 import { CommentsSection } from '@/components/UGCPost';
 
@@ -107,6 +107,142 @@ const allUGCReports: UGCReport[] = [
     likes: 78,
     comments: 15,
     shares: 22
+  },
+  {
+    id: 9,
+    authorName: 'Warga Cipete',
+    location: 'Cipete',
+    time: '7 jam lalu',
+    content: 'Parkir di sepanjang Jl Cipete Raya penuh banget nih! Kalo mau ke sini saranku pake motor aja. 🏍️',
+    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
+    likes: 35,
+    comments: 7,
+    shares: 3
+  },
+  {
+    id: 10,
+    authorName: 'Warga Gandaria',
+    location: 'Gandaria',
+    time: '8 jam lalu',
+    content: 'Ada yang tau restoran baru di Gandaria? Buka jam berapa ya? Mau rendezvous sama temen. 🍽️',
+    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
+    likes: 28,
+    comments: 5,
+    shares: 2
+  },
+  {
+    id: 11,
+    authorName: 'Warga Kemang',
+    location: 'Kemang',
+    time: '9 jam lalu',
+    content: 'Baru aja turun hujan deras di Kemang. Semoga ga banjir ya! 🌧️',
+    image: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&q=80',
+    likes: 45,
+    comments: 12,
+    shares: 6
+  },
+  {
+    id: 12,
+    authorName: 'Warga Blok M',
+    location: 'Blok M',
+    time: '10 jam lalu',
+    content: 'Malam minggu di Blok M rame parah! Tapi lampu traffict light mati di pertigaan. 🚥',
+    image: null,
+    likes: 22,
+    comments: 3,
+    shares: 1
+  }
+];
+
+// More reports for infinite scroll simulation
+const moreReports: UGCReport[] = [
+  {
+    id: 13,
+    authorName: 'Warga Bintaro',
+    location: 'Bintaro',
+    time: '11 jam lalu',
+    content: 'KRL Bintaro arah Tanah Abang rame banget di jam ini. Kalo bisa hindari jam 5-7 malam ya! 🚆',
+    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80',
+    likes: 18,
+    comments: 2,
+    shares: 1
+  },
+  {
+    id: 14,
+    authorName: 'Warga Senayan',
+    location: 'Senayan',
+    time: '12 jam lalu',
+    content: 'Ada konser di GBK malam ini, jadi macet parah di sekitar Senayan. Hati-hati ya! 🎤',
+    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80',
+    likes: 52,
+    comments: 8,
+    shares: 15
+  },
+  {
+    id: 15,
+    authorName: 'Warga Pondok Indah',
+    location: 'Pondok Indah',
+    time: '13 jam lalu',
+    content: 'Mall Pondok Indah weekend ini promo gede banget! Sale up to 70% 🎉🛍️',
+    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80',
+    likes: 89,
+    comments: 20,
+    shares: 35
+  },
+  {
+    id: 16,
+    authorName: 'Warga Cilandak',
+    location: 'Cilandak',
+    time: '14 jam lalu',
+    content: 'Pasar Rebo ada bazar книга makanan enak-enak. Cobain deh! 🍜',
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
+    likes: 33,
+    comments: 6,
+    shares: 4
+  },
+  {
+    id: 17,
+    authorName: 'Warga Manggarai',
+    location: 'Manggarai',
+    time: '15 jam lalu',
+    content: 'Stasiun Manggarai lagi perbaikan. Ada yang informasi kapan selesai? 🚉',
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
+    likes: 25,
+    comments: 4,
+    shares: 2
+  },
+  {
+    id: 18,
+    authorName: 'Warga Kebayoran',
+    location: 'Kebayoran',
+    time: '16 jam lalu',
+    content: 'Jalan Kebayoran Baru udah mulus sekarang! Makasih pak Jokowi! 😂',
+    image: null,
+    likes: 41,
+    comments: 9,
+    shares: 3
+  },
+  {
+    id: 19,
+    authorName: 'Warga Melawai',
+    location: 'Melawai',
+    time: '17 jam lalu',
+    content: 'Hotel di Melawai lengkap bgt! Meeting weekend yuk在这里! 🏨',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80',
+    likes: 19,
+    comments: 3,
+    shares: 1
+  },
+  {
+    id: 20,
+    authorName: 'Warga Cipete',
+    location: 'Cipete',
+    time: '18 jam lalu',
+    content: 'Warung baru di Cipete Utara makanannya enak dan murah! Wajib cobain! 🍲',
+    image: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80',
+    likes: 67,
+    comments: 14,
+    shares: 8
   }
 ];
 
@@ -135,7 +271,7 @@ function UGCCard({ report }: { report: UGCReport }) {
         {/* Author */}
         <div className="flex items-center gap-3 p-4">
           <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-            <User size={24} className="text-gray-500" />
+            <span className="text-gray-500 font-bold text-sm">W</span>
           </div>
           <div className="flex-1">
             <p className="font-semibold text-gray-900">{report.authorName}</p>
@@ -192,6 +328,36 @@ function UGCCard({ report }: { report: UGCReport }) {
 }
 
 export default function BreakingNewsPage() {
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  const allReports = [...allUGCReports, ...moreReports];
+  const visibleReports = allReports.slice(0, visibleCount);
+  const hasMore = visibleCount < allReports.length;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoading) {
+          setIsLoading(true);
+          // Simulate loading delay
+          setTimeout(() => {
+            setVisibleCount(prev => Math.min(prev + 10, allReports.length));
+            setIsLoading(false);
+          }, 500);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMore, isLoading, allReports.length]);
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
@@ -202,9 +368,32 @@ export default function BreakingNewsPage() {
 
       {/* UGC Feed */}
       <div className="px-4 py-4">
-        {allUGCReports.map((report) => (
+        {visibleReports.map((report) => (
           <UGCCard key={report.id} report={report} />
         ))}
+
+        {/* Loading indicator / Load more trigger */}
+        {hasMore && (
+          <div ref={loaderRef} className="py-8 text-center">
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2 text-gray-500">
+                <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span className="text-sm">Memuat lebih banyak...</span>
+              </div>
+            ) : (
+              <span className="text-sm text-gray-400">Scroll untuk load lebih banyak</span>
+            )}
+          </div>
+        )}
+
+        {!hasMore && visibleReports.length > 0 && (
+          <div className="py-8 text-center">
+            <span className="text-sm text-gray-400">Semua laporan telah dimuat</span>
+          </div>
+        )}
       </div>
     </div>
   );

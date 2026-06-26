@@ -2,37 +2,26 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Camera, MapPin, X, ChevronLeft, Send } from 'lucide-react';
+import Image from 'next/image';
+import { MapPin, Camera, X, ChevronLeft, Send } from 'lucide-react';
 
 const categories = [
-  { id: 1, name: 'Banjir', icon: '🌊', color: 'bg-blue-500' },
-  { id: 2, name: 'Kemacetan', icon: '🚗', color: 'bg-orange-500' },
-  { id: 3, name: 'Kriminal', icon: '🚨', color: 'bg-red-500' },
-  { id: 4, name: 'Begal', icon: '⚠️', color: 'bg-red-600' },
-  { id: 5, name: 'Infrastruktur', icon: '🛠️', color: 'bg-gray-500' },
-  { id: 6, name: 'Jalan Rusak', icon: '🕳️', color: 'bg-amber-500' },
-  { id: 7, name: 'Listrik', icon: '💡', color: 'bg-yellow-500' },
-  { id: 8, name: 'Air Bersih', icon: '🚰', color: 'bg-cyan-500' },
-  { id: 9, name: 'Gas Bocor', icon: '🔥', color: 'bg-orange-400' },
-  { id: 10, name: 'Internet', icon: '📶', color: 'bg-indigo-500' },
-  { id: 11, name: 'Kesehatan', icon: '🏥', color: 'bg-green-500' },
-  { id: 12, name: 'Ambulans', icon: '🚑', color: 'bg-red-400' },
-  { id: 13, name: 'Kebersihan', icon: '🗑️', color: 'bg-emerald-500' },
-  { id: 14, name: 'Sampah', icon: '🍂', color: 'bg-green-600' },
-  { id: 15, name: 'Keamanan', icon: '🔒', color: 'bg-purple-500' },
-  { id: 16, name: 'Kebisingan', icon: '🔊', color: 'bg-violet-500' },
-  { id: 17, name: 'Parkir Liar', icon: '🅿️', color: 'bg-gray-600' },
-  { id: 18, name: 'PKL Liar', icon: '🏪', color: 'bg-amber-600' },
-  { id: 19, name: 'Pohon Tumbang', icon: '🌳', color: 'bg-green-500' },
-  { id: 20, name: 'Lahan Terbuka', icon: '🏞️', color: 'bg-teal-500' },
-  { id: 21, name: 'Hewan Liar', icon: '🐕', color: 'bg-amber-700' },
-  { id: 22, name: 'Facebook', icon: '📘', color: 'bg-blue-600' },
-  { id: 23, name: 'Lainnya', icon: '📝', color: 'bg-gray-400', isOther: true },
+  { id: 1, name: 'Banjir', icon: '🌊' },
+  { id: 2, name: 'Kemacetan', icon: '🚗' },
+  { id: 3, name: 'Kriminal', icon: '🚨' },
+  { id: 4, name: 'Infrastruktur', icon: '🏗️' },
+  { id: 5, name: 'Jalan Rusak', icon: '🕳️' },
+  { id: 6, name: 'Listrik', icon: '💡' },
+  { id: 7, name: 'Air Bersih', icon: '🚰' },
+  { id: 8, name: 'Kesehatan', icon: '🏥' },
+  { id: 9, name: 'Kebersihan', icon: '🗑️' },
+  { id: 10, name: 'Keamanan', icon: '🔒' },
+  { id: 11, name: 'Pohon Tumbang', icon: '🌳' },
+  { id: 12, name: 'Lainnya', icon: '📝' },
 ];
 
 export default function LaporPage() {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [customCategory, setCustomCategory] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<File[]>([]);
@@ -44,7 +33,7 @@ export default function LaporPage() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newPhotos = Array.from(e.target.files);
-      setPhotos(prev => [...prev, ...newPhotos].slice(0, 5)); // Max 5 photos
+      setPhotos(prev => [...prev, ...newPhotos].slice(0, 5));
     }
   };
 
@@ -54,7 +43,6 @@ export default function LaporPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate submission
     setIsSubmitted(true);
   };
 
@@ -63,7 +51,9 @@ export default function LaporPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl p-8 text-center max-w-sm w-full shadow-lg">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Send size={32} className="text-green-600" />
+            <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-green-600" stroke="currentColor" strokeWidth={2}>
+              <polyline points="20,6 9,17 4,12" />
+            </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Laporan Terkirim!</h2>
           <p className="text-gray-500 mb-6">Terima kasih atas laporan Anda. Tim kami akan meninjaunya segera.</p>
@@ -77,7 +67,6 @@ export default function LaporPage() {
 
   if (selectedCategory) {
     const category = categories.find(c => c.id === selectedCategory);
-    const isOtherCategory = category?.isOther || (customCategory.length > 0);
 
     return (
       <div className="min-h-screen bg-gray-50 pb-20">
@@ -97,20 +86,8 @@ export default function LaporPage() {
             <label className="text-sm font-medium text-gray-700 mb-2 block">Kategori</label>
             <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-3">
               <span className="text-lg">{category?.icon}</span>
-              <span className="font-medium text-gray-900">
-                {isOtherCategory ? customCategory : category?.name}
-              </span>
+              <span className="font-medium text-gray-900">{category?.name}</span>
             </div>
-            {category?.isOther && (
-              <input
-                type="text"
-                value={customCategory}
-                onChange={(e) => setCustomCategory(e.target.value)}
-                placeholder="Ketik kategori..."
-                className="w-full mt-2 px-4 py-3 bg-gray-50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
-            )}
           </div>
 
           {/* Location */}
@@ -228,20 +205,20 @@ export default function LaporPage() {
         <p className="text-sm text-gray-500">Laporkan kejadian di Jakarta Selatan</p>
       </div>
 
-      {/* Categories */}
+      {/* Categories - Horizontal scroll */}
       <div className="px-4 py-4">
         <h2 className="text-sm font-medium text-gray-700 mb-3">Pilih Kategori Laporan</h2>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className="bg-white rounded-xl p-3 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow"
+              className="flex flex-col items-center gap-2 shrink-0"
             >
-              <div className={`w-14 h-14 ${category.color} rounded-xl flex items-center justify-center text-2xl mb-2`}>
+              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
                 {category.icon}
               </div>
-              <span className="text-xs font-medium text-gray-700 leading-tight">{category.name}</span>
+              <span className="text-xs font-medium text-gray-600 text-center">{category.name}</span>
             </button>
           ))}
         </div>

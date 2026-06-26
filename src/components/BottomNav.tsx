@@ -4,27 +4,23 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-// Colorful SVG Icons with white background boxes
+// Colorful Phosphor-style SVG Icons - just the icon, no background
 const HomeIcon = ({ active }: { active: boolean }) => (
-  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-    <svg viewBox="0 0 24 24" fill="none" className={`w-5 h-5 ${active ? 'text-red-500' : 'text-gray-500'}`} stroke="currentColor" strokeWidth={2}>
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-      <polyline points="9,22 9,12 15,12 15,22" />
-    </svg>
-  </div>
+  <svg viewBox="0 0 24 24" fill="none" className={`w-6 h-6 ${active ? 'text-red-500' : 'text-gray-500'}`} stroke="currentColor" strokeWidth={1.5}>
+    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+    <polyline points="9,22 9,12 15,12 15,22" />
+  </svg>
 );
 
 const ArticleIcon = ({ active }: { active: boolean }) => (
-  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-    <svg viewBox="0 0 24 24" fill="none" className={`w-5 h-5 ${active ? 'text-red-500' : 'text-gray-500'}`} stroke="currentColor" strokeWidth={2}>
-      <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-    </svg>
-  </div>
+  <svg viewBox="0 0 24 24" fill="none" className={`w-6 h-6 ${active ? 'text-red-500' : 'text-gray-500'}`} stroke="currentColor" strokeWidth={1.5}>
+    <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+  </svg>
 );
 
 const LaporIcon = () => (
-  <div className="w-11 h-11 -mt-3 rounded-full bg-white shadow-lg flex items-center justify-center border-[2px] border-white">
+  <div className="w-11 h-11 -mt-3">
     <Image
       src="/logo-button.png"
       alt="Jakselnews"
@@ -36,24 +32,20 @@ const LaporIcon = () => (
 );
 
 const InfoIcon = ({ active }: { active: boolean }) => (
-  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-    <svg viewBox="0 0 24 24" fill="none" className={`w-5 h-5 ${active ? 'text-red-500' : 'text-gray-500'}`} stroke="currentColor" strokeWidth={2}>
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="16" x2="12" y2="12" />
-      <line x1="12" y1="8" x2="12.01" y2="8" />
-    </svg>
-  </div>
+  <svg viewBox="0 0 24 24" fill="none" className={`w-6 h-6 ${active ? 'text-red-500' : 'text-gray-500'}`} stroke="currentColor" strokeWidth={1.5}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="16" x2="12" y2="12" />
+    <line x1="12" y1="8" x2="12.01" y2="8" />
+  </svg>
 );
 
 const LayananIcon = ({ active }: { active: boolean }) => (
-  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-    <svg viewBox="0 0 24 24" fill="none" className={`w-5 h-5 ${active ? 'text-red-500' : 'text-gray-500'}`} stroke="currentColor" strokeWidth={2}>
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-    </svg>
-  </div>
+  <svg viewBox="0 0 24 24" fill="none" className={`w-6 h-6 ${active ? 'text-red-500' : 'text-gray-500'}`} stroke="currentColor" strokeWidth={1.5}>
+    <rect x="3" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="14" width="7" height="7" rx="1" />
+    <rect x="3" y="14" width="7" height="7" rx="1" />
+  </svg>
 );
 
 const navItems = [
@@ -68,7 +60,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-gray-50 border-t border-gray-200 z-50 md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
       <div className="flex items-center justify-around h-16 px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
