@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import {
   PhMagnifyingGlass,
   PhFunnel,
-  PhPhClock,
+  PhClock,
   PhMapPin,
   PhUser,
   PhCheck,
@@ -14,7 +14,7 @@ import {
   PhChatCircle,
   PhEnvelope,
   PhChartBar,
-  PhHourglass,
+  PhTimer,
   PhArrowsClockwise,
   PhCheckCircle,
 } from '@phosphor-icons/react';
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-4 shadow-md border border-amber-100">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-400 rounded-xl flex items-center justify-center shadow-lg">
-                <PhHourglass size={24} weight="fill" className="text-white" />
+                <PhTimer size={24} weight="fill" className="text-white" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-amber-600">{pendingCount}</p>
