@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Server & Backend (separate deployment)
+/server/
+/dist/
+/supabase/
+/api/
