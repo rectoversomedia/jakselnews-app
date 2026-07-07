@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   List,
   X,
@@ -46,9 +47,13 @@ export default function Header({
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:shadow-red-500/50 transition-shadow">
-                <span className="text-white font-bold text-lg">J</span>
-              </div>
+              <Image
+                src="/logo-button.png"
+                alt="Jakselnews"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
               <span className="font-bold text-xl text-gray-900">Jaksel<span className="text-red-500">news</span></span>
             </Link>
 
@@ -124,9 +129,13 @@ export default function Header({
           <div className="flex items-center">
             {showLogo ? (
               <Link href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-500 rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-sm">J</span>
-                </div>
+                <Image
+                  src="/logo-button.png"
+                  alt="Jakselnews"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                />
                 <span className="font-bold text-gray-900">Jaksel<span className="text-red-500">news</span></span>
               </Link>
             ) : title ? (
@@ -159,9 +168,13 @@ export default function Header({
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-red-500 to-rose-500">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">J</span>
-                </div>
+                <Image
+                  src="/logo-button.png"
+                  alt="Jakselnews"
+                  width={40}
+                  height={40}
+                  className="object-contain bg-white rounded-lg p-1"
+                />
                 <span className="font-bold text-xl text-white">Jakselnews</span>
               </div>
               <button
