@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import {
-  PhMapPin,
-  PhClock,
-  PhHeart,
-  PhChatCircle,
-  PhShare,
-  PhFunnel,
-  PhNewspaper,
+  MapPin,
+  Clock,
+  Heart,
+  ChatCircle,
+  Share,
+  Funnel,
+  Newspaper,
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
@@ -164,10 +164,10 @@ export default function InfoTerkiniPage() {
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 flex items-center gap-2 mt-0.5">
-                  <PhMapPin size={12} />
+                  <MapPin size={12} />
                   {post.location}
                   <span className="mx-1">•</span>
-                  <PhClock size={12} />
+                  <Clock size={12} />
                   {post.time}
                 </p>
               </div>
@@ -190,17 +190,17 @@ export default function InfoTerkiniPage() {
                     : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
                 }`}
               >
-                <PhHeart size={18} weight={likedPosts.has(post.id) ? 'fill' : 'regular'} />
+                <Heart size={18} weight={likedPosts.has(post.id) ? 'fill' : 'regular'} />
                 <span>{post.likes + (likedPosts.has(post.id) ? 1 : 0)}</span>
               </button>
 
               <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-violet-500 hover:bg-violet-50 transition-all duration-300">
-                <PhChatCircle size={18} />
+                <ChatCircle size={18} />
                 <span>{post.comments}</span>
               </button>
 
               <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-blue-500 hover:bg-blue-50 transition-all duration-300 ml-auto">
-                <PhShare size={18} />
+                <Share size={18} />
                 <span>{post.shares}</span>
               </button>
             </div>
@@ -210,7 +210,7 @@ export default function InfoTerkiniPage() {
         {filteredPosts.length === 0 && (
           <div className="text-center py-16">
             <div className={`w-20 h-20 bg-gradient-to-br ${categories.find(c => c.id === selectedCategory)?.gradient || 'from-gray-400 to-gray-300'} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-              <PhNewspaper size={40} className="text-white" />
+              <Newspaper size={40} className="text-white" />
             </div>
             <p className="text-gray-500 mb-2">Tidak ada info terkini untuk kategori ini</p>
             <button

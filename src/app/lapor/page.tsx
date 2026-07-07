@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  PhMapPin,
-  PhPhone,
-  PhEnvelope,
-  PhUser,
-  PhX,
-  PhCheck,
-  PhSpinner,
-  PhWarning,
+  MapPin,
+  Phone,
+  Envelope,
+  User,
+  X,
+  Check,
+  Spinner,
+  Warning,
 } from '@phosphor-icons/react';
 import { api, Category } from '@/lib/api';
 import Header from '@/components/layout/Header';
@@ -140,7 +140,7 @@ export default function LaporPage() {
         <div className="pt-20 px-4 flex items-center justify-center min-h-[70vh]">
           <div className="text-center max-w-sm">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <PhCheck size={40} className="text-green-600" />
+              <Check size={40} className="text-green-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Laporan Terkirim!</h2>
             <p className="text-gray-600 mb-6">
@@ -185,7 +185,7 @@ export default function LaporPage() {
         {/* Info Banner */}
         <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6">
           <div className="flex gap-3">
-            <PhWarning size={20} className="text-blue-600 shrink-0 mt-0.5" />
+            <Warning size={20} className="text-blue-600 shrink-0 mt-0.5" />
             <div>
               <h3 className="font-semibold text-blue-900 mb-1">Laporkan Kejadian</h3>
               <p className="text-sm text-blue-700">
@@ -265,7 +265,7 @@ export default function LaporPage() {
               Kecamatan *
             </label>
             <div className="relative">
-              <PhMapPin size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <MapPin size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <select
                 value={formData.kecamatan}
                 onChange={(e) => {
@@ -306,7 +306,7 @@ export default function LaporPage() {
                 <div>
                   <label className="block text-sm text-gray-600 mb-1">Nama</label>
                   <div className="relative">
-                    <PhUser size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
                       value={formData.reporter_name}
@@ -327,7 +327,7 @@ export default function LaporPage() {
                   <div>
                     <label className="block text-sm text-gray-600 mb-1">No. HP</label>
                     <div className="relative">
-                      <PhPhone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input
                         type="tel"
                         value={formData.reporter_phone}
@@ -340,7 +340,7 @@ export default function LaporPage() {
                   <div>
                     <label className="block text-sm text-gray-600 mb-1">Email</label>
                     <div className="relative">
-                      <PhEnvelope size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <Envelope size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input
                         type="email"
                         value={formData.reporter_email}
@@ -359,7 +359,7 @@ export default function LaporPage() {
           {/* Submit Error */}
           {errors.submit && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2">
-              <PhWarning size={18} className="text-red-600" />
+              <Warning size={18} className="text-red-600" />
               <p className="text-sm text-red-700">{errors.submit}</p>
             </div>
           )}
@@ -372,12 +372,12 @@ export default function LaporPage() {
           >
             {submitting ? (
               <>
-                <PhSpinner size={20} className="animate-spin" />
+                <Spinner size={20} className="animate-spin" />
                 Mengirim...
               </>
             ) : (
               <>
-                <PhCheck size={20} />
+                <Check size={20} />
                 Kirim Laporan
               </>
             )}

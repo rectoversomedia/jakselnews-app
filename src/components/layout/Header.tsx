@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  PhList,
-  PhX,
-  PhBell,
-  PhMagnifyingGlass,
-  PhUser,
-  PhHouse,
-  PhNewspaper,
-  PhWarning,
-  PhSquaresFour,
+  List,
+  X,
+  Bell,
+  MagnifyingGlass,
+  User,
+  House,
+  Newspaper,
+  Warning,
+  SquaresFour,
 } from '@phosphor-icons/react';
 
 interface HeaderProps {
@@ -55,11 +55,11 @@ export default function Header({
             {/* Desktop Navigation */}
             <nav className="flex items-center gap-1">
               {[
-                { href: '/', icon: PhHouse, label: 'Beranda' },
-                { href: '/artikel', icon: PhNewspaper, label: 'Artikel' },
-                { href: '/lapor', icon: PhWarning, label: 'Lapor' },
-                { href: '/info-terkini', icon: PhBell, label: 'Info' },
-                { href: '/layanan', icon: PhSquaresFour, label: 'Layanan' },
+                { href: '/', icon: House, label: 'Beranda' },
+                { href: '/artikel', icon: Newspaper, label: 'Artikel' },
+                { href: '/lapor', icon: Warning, label: 'Lapor' },
+                { href: '/info-terkini', icon: Bell, label: 'Info' },
+                { href: '/layanan', icon: SquaresFour, label: 'Layanan' },
               ].map(({ href, icon: Icon, label }) => (
                 <Link
                   key={href}
@@ -75,17 +75,17 @@ export default function Header({
             {/* Right Actions */}
             <div className="flex items-center gap-2">
               <button className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
-                <PhMagnifyingGlass size={20} />
+                <MagnifyingGlass size={20} />
               </button>
               <button className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors relative">
-                <PhBell size={20} />
+                <Bell size={20} />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
               </button>
               <Link
                 href="/admin"
                 className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
               >
-                <PhUser size={20} />
+                <User size={20} />
               </Link>
             </div>
           </div>
@@ -115,7 +115,7 @@ export default function Header({
                 onClick={() => setShowMenu(true)}
                 className="p-2 -ml-2 rounded-xl hover:bg-gray-100 transition-colors"
               >
-                <PhList size={24} weight="bold" className="text-gray-700" />
+                <List size={24} weight="bold" className="text-gray-700" />
               </button>
             )}
           </div>
@@ -140,7 +140,7 @@ export default function Header({
           <div className="flex items-center gap-1">
             {rightAction}
             <Link href="/artikel" className="p-2 -mr-2 rounded-xl hover:bg-gray-100 transition-colors">
-              <PhMagnifyingGlass size={20} className="text-gray-700" />
+              <MagnifyingGlass size={20} className="text-gray-700" />
             </Link>
           </div>
         </div>
@@ -168,18 +168,18 @@ export default function Header({
                 onClick={() => setShowMenu(false)}
                 className="p-2 rounded-xl hover:bg-white/20 transition-colors"
               >
-                <PhX size={20} className="text-white" />
+                <X size={20} className="text-white" />
               </button>
             </div>
 
             {/* Navigation */}
             <nav className="p-4 space-y-2">
               {[
-                { href: '/', icon: PhHouse, label: 'Beranda', color: 'from-red-500 to-rose-500' },
-                { href: '/artikel', icon: PhNewspaper, label: 'Artikel', color: 'from-blue-500 to-cyan-500' },
-                { href: '/lapor', icon: PhWarning, label: 'Lapor Kejadian', color: 'from-amber-500 to-orange-500' },
-                { href: '/info-terkini', icon: PhBell, label: 'Info Terkini', color: 'from-violet-500 to-purple-500' },
-                { href: '/layanan', icon: PhSquaresFour, label: 'Layanan', color: 'from-emerald-500 to-teal-500' },
+                { href: '/', icon: House, label: 'Beranda', color: 'from-red-500 to-rose-500' },
+                { href: '/artikel', icon: Newspaper, label: 'Artikel', color: 'from-blue-500 to-cyan-500' },
+                { href: '/lapor', icon: Warning, label: 'Lapor Kejadian', color: 'from-amber-500 to-orange-500' },
+                { href: '/info-terkini', icon: Bell, label: 'Info Terkini', color: 'from-violet-500 to-purple-500' },
+                { href: '/layanan', icon: SquaresFour, label: 'Layanan', color: 'from-emerald-500 to-teal-500' },
               ].map(({ href, icon: Icon, label, color }) => (
                 <Link
                   key={href}
@@ -203,7 +203,7 @@ export default function Header({
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors"
               >
                 <div className="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center">
-                  <PhUser size={20} className="text-gray-600" />
+                  <User size={20} className="text-gray-600" />
                 </div>
                 <span>Admin Dashboard</span>
               </Link>

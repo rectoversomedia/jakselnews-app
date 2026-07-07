@@ -3,22 +3,22 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  PhMagnifyingGlass,
-  PhPhone,
-  PhCaretRight,
-  PhCaretLeft,
-  PhHeart,
-  PhStar,
-  PhListChecks,
+  MagnifyingGlass,
+  Phone,
+  CaretRight,
+  CaretLeft,
+  Heart,
+  Star,
+  ListChecks,
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
 
 const popularServices = [
-  { id: 1, name: 'Cek Bansos', desc: 'Cek penerima bansos', icon: '💰', gradient: 'from-emerald-500 to-teal-500' },
-  { id: 2, name: 'KJP Plus', desc: 'Saldo KJP Plus', icon: '🎓', gradient: 'from-violet-500 to-purple-500' },
-  { id: 3, name: 'Cek ETLE', desc: 'Tilang elektronik', icon: '📸', gradient: 'from-blue-500 to-cyan-500' },
-  { id: 4, name: 'Pajak', desc: 'Bayar pajak', icon: '🚗', gradient: 'from-amber-500 to-orange-500' },
+  { id: 1, name: 'Cek Bansos', slug: 'cek-bansos', desc: 'Cek penerima bansos', icon: '💰', gradient: 'from-emerald-500 to-teal-500' },
+  { id: 2, name: 'KJP Plus', slug: 'kjp-plus', desc: 'Saldo KJP Plus', icon: '🎓', gradient: 'from-violet-500 to-purple-500' },
+  { id: 3, name: 'Cek ETLE', slug: 'cek-etle', desc: 'Tilang elektronik', icon: '📸', gradient: 'from-blue-500 to-cyan-500' },
+  { id: 4, name: 'Pajak', slug: 'pajak-kendaraan', desc: 'Bayar pajak', icon: '🚗', gradient: 'from-amber-500 to-orange-500' },
 ];
 
 const allServices = [
@@ -71,7 +71,7 @@ export default function LayananPage() {
       {/* Search Bar */}
       <div className="sticky top-14 lg:top-16 z-30 bg-white border-b px-4 py-3">
         <div className="relative">
-          <PhMagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <MagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             placeholder="Cari layanan..."
@@ -105,7 +105,7 @@ export default function LayananPage() {
           <section className="mb-6">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center shadow-lg">
-                <PhStar size={18} weight="fill" className="text-white" />
+                <Star size={18} weight="fill" className="text-white" />
               </div>
               <h2 className="text-lg font-bold text-gray-900">Layanan Populer</h2>
             </div>
@@ -132,7 +132,7 @@ export default function LayananPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-lg">
-              <PhListChecks size={18} weight="fill" className="text-white" />
+              <ListChecks size={18} weight="fill" className="text-white" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">
               {searchQuery || selectedCategory !== 'all' ? 'Hasil Pencarian' : 'Semua Layanan'}
@@ -155,14 +155,14 @@ export default function LayananPage() {
                     <h3 className="font-bold text-gray-900 group-hover:text-red-500 transition-colors">{service.name}</h3>
                     <p className="text-sm text-gray-500 truncate">{service.desc}</p>
                   </div>
-                  <PhCaretRight size={20} className="text-gray-400 group-hover:text-red-500 group-hover:translate-x-1 transition-all" />
+                  <CaretRight size={20} className="text-gray-400 group-hover:text-red-500 group-hover:translate-x-1 transition-all" />
                 </Link>
               ))}
             </div>
           ) : (
             <div className="text-center py-16">
               <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <PhMagnifyingGlass size={40} className="text-gray-400" />
+                <MagnifyingGlass size={40} className="text-gray-400" />
               </div>
               <p className="text-gray-500 mb-4">Layanan tidak ditemukan</p>
               <button
@@ -180,7 +180,7 @@ export default function LayananPage() {
           <section className="mt-8">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-500 rounded-lg flex items-center justify-center shadow-lg animate-pulse">
-                <PhPhone size={18} weight="fill" className="text-white" />
+                <Phone size={18} weight="fill" className="text-white" />
               </div>
               <h2 className="text-lg font-bold text-gray-900">Nomor Darurat</h2>
             </div>
@@ -198,7 +198,7 @@ export default function LayananPage() {
                     className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/30 transition-all duration-300 group"
                   >
                     <div className={`w-12 h-12 bg-gradient-to-br ${num.gradient} rounded-xl flex items-center justify-center mx-auto mb-2 shadow-lg group-hover:scale-110 transition-transform`}>
-                      <PhPhone size={24} weight="fill" className="text-white" />
+                      <Phone size={24} weight="fill" className="text-white" />
                     </div>
                     <p className="font-bold text-white text-lg">{num.name}</p>
                     <p className="text-white/80 text-xs">{num.label}</p>

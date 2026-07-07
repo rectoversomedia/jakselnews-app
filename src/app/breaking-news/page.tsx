@@ -4,11 +4,11 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  PhMapPin,
-  PhHeart,
-  PhChatCircle,
-  PhShareNetwork,
-  PhSpinner,
+  MapPin,
+  Heart,
+  ChatCircle,
+  ShareNetwork,
+  Spinner,
 } from '@phosphor-icons/react';
 import { SharePopup } from '@/components/SharePopup';
 import { CommentsSection } from '@/components/UGCPost';
@@ -282,7 +282,7 @@ function UGCCard({ report }: { report: UGCReport }) {
           <div className="flex-1">
             <p className="font-semibold text-gray-900">{report.authorName}</p>
             <p className="text-sm text-gray-500 flex items-center gap-1">
-              <PhMapPin size={14} />
+              <MapPin size={14} />
               {report.location} • {report.time}
             </p>
           </div>
@@ -309,15 +309,15 @@ function UGCCard({ report }: { report: UGCReport }) {
         {/* Actions */}
         <div className="flex items-center justify-around py-4 px-4 border-t border-gray-100">
           <button onClick={handleLike} className={`flex items-center gap-2 transition-colors ${isLiked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
-            <PhHeart size={22} weight={isLiked ? 'fill' : 'regular'} />
+            <Heart size={22} weight={isLiked ? 'fill' : 'regular'} />
             <span className="text-sm font-medium">{likes}</span>
           </button>
           <button onClick={() => setIsCommentsOpen(true)} className="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors">
-            <PhChatCircle size={22} />
+            <ChatCircle size={22} />
             <span className="text-sm font-medium">{commentCount}</span>
           </button>
           <button onClick={() => setIsShareOpen(true)} className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors">
-            <PhShareNetwork size={22} />
+            <ShareNetwork size={22} />
             <span className="text-sm font-medium">{report.shares}</span>
           </button>
         </div>
@@ -379,7 +379,7 @@ export default function BreakingNewsPage() {
           <div ref={loaderRef} className="py-8 text-center">
             {isLoading ? (
               <div className="flex items-center justify-center gap-2 text-gray-500">
-                <PhSpinner size={20} className="animate-spin" />
+                <Spinner size={20} className="animate-spin" />
                 <span className="text-sm">Memuat lebih banyak...</span>
               </div>
             ) : (

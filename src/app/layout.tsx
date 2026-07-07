@@ -1,7 +1,16 @@
 import { Inter, Poppins } from "next/font/google";
+import dynamic from "next/dynamic";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { BottomNav } from "@/components/BottomNav";
+
+// Dynamic import to avoid SSR issues with Phosphor Icons
+const Header = dynamic(() => import("@/components/layout/Header").then(mod => mod.default), {
+  ssr: false,
+  loading: () => <div className="h-14 lg:h-16 bg-white border-b" />,
+});
+const BottomNav = dynamic(() => import("@/components/layout/BottomNav").then(mod => mod.default), {
+  ssr: false,
+  loading: () => <div className="h-16 bg-white border-t" />,
+});
 
 const inter = Inter({
   subsets: ["latin"],

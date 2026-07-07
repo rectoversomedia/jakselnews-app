@@ -2,21 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import {
-  PhMagnifyingGlass,
-  PhFunnel,
-  PhClock,
-  PhMapPin,
-  PhUser,
-  PhCheck,
-  PhX,
-  PhWarning,
-  PhSpinner,
-  PhChatCircle,
-  PhEnvelope,
-  PhChartBar,
-  PhTimer,
-  PhArrowsClockwise,
-  PhCheckCircle,
+  MagnifyingGlass,
+  Funnel,
+  Clock,
+  MapPin,
+  User,
+  Check,
+  X,
+  Warning,
+  Spinner,
+  ChatCircle,
+  Envelope,
+  ChartBar,
+  Timer,
+  ArrowsClockwise,
+  CheckCircle,
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-100">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-400 rounded-xl flex items-center justify-center shadow-lg">
-                <PhChartBar size={24} weight="fill" className="text-white" />
+                <ChartBar size={24} weight="fill" className="text-white" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">{totalReports}</p>
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-4 shadow-md border border-amber-100">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-400 rounded-xl flex items-center justify-center shadow-lg">
-                <PhTimer size={24} weight="fill" className="text-white" />
+                <Timer size={24} weight="fill" className="text-white" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-amber-600">{pendingCount}</p>
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-4 shadow-md border border-violet-100">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-400 rounded-xl flex items-center justify-center shadow-lg">
-                <PhArrowsClockwise size={24} weight="fill" className="text-white" />
+                <ArrowsClockwise size={24} weight="fill" className="text-white" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-violet-600">{processingCount}</p>
@@ -185,7 +185,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-4 shadow-md border border-emerald-100">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-400 rounded-xl flex items-center justify-center shadow-lg">
-                <PhCheckCircle size={24} weight="fill" className="text-white" />
+                <CheckCircle size={24} weight="fill" className="text-white" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-emerald-600">{resolvedCount}</p>
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-100 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <PhMagnifyingGlass size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <MagnifyingGlass size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Cari laporan..."
@@ -235,7 +235,7 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
           {loading ? (
             <div className="p-8 flex items-center justify-center">
-              <PhSpinner size={32} className="animate-spin text-red-500" />
+              <Spinner size={32} className="animate-spin text-red-500" />
             </div>
           ) : filteredReports.length === 0 ? (
             <div className="p-8 text-center">
@@ -262,18 +262,18 @@ export default function AdminDashboard() {
                           {statusConfig[report.status].label}
                         </span>
                         <span className="text-xs text-gray-400 flex items-center gap-1">
-                          <PhClock size={12} />
+                          <Clock size={12} />
                           {getTimeAgo(report.created_at)}
                         </span>
                       </div>
                       <p className="text-sm text-gray-900 line-clamp-2">{report.description}</p>
                       <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
                         <span className="flex items-center gap-1">
-                          <PhMapPin size={12} />
+                          <MapPin size={12} />
                           {report.location_name || '-'}
                         </span>
                         <span className="flex items-center gap-1">
-                          <PhUser size={12} />
+                          <User size={12} />
                           {report.reporter_name || 'Anonim'}
                         </span>
                       </div>
@@ -308,7 +308,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <button onClick={() => setSelectedReport(null)} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
-                  <PhX size={20} className="text-white" />
+                  <X size={20} className="text-white" />
                 </button>
               </div>
             </div>
@@ -316,10 +316,10 @@ export default function AdminDashboard() {
             <div className="p-6 space-y-4">
               {/* Location & Time */}
               <div className="flex items-center gap-3 text-sm text-gray-500">
-                <PhMapPin size={18} />
+                <MapPin size={18} />
                 <span>{selectedReport.location_name}</span>
                 <span className="mx-2">•</span>
-                <PhClock size={18} />
+                <Clock size={18} />
                 <span>{getTimeAgo(selectedReport.created_at)}</span>
               </div>
 
@@ -331,20 +331,20 @@ export default function AdminDashboard() {
               {/* Reporter Info */}
               <div className="border-t pt-4">
                 <h3 className="font-bold text-sm text-gray-900 mb-3 flex items-center gap-2">
-                  <PhUser size={18} />
+                  <User size={18} />
                   Informasi Pelapor
                 </h3>
                 <div className="space-y-2 text-sm">
                   <p><span className="text-gray-500">Nama:</span> <span className="font-medium">{selectedReport.reporter_name || 'Anonim'}</span></p>
                   {selectedReport.reporter_phone && (
                     <p className="flex items-center gap-2">
-                      <PhChatCircle size={16} className="text-gray-400" />
+                      <ChatCircle size={16} className="text-gray-400" />
                       <span className="text-gray-500">HP:</span> <a href={`tel:${selectedReport.reporter_phone}`} className="text-blue-600 hover:underline">{selectedReport.reporter_phone}</a>
                     </p>
                   )}
                   {selectedReport.reporter_email && (
                     <p className="flex items-center gap-2">
-                      <PhEnvelope size={16} className="text-gray-400" />
+                      <Envelope size={16} className="text-gray-400" />
                       <span className="text-gray-500">Email:</span> <span className="font-medium">{selectedReport.reporter_email}</span>
                     </p>
                   )}

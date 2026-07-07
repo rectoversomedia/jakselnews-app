@@ -4,23 +4,23 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  PhClock,
-  PhMapPin,
-  PhCaretRight,
-  PhWarning,
-  PhX,
-  PhArrowRight,
-  PhHeart,
-  PhChatCircle,
-  PhShare,
-  PhBookmark,
-  PhBell,
-  PhNewspaper,
-  PhSquaresFour,
-  PhHouse,
-  PhMagnifyingGlass,
-  PhUser,
-  PhList,
+  Clock,
+  MapPin,
+  CaretRight,
+  Warning,
+  X,
+  ArrowRight,
+  Heart,
+  ChatCircle,
+  Share,
+  Bookmark,
+  Bell,
+  Newspaper,
+  SquaresFour,
+  House,
+  MagnifyingGlass,
+  User,
+  List,
 } from '@phosphor-icons/react';
 import { wp, WPPost, getFeaturedImage, formatPostDate, stripHtml } from '@/lib/wordpress';
 import Header from '@/components/layout/Header';
@@ -143,7 +143,7 @@ export default function HomePage() {
                     </h2>
                     <div className="flex items-center gap-3 text-white/90 text-xs md:text-sm">
                       <span className="flex items-center gap-1">
-                        <PhClock size={14} weight="fill" />
+                        <Clock size={14} weight="fill" />
                         {formatPostDate(post.date)}
                       </span>
                     </div>
@@ -168,7 +168,7 @@ export default function HomePage() {
         <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 p-4 border border-gray-100">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-500 rounded-lg flex items-center justify-center">
-              <PhWarning size={18} weight="fill" className="text-white" />
+              <Warning size={18} weight="fill" className="text-white" />
             </div>
             <h2 className="font-bold text-gray-900">PERINGATAN WARGA</h2>
           </div>
@@ -182,7 +182,7 @@ export default function HomePage() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                    <PhWarning size={24} weight="fill" className="text-white" />
+                    <Warning size={24} weight="fill" className="text-white" />
                   </div>
                   <div className="flex-1 text-left">
                     <div className="flex items-center gap-2">
@@ -190,11 +190,11 @@ export default function HomePage() {
                       <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs">🔥 {warning.reports}x</span>
                     </div>
                     <p className="text-white/80 text-xs flex items-center gap-1 mt-0.5">
-                      <PhMapPin size={12} />
+                      <MapPin size={12} />
                       {warning.location} • {warning.time}
                     </p>
                   </div>
-                  <PhCaretRight size={20} className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                  <CaretRight size={20} className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all" />
                 </div>
               </button>
             ))}
@@ -207,12 +207,12 @@ export default function HomePage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <PhNewspaper size={18} weight="fill" className="text-white" />
+              <Newspaper size={18} weight="fill" className="text-white" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">INFO TERKINI</h2>
           </div>
           <Link href="/info-terkini" className="text-sm text-violet-600 font-medium flex items-center gap-1 hover:gap-2 transition-all">
-            Lihat Semua <PhCaretRight size={16} />
+            Lihat Semua <CaretRight size={16} />
           </Link>
         </div>
 
@@ -226,7 +226,7 @@ export default function HomePage() {
                 <div>
                   <p className="font-semibold text-gray-900 text-sm">Warga Kemang</p>
                   <p className="text-xs text-gray-500 flex items-center gap-1">
-                    <PhMapPin size={10} /> Kemang • 10 menit
+                    <MapPin size={10} /> Kemang • 10 menit
                   </p>
                 </div>
               </div>
@@ -235,13 +235,13 @@ export default function HomePage() {
               </p>
               <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
                 <button className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-red-500 transition-colors">
-                  <PhHeart size={16} /> 24
+                  <Heart size={16} /> 24
                 </button>
                 <button className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-violet-500 transition-colors">
-                  <PhChatCircle size={16} /> 8
+                  <ChatCircle size={16} /> 8
                 </button>
                 <button className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-blue-500 transition-colors ml-auto">
-                  <PhShare size={16} /> 5
+                  <Share size={16} /> 5
                 </button>
               </div>
             </div>
@@ -254,12 +254,12 @@ export default function HomePage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-              <PhNewspaper size={18} weight="fill" className="text-white" />
+              <Newspaper size={18} weight="fill" className="text-white" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">ARTIKEL TERBARU</h2>
           </div>
           <Link href="/artikel" className="text-sm text-blue-600 font-medium flex items-center gap-1 hover:gap-2 transition-all">
-            Lihat Semua <PhCaretRight size={16} />
+            Lihat Semua <CaretRight size={16} />
           </Link>
         </div>
 
@@ -301,13 +301,13 @@ export default function HomePage() {
                     {stripHtml(post.title.rendered)}
                   </h3>
                   <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <PhClock size={12} />
+                    <Clock size={12} />
                     <span>{formatPostDate(post.date)}</span>
                     <button
                       onClick={(e) => { e.preventDefault(); handleLike(post.id); }}
                       className={`ml-auto p-1 rounded-lg transition-colors ${likedPosts.has(post.id) ? 'text-red-500 bg-red-50' : 'hover:bg-gray-100'}`}
                     >
-                      <PhHeart size={16} weight={likedPosts.has(post.id) ? 'fill' : 'regular'} />
+                      <Heart size={16} weight={likedPosts.has(post.id) ? 'fill' : 'regular'} />
                     </button>
                   </div>
                 </div>
@@ -322,7 +322,7 @@ export default function HomePage() {
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300"
           >
             Lihat Semua Artikel
-            <PhArrowRight size={18} />
+            <ArrowRight size={18} />
           </Link>
         </div>
       </section>
@@ -332,12 +332,12 @@ export default function HomePage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
-              <PhSquaresFour size={18} weight="fill" className="text-white" />
+              <SquaresFour size={18} weight="fill" className="text-white" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">LAYANAN POPULER</h2>
           </div>
           <Link href="/layanan" className="text-sm text-emerald-600 font-medium flex items-center gap-1 hover:gap-2 transition-all">
-            Lihat Semua <PhCaretRight size={16} />
+            Lihat Semua <CaretRight size={16} />
           </Link>
         </div>
 
@@ -421,14 +421,14 @@ function WarningModal({ warning, onClose }: { warning: WarningReport; onClose: (
           <div className="relative flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                <PhWarning size={28} weight="fill" className="text-white" />
+                <Warning size={28} weight="fill" className="text-white" />
               </div>
               <div>
                 <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium">⚠️ {warning.reports}x Laporan</span>
               </div>
             </div>
             <button onClick={onClose} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
-              <PhX size={20} className="text-white" />
+              <X size={20} className="text-white" />
             </button>
           </div>
         </div>
@@ -437,7 +437,7 @@ function WarningModal({ warning, onClose }: { warning: WarningReport; onClose: (
           <div>
             <h2 className="text-xl font-bold text-gray-900 mb-1">{warning.type}</h2>
             <p className="text-sm text-gray-500 flex items-center gap-2">
-              <PhMapPin size={14} />
+              <MapPin size={14} />
               {warning.location} • {warning.time}
             </p>
           </div>
@@ -461,7 +461,7 @@ function WarningModal({ warning, onClose }: { warning: WarningReport; onClose: (
             href={`tel:${warning.hotline}`}
             className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-red-500 to-rose-500 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-red-500/30 transition-all"
           >
-            <PhWarning size={18} weight="fill" />
+            <Warning size={18} weight="fill" />
             Hubungi {warning.hotline}
           </a>
 

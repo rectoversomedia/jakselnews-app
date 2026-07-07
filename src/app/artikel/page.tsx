@@ -5,13 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
-  PhMagnifyingGlass,
-  PhFunnel,
-  PhX,
-  PhSpinner,
-  PhShare,
-  PhBookmark,
-  PhClock,
+  MagnifyingGlass,
+  Funnel,
+  X,
+  Spinner,
+  Share,
+  Bookmark,
+  Clock,
 } from '@phosphor-icons/react';
 import {
   wp,
@@ -131,7 +131,7 @@ export default function ArtikelPage() {
       <div className="sticky top-14 lg:top-16 z-30 bg-white border-b px-4 py-3">
         <form onSubmit={handleSearch} className="flex gap-2">
           <div className="flex-1 relative">
-            <PhMagnifyingGlass size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <MagnifyingGlass size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Cari artikel..."
@@ -141,7 +141,7 @@ export default function ArtikelPage() {
             />
             {searchQuery && (
               <button type="button" onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2">
-                <PhX size={16} className="text-gray-400" />
+                <X size={16} className="text-gray-400" />
               </button>
             )}
           </div>
@@ -154,7 +154,7 @@ export default function ArtikelPage() {
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            <PhFunnel size={20} weight={showFilters || selectedCategory ? 'fill' : 'regular'} />
+            <Funnel size={20} weight={showFilters || selectedCategory ? 'fill' : 'regular'} />
           </button>
         </form>
 
@@ -211,7 +211,7 @@ export default function ArtikelPage() {
         ) : posts.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <PhMagnifyingGlass size={40} className="text-gray-400" />
+              <MagnifyingGlass size={40} className="text-gray-400" />
             </div>
             <p className="text-gray-500 mb-4">Tidak ada artikel ditemukan</p>
             <button
@@ -237,7 +237,7 @@ export default function ArtikelPage() {
                 >
                   {loadingMore ? (
                     <>
-                      <PhSpinner size={20} className="animate-spin" />
+                      <Spinner size={20} className="animate-spin" />
                       Memuat...
                     </>
                   ) : (
@@ -304,7 +304,7 @@ function ArticleCard({ post }: { post: WPPost }) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-gray-500">
-            <PhClock size={14} />
+            <Clock size={14} />
             <span>{formatPostDate(post.date)}</span>
           </div>
 
@@ -317,13 +317,13 @@ function ArticleCard({ post }: { post: WPPost }) {
                   : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
               }`}
             >
-              <PhBookmark size={18} weight={isLiked ? 'fill' : 'regular'} />
+              <Bookmark size={18} weight={isLiked ? 'fill' : 'regular'} />
             </button>
             <button
               onClick={handleShare}
               className="p-2 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all"
             >
-              <PhShare size={18} />
+              <Share size={18} />
             </button>
           </div>
         </div>

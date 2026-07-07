@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  PhHouse,
-  PhNewspaper,
-  PhWarning,
-  PhBell,
-  PhSquaresFour,
-  PhPlus,
-  PhList,
-  PhX,
-  PhMagnifyingGlass,
-  PhUser,
+  House,
+  Newspaper,
+  Warning,
+  Bell,
+  SquaresFour,
+  Plus,
+  List,
+  X,
+  MagnifyingGlass,
+  User,
 } from '@phosphor-icons/react';
 
 interface NavItem {
@@ -26,11 +26,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { id: 'beranda', label: 'Beranda', icon: <PhHouse size={24} weight="fill" />, href: '/', gradient: 'from-red-500 to-rose-500' },
-  { id: 'artikel', label: 'Artikel', icon: <PhNewspaper size={24} weight="fill" />, href: '/artikel', gradient: 'from-blue-500 to-cyan-500' },
-  { id: 'lapor', label: 'Lapor', icon: <PhPlus size={28} weight="bold" />, href: '/lapor', isCenter: true, gradient: 'from-red-500 to-rose-500' },
-  { id: 'info', label: 'Info', icon: <PhBell size={24} weight="fill" />, href: '/info-terkini', gradient: 'from-violet-500 to-purple-500' },
-  { id: 'layanan', label: 'Layanan', icon: <PhSquaresFour size={24} weight="fill" />, href: '/layanan', gradient: 'from-emerald-500 to-teal-500' },
+  { id: 'beranda', label: 'Beranda', icon: <House size={24} weight="fill" />, href: '/', gradient: 'from-red-500 to-rose-500' },
+  { id: 'artikel', label: 'Artikel', icon: <Newspaper size={24} weight="fill" />, href: '/artikel', gradient: 'from-blue-500 to-cyan-500' },
+  { id: 'lapor', label: 'Lapor', icon: <Plus size={28} weight="bold" />, href: '/lapor', isCenter: true, gradient: 'from-red-500 to-rose-500' },
+  { id: 'info', label: 'Info', icon: <Bell size={24} weight="fill" />, href: '/info-terkini', gradient: 'from-violet-500 to-purple-500' },
+  { id: 'layanan', label: 'Layanan', icon: <SquaresFour size={24} weight="fill" />, href: '/layanan', gradient: 'from-emerald-500 to-teal-500' },
 ];
 
 export default function BottomNav() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PhLink, PhCheck } from '@phosphor-icons/react';
+import { Link, Check } from '@phosphor-icons/react';
 import { socialShareLinks } from './SocialIcons';
 
 interface ShareButtonsProps {
@@ -51,12 +51,12 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
       >
         {copied ? (
           <>
-            <PhCheck size={16} className="text-green-600" />
+            <Check size={16} className="text-green-600" />
             <span className="text-green-600">Link berhasil disalin!</span>
           </>
         ) : (
           <>
-            <PhLink size={16} />
+            <Link size={16} />
             <span>Salin Link</span>
           </>
         )}

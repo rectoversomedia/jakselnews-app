@@ -1,5 +1,7 @@
+'use client';
+
 import Link from 'next/link';
-import { PhHouse } from '@phosphor-icons/react';
+import { House } from '@phosphor-icons/react';
 
 export default function NotFound() {
   return (
@@ -14,7 +16,7 @@ export default function NotFound() {
           href="/"
           className="px-6 py-3 bg-primary text-white rounded-xl font-medium text-sm hover:bg-primary-dark transition-colors inline-flex items-center justify-center gap-2"
         >
-          <PhHouse size={18} />
+          <House size={18} />
           Kembali ke Beranda
         </Link>
       </div>

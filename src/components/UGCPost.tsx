@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import {
-  PhMapPin,
-  PhHeart,
-  PhChatCircle,
-  PhShareNetwork,
-  PhPaperPlaneTilt,
-  PhX,
-  PhPaperPlaneRight,
+  MapPin,
+  Heart,
+  ChatCircle,
+  ShareNetwork,
+  PaperPlaneTilt,
+  X,
+  PaperPlaneRight,
 } from '@phosphor-icons/react';
 import { SharePopup } from './SharePopup';
 
@@ -111,7 +111,7 @@ function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-gray-900">Komentar ({comments.length})</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <PhX size={20} className="text-gray-500" />
+            <X size={20} className="text-gray-500" />
           </button>
         </div>
 
@@ -163,7 +163,7 @@ function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
                     className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                   <button onClick={() => handleReply(comment.id)} className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600">
-                    <PhPaperPlaneRight size={16} />
+                    <PaperPlaneRight size={16} />
                   </button>
                 </div>
               )}
@@ -180,7 +180,7 @@ function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
             className="flex-1 px-4 py-3 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button onClick={handleSubmitComment} className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600">
-            <PhPaperPlaneRight size={16} />
+            <PaperPlaneRight size={16} />
           </button>
         </div>
       </div>
@@ -225,7 +225,7 @@ function UGCPostCard({ report }: { report: UGCReport }) {
               <span className="font-semibold text-gray-900 text-sm">{report.authorName}</span>
               <span className="text-gray-300">•</span>
               <span className="text-xs text-gray-500 flex items-center gap-1">
-                <PhMapPin size={10} />
+                <MapPin size={10} />
                 {report.location}
               </span>
               <span className="text-gray-300">•</span>
@@ -235,15 +235,15 @@ function UGCPostCard({ report }: { report: UGCReport }) {
 
             <div className="flex items-center gap-4 mt-3">
               <button onClick={handleLike} className={`flex items-center gap-1.5 transition-colors ${isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}>
-                <PhHeart size={16} weight={isLiked ? 'fill' : 'regular'} />
+                <Heart size={16} weight={isLiked ? 'fill' : 'regular'} />
                 <span className="text-xs">{likes}</span>
               </button>
               <button onClick={() => setIsCommentsOpen(true)} className="flex items-center gap-1.5 text-gray-400 hover:text-blue-500 transition-colors">
-                <PhChatCircle size={16} />
+                <ChatCircle size={16} />
                 <span className="text-xs">{report.comments}</span>
               </button>
               <button onClick={() => setIsShareOpen(true)} className="flex items-center gap-1.5 text-gray-400 hover:text-green-500 transition-colors">
-                <PhShareNetwork size={16} />
+                <ShareNetwork size={16} />
                 <span className="text-xs">{report.shares}</span>
               </button>
             </div>
