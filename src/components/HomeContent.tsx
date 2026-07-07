@@ -3,8 +3,36 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import {
+  PhClock,
+  PhMapPin,
+  PhCaretRight,
+  PhWarning,
+  PhX,
+  PhArrowsClockwise,
+  PhHeart,
+  PhChatCircle,
+  PhShare,
+  PhMagnifyingGlass,
+  PhUser,
+  PhList,
+  PhNewspaper,
+  PhSquaresFour,
+  PhStar,
+  PhBell,
+  PhPushPin,
+  PhMapPinLine,
+  PhLightning,
+  PhTree,
+  PhCar,
+  PhTrain,
+  PhBus,
+  PhCurrencyDollar,
+  PhGraduationCap,
+  PhCamera,
+  PhHouse,
+} from '@phosphor-icons/react';
 import { wpAPI, getFeaturedImage, formatPostDate, stripHtml } from '@/lib/wordpress';
-import { Clock, MapPin, ChevronRight, AlertCircle, X } from 'lucide-react';
 import { UGCPostCard } from './UGCPost';
 
 // Trending citizen reports - grouped by category, top 3 most viral
@@ -82,7 +110,7 @@ function PeringatanPopup({ report, onClose }: { report: typeof trendingReports[0
             </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
+            <PhX size={20} className="text-gray-500" />
           </button>
         </div>
 
@@ -90,7 +118,7 @@ function PeringatanPopup({ report, onClose }: { report: typeof trendingReports[0
           <div>
             <h2 className="text-lg font-bold text-gray-900 mb-1">{report.warningType}</h2>
             <p className="text-sm text-gray-500 flex items-center gap-2">
-              <MapPin size={14} />
+              <PhMapPin size={14} />
               {report.location} • {report.time}
             </p>
           </div>
@@ -136,7 +164,7 @@ function PeringatanSection() {
       <section className="px-4 py-4">
         <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-3">
-            <AlertCircle size={20} className="text-red-600" />
+            <PhWarning size={20} weight="fill" className="text-red-600" />
             <h2 className="text-base font-bold text-red-700">PERINGATAN</h2>
           </div>
           <div className="space-y-2">
@@ -157,11 +185,11 @@ function PeringatanSection() {
                     <span className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-600 rounded-full shrink-0">{report.reportCount}x</span>
                   </div>
                   <p className="text-xs text-gray-500 flex items-center gap-1">
-                    <MapPin size={10} />
+                    <PhMapPin size={10} />
                     {report.location} • {report.time}
                   </p>
                 </div>
-                <ChevronRight size={16} className="text-gray-400 shrink-0" />
+                <PhCaretRight size={16} className="text-gray-400 shrink-0" />
               </button>
             ))}
           </div>
@@ -196,7 +224,7 @@ function BreakingNewsCard({ post, isFirst }: { post: any; isFirst?: boolean }) {
       <div className="absolute bottom-0 left-0 right-0 p-4">
         <h3 className="text-white font-bold text-sm line-clamp-2 mb-2">{title}</h3>
         <div className="flex items-center gap-3 text-white/80 text-xs">
-          <span className="flex items-center gap-1"><Clock size={12} />{date}</span>
+          <span className="flex items-center gap-1"><PhClock size={12} />{date}</span>
         </div>
       </div>
     </Link>
@@ -276,7 +304,7 @@ function InfoTerkiniSection() {
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-base md:text-lg font-bold text-gray-900">INFO TERKINI</h2>
         <Link href="/breaking-news" className="text-xs text-primary font-medium flex items-center gap-0.5">
-          Lihat Semua <ChevronRight size={14} />
+          Lihat Semua <PhCaretRight size={14} />
         </Link>
       </div>
       <div className="overflow-x-auto scrollbar-hide flex gap-3 -mx-4 px-4">
@@ -305,7 +333,7 @@ function LayananPopulerSection() {
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-base font-bold text-gray-900">LAYANAN POPULER</h2>
         <Link href="/layanan" className="text-xs text-primary font-medium flex items-center gap-0.5">
-          Lihat Semua <ChevronRight size={14} />
+          Lihat Semua <PhCaretRight size={14} />
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

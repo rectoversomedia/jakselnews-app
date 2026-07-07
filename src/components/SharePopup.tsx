@@ -1,6 +1,6 @@
 'use client';
 
-import { X } from 'lucide-react';
+import { PhX } from '@phosphor-icons/react';
 import { socialShareLinks } from './SocialIcons';
 
 interface SharePopupProps {
@@ -43,7 +43,7 @@ export function SharePopup({ isOpen, onClose, url, title }: SharePopupProps) {
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-gray-900">Bagikan ke</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
+            <PhX size={20} className="text-gray-500" />
           </button>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-6">

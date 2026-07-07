@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react';
+import { PhSpinner } from '@phosphor-icons/react';
 
 export default function Loading() {
   return (
@@ -7,7 +7,7 @@ export default function Loading() {
         <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
           <span className="text-white font-bold text-xl">J</span>
         </div>
-        <Loader2 size={32} className="animate-spin text-primary mx-auto" />
+        <PhSpinner size={32} className="animate-spin text-primary mx-auto" />
         <p className="text-gray-500 text-sm mt-4">Memuat...</p>
       </div>
     </div>

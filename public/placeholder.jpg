@@ -1,0 +1,6 @@
+<svg width="430" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect fill="#f3f4f6" width="430" height="400"/>
+  <rect fill="#EF2B2D" x="115" y="100" width="200" height="150" rx="16"/>
+  <text x="215" y="170" font-family="system-ui, sans-serif" font-size="36" font-weight="bold" fill="white" text-anchor="middle">J</text>
+  <text x="215" y="320" font-family="system-ui, sans-serif" font-size="18" fill="#6b7280" text-anchor="middle">Jakselnews</text>
+</svg>

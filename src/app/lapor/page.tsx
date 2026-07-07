@@ -1,237 +1,389 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { MapPin, Camera, X, ChevronLeft, Send } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  PhMapPin,
+  PhPhone,
+  PhEnvelope,
+  PhUser,
+  PhX,
+  PhCheck,
+  PhSpinner,
+  PhWarning,
+} from '@phosphor-icons/react';
+import { api, Category } from '@/lib/api';
+import Header from '@/components/layout/Header';
 
-const categories = [
-  { id: 1, name: 'Banjir', icon: '🌊' },
-  { id: 2, name: 'Kemacetan', icon: '🚗' },
-  { id: 3, name: 'Kriminal', icon: '🚨' },
-  { id: 4, name: 'Infrastruktur', icon: '🏗️' },
-  { id: 5, name: 'Jalan Rusak', icon: '🕳️' },
-  { id: 6, name: 'Listrik', icon: '💡' },
-  { id: 7, name: 'Air Bersih', icon: '🚰' },
-  { id: 8, name: 'Kesehatan', icon: '🏥' },
-  { id: 9, name: 'Kebersihan', icon: '🗑️' },
-  { id: 10, name: 'Keamanan', icon: '🔒' },
-  { id: 11, name: 'Pohon Tumbang', icon: '🌳' },
-  { id: 12, name: 'Lainnya', icon: '📝' },
+const kecamatanList = [
+  'Cilandak', 'Jagakarsa', 'Kebayoran Baru', 'Kebayoran Lama',
+  'Mampang Prapatan', 'Pancoran', 'Pasar Minggu', 'Pesanggrahan',
+  'Setiabudi', 'Tebet'
 ];
 
-export default function LaporPage() {
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
-  const [photos, setPhotos] = useState<File[]>([]);
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+const categoryIcons: Record<string, string> = {
+  'keamanan': '🛡️',
+  'lalu-lintas': '🚦',
+  'banjir': '🌊',
+  'kebakaran': '🔥',
+  'penerangan': '💡',
+  'lingkungan': '🌿',
+  'kemacetan': '🚗',
+  'jalan-rusak': '🕳️',
+  'kriminal': '🚨',
+  'sampah': '🗑️',
+  'fenomena': '👁️',
+  'lainnya': '📌',
+};
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newPhotos = Array.from(e.target.files);
-      setPhotos(prev => [...prev, ...newPhotos].slice(0, 5));
+export default function LaporPage() {
+  const router = useRouter();
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const [formData, setFormData] = useState({
+    type: '',
+    description: '',
+    kecamatan: '',
+    reporter_name: '',
+    reporter_phone: '',
+    reporter_email: '',
+    is_anonymous: false,
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const result = await api.getCategories();
+        if (result.success && result.data) {
+          setCategories(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.type) {
+      newErrors.type = 'Pilih kategori laporan';
+    }
+    if (!formData.description || formData.description.length < 10) {
+      newErrors.description = 'Deskripsi minimal 10 karakter';
+    }
+    if (formData.description.length > 2000) {
+      newErrors.description = 'Deskripsi maksimal 2000 karakter';
+    }
+    if (!formData.kecamatan) {
+      newErrors.kecamatan = 'Pilih kecamatan';
+    }
+    if (!formData.is_anonymous) {
+      if (!formData.reporter_name) {
+        newErrors.reporter_name = 'Nama harus diisi';
+      }
+      if (!formData.reporter_phone && !formData.reporter_email) {
+        newErrors.contact = 'Nomor HP atau email harus diisi';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const result = await api.createReport({
+        type: formData.type,
+        description: formData.description,
+        kecamatan: formData.kecamatan,
+        reporter_name: formData.is_anonymous ? undefined : formData.reporter_name,
+        reporter_phone: formData.is_anonymous ? undefined : formData.reporter_phone,
+        reporter_email: formData.is_anonymous ? undefined : formData.reporter_email,
+        is_anonymous: formData.is_anonymous,
+      });
+
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        setErrors({ submit: result.error || 'Gagal mengirim laporan' });
+      }
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      setErrors({ submit: 'Terjadi kesalahan. Silakan coba lagi.' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const removePhoto = (index: number) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitted(true);
-  };
-
-  if (isSubmitted) {
+  if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl p-8 text-center max-w-sm w-full shadow-lg">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-green-600" stroke="currentColor" strokeWidth={2}>
-              <polyline points="20,6 9,17 4,12" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Laporan Terkirim!</h2>
-          <p className="text-gray-500 mb-6">Terima kasih atas laporan Anda. Tim kami akan meninjaunya segera.</p>
-          <Link href="/" className="block w-full py-3 bg-primary text-white rounded-xl font-medium text-center">
-            Kembali ke Beranda
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (selectedCategory) {
-    const category = categories.find(c => c.id === selectedCategory);
-
-    return (
-      <div className="min-h-screen bg-gray-50 pb-20">
-        {/* Header */}
-        <div className="bg-white px-4 py-4 border-b border-gray-100 sticky top-0 z-10">
-          <div className="flex items-center gap-3">
-            <button onClick={() => setSelectedCategory(null)} className="p-2 hover:bg-gray-100 rounded-full">
-              <ChevronLeft size={24} className="text-gray-600" />
-            </button>
-            <h1 className="text-lg font-bold text-gray-900">Buat Laporan</h1>
+      <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 lg:pt-20">
+        <Header title="Lapor" />
+        <div className="pt-20 px-4 flex items-center justify-center min-h-[70vh]">
+          <div className="text-center max-w-sm">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <PhCheck size={40} className="text-green-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Laporan Terkirim!</h2>
+            <p className="text-gray-600 mb-6">
+              Terima kasih atas laporan Anda. Tim kami akan memverifikasi dan menindaklanjuti secepat mungkin.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  setSubmitted(false);
+                  setFormData({
+                    type: '',
+                    description: '',
+                    kecamatan: '',
+                    reporter_name: '',
+                    reporter_phone: '',
+                    reporter_email: '',
+                    is_anonymous: false,
+                  });
+                }}
+                className="w-full py-3 bg-primary text-white font-semibold rounded-xl"
+              >
+                Kirim Laporan Lain
+              </button>
+              <button
+                onClick={() => router.push('/')}
+                className="w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl"
+              >
+                Kembali ke Beranda
+              </button>
+            </div>
           </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="px-4 py-4 space-y-4">
-          {/* Category */}
-          <div className="bg-white rounded-xl p-4">
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Kategori</label>
-            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-3">
-              <span className="text-lg">{category?.icon}</span>
-              <span className="font-medium text-gray-900">{category?.name}</span>
-            </div>
-          </div>
-
-          {/* Location */}
-          <div className="bg-white rounded-xl p-4">
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Lokasi Kejadian</label>
-            <div className="relative">
-              <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Jl. Kemang Raya, Jakarta Selatan"
-                className="w-full pl-11 pr-4 py-3 bg-gray-50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="bg-white rounded-xl p-4">
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Deskripsi Kejadian</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Jelaskan kejadian yang ingin Anda laporkan..."
-              rows={4}
-              className="w-full px-4 py-3 bg-gray-50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-              required
-            />
-          </div>
-
-          {/* Photos */}
-          <div className="bg-white rounded-xl p-4">
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Foto (Opsional, maks 5)</label>
-            <div className="flex flex-wrap gap-2">
-              {photos.map((photo, index) => (
-                <div key={index} className="relative w-20 h-20 rounded-lg overflow-hidden">
-                  <img src={URL.createObjectURL(photo)} alt="" className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => removePhoto(index)}
-                    className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center"
-                  >
-                    <X size={14} className="text-white" />
-                  </button>
-                </div>
-              ))}
-              {photos.length < 5 && (
-                <label className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
-                  <Camera size={24} className="text-gray-400" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handlePhotoUpload}
-                    className="hidden"
-                  />
-                </label>
-              )}
-            </div>
-          </div>
-
-          {/* Identity */}
-          <div className="bg-white rounded-xl p-4">
-            <label className="text-sm font-medium text-gray-700 mb-3 block">Identitas Pelapor</label>
-
-            <label className="flex items-center gap-3 mb-4 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isAnonymous}
-                onChange={(e) => setIsAnonymous(e.target.checked)}
-                className="w-5 h-5 text-primary rounded focus:ring-primary"
-              />
-              <span className="text-sm text-gray-700">Kirim sebagai anonim</span>
-            </label>
-
-            {!isAnonymous && (
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Nama lengkap"
-                  className="w-full px-4 py-3 bg-gray-50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  required={!isAnonymous}
-                />
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Nomor WhatsApp (opsional)"
-                  className="w-full px-4 py-3 bg-gray-50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-          >
-            Kirim Laporan
-          </button>
-        </form>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Header */}
-      <div className="bg-white px-4 py-4 border-b border-gray-100">
-        <h1 className="text-xl font-bold text-gray-900 mb-1">Lapor Kejadian</h1>
-        <p className="text-sm text-gray-500">Laporkan kejadian di Jakarta Selatan</p>
-      </div>
+    <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 lg:pt-20">
+      <Header title="Lapor Kejadian" />
 
-      {/* Categories - Horizontal scroll */}
-      <div className="px-4 py-4">
-        <h2 className="text-sm font-medium text-gray-700 mb-3">Pilih Kategori Laporan</h2>
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className="flex flex-col items-center gap-2 shrink-0"
-            >
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-                {category.icon}
+      <div className="pt-14 lg:pt-4 px-4 py-6 max-w-2xl mx-auto">
+        {/* Info Banner */}
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6">
+          <div className="flex gap-3">
+            <PhWarning size={20} className="text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-blue-900 mb-1">Laporkan Kejadian</h3>
+              <p className="text-sm text-blue-700">
+                Bantu kami menjaga keamanan dan kenyamanan warga Jaksel dengan melaporkan kejadian yang Anda alami atau saksikan.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Category Selection */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
+              Kategori Laporan *
+            </label>
+            {loading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="h-16 bg-gray-200 rounded-xl animate-pulse" />
+                ))}
               </div>
-              <span className="text-xs font-medium text-gray-600 text-center">{category.name}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => {
+                      setFormData({ ...formData, type: cat.slug || cat.id });
+                      setErrors({ ...errors, type: '' });
+                    }}
+                    className={`p-3 rounded-xl border-2 transition-all text-left ${
+                      formData.type === (cat.slug || cat.id)
+                        ? 'border-primary bg-primary/5'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{categoryIcons[cat.slug || cat.id] || '📌'}</span>
+                      <span className="text-sm font-medium text-gray-700">{cat.name}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+            {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type}</p>}
+          </div>
 
-      {/* Info */}
-      <div className="px-4">
-        <div className="bg-blue-50 rounded-xl p-4">
-          <p className="text-sm text-blue-700">
-            <strong>Tips:</strong> Sertakan lokasi yang jelas dan foto pendukung untuk mempercepat proses penanganan.
-          </p>
-        </div>
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Deskripsi Kejadian *
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => {
+                setFormData({ ...formData, description: e.target.value });
+                setErrors({ ...errors, description: '' });
+              }}
+              placeholder="Jelaskan kejadian yang Anda laporkan secara detail..."
+              rows={5}
+              className={`w-full p-4 border-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none ${
+                errors.description ? 'border-red-300' : 'border-gray-200'
+              }`}
+            />
+            <div className="flex justify-between mt-1">
+              {errors.description ? (
+                <p className="text-red-500 text-sm">{errors.description}</p>
+              ) : <span />}
+              <span className="text-xs text-gray-400">{formData.description.length}/2000</span>
+            </div>
+          </div>
+
+          {/* Location */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Kecamatan *
+            </label>
+            <div className="relative">
+              <PhMapPin size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <select
+                value={formData.kecamatan}
+                onChange={(e) => {
+                  setFormData({ ...formData, kecamatan: e.target.value });
+                  setErrors({ ...errors, kecamatan: '' });
+                }}
+                className={`w-full pl-12 pr-10 py-3 border-2 rounded-xl text-sm focus:outline-none appearance-none ${
+                  errors.kecamatan ? 'border-red-300' : 'border-gray-200'
+                }`}
+              >
+                <option value="">Pilih Kecamatan</option>
+                {kecamatanList.map((kec) => (
+                  <option key={kec} value={kec}>{kec}</option>
+                ))}
+              </select>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">▼</span>
+            </div>
+            {errors.kecamatan && <p className="text-red-500 text-sm mt-1">{errors.kecamatan}</p>}
+          </div>
+
+          {/* Reporter Info */}
+          <div className="bg-gray-50 rounded-2xl p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-gray-900">Identitas Pelapor</h3>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.is_anonymous}
+                  onChange={(e) => setFormData({ ...formData, is_anonymous: e.target.checked })}
+                  className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span className="text-sm text-gray-600">Lapor anonim</span>
+              </label>
+            </div>
+
+            {!formData.is_anonymous && (
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Nama</label>
+                  <div className="relative">
+                    <PhUser size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={formData.reporter_name}
+                      onChange={(e) => {
+                        setFormData({ ...formData, reporter_name: e.target.value });
+                        setErrors({ ...errors, reporter_name: '', contact: '' });
+                      }}
+                      placeholder="Nama lengkap"
+                      className={`w-full pl-10 pr-4 py-2.5 border-2 rounded-xl text-sm focus:outline-none ${
+                        errors.reporter_name ? 'border-red-300' : 'border-gray-200'
+                      }`}
+                    />
+                  </div>
+                  {errors.reporter_name && <p className="text-red-500 text-sm mt-1">{errors.reporter_name}</p>}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">No. HP</label>
+                    <div className="relative">
+                      <PhPhone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="tel"
+                        value={formData.reporter_phone}
+                        onChange={(e) => setFormData({ ...formData, reporter_phone: e.target.value })}
+                        placeholder="08xxxxxxxxxx"
+                        className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">Email</label>
+                    <div className="relative">
+                      <PhEnvelope size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="email"
+                        value={formData.reporter_email}
+                        onChange={(e) => setFormData({ ...formData, reporter_email: e.target.value })}
+                        placeholder="email@email.com"
+                        className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-xl text-sm focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+                {errors.contact && <p className="text-red-500 text-sm">{errors.contact}</p>}
+              </div>
+            )}
+          </div>
+
+          {/* Submit Error */}
+          {errors.submit && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2">
+              <PhWarning size={18} className="text-red-600" />
+              <p className="text-sm text-red-700">{errors.submit}</p>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary-hover disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {submitting ? (
+              <>
+                <PhSpinner size={20} className="animate-spin" />
+                Mengirim...
+              </>
+            ) : (
+              <>
+                <PhCheck size={20} />
+                Kirim Laporan
+              </>
+            )}
+          </button>
+        </form>
       </div>
-    </div>
+    </main>
   );
 }

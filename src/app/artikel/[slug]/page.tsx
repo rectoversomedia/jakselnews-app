@@ -2,8 +2,14 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
+import {
+  PhClock,
+  PhMapPin,
+  PhBookmarkSimple,
+  PhCaretLeft,
+  PhCaretRight,
+} from "@phosphor-icons/react";
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
-import { Clock, MapPin, Bookmark, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PageProps {
   params: { slug: string };
@@ -61,7 +67,7 @@ export default async function ArticlePage({ params }: PageProps) {
           href="/artikel"
           className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-primary transition-colors"
         >
-          <ChevronLeft size={18} />
+          <PhCaretLeft size={18} />
           Kembali
         </Link>
       </div>
@@ -101,16 +107,16 @@ export default async function ArticlePage({ params }: PageProps) {
 
           <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm text-gray-500 pb-4 border-b border-gray-100">
             <span className="flex items-center gap-1">
-              <Clock size={14} />
+              <PhClock size={14} />
               {date}
             </span>
             <span className="flex items-center gap-1">
-              <MapPin size={14} />
+              <PhMapPin size={14} />
               Jakarta Selatan
             </span>
             <div className="flex-1" />
             <button className="flex items-center gap-1 hover:text-primary transition-colors">
-              <Bookmark size={16} />
+              <PhBookmarkSimple size={16} />
               Simpan
             </button>
           </div>

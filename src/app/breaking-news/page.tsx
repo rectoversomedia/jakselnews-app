@@ -3,7 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Heart } from 'lucide-react';
+import {
+  PhMapPin,
+  PhHeart,
+  PhChatCircle,
+  PhShareNetwork,
+  PhSpinner,
+} from '@phosphor-icons/react';
 import { SharePopup } from '@/components/SharePopup';
 import { CommentsSection } from '@/components/UGCPost';
 
@@ -276,7 +282,7 @@ function UGCCard({ report }: { report: UGCReport }) {
           <div className="flex-1">
             <p className="font-semibold text-gray-900">{report.authorName}</p>
             <p className="text-sm text-gray-500 flex items-center gap-1">
-              <MapPin size={14} />
+              <PhMapPin size={14} />
               {report.location} • {report.time}
             </p>
           </div>
@@ -303,19 +309,15 @@ function UGCCard({ report }: { report: UGCReport }) {
         {/* Actions */}
         <div className="flex items-center justify-around py-4 px-4 border-t border-gray-100">
           <button onClick={handleLike} className={`flex items-center gap-2 transition-colors ${isLiked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}>
-            <Heart size={22} fill={isLiked ? 'currentColor' : 'none'} />
+            <PhHeart size={22} weight={isLiked ? 'fill' : 'regular'} />
             <span className="text-sm font-medium">{likes}</span>
           </button>
           <button onClick={() => setIsCommentsOpen(true)} className="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
-            </svg>
+            <PhChatCircle size={22} />
             <span className="text-sm font-medium">{commentCount}</span>
           </button>
           <button onClick={() => setIsShareOpen(true)} className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
-            </svg>
+            <PhShareNetwork size={22} />
             <span className="text-sm font-medium">{report.shares}</span>
           </button>
         </div>
@@ -377,10 +379,7 @@ export default function BreakingNewsPage() {
           <div ref={loaderRef} className="py-8 text-center">
             {isLoading ? (
               <div className="flex items-center justify-center gap-2 text-gray-500">
-                <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
+                <PhSpinner size={20} className="animate-spin" />
                 <span className="text-sm">Memuat lebih banyak...</span>
               </div>
             ) : (

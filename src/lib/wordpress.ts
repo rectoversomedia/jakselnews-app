@@ -1,213 +1,282 @@
-import { WPPost, WPCategory, WPTag, WPMedia, WPAuthor, WPTerm, WPPage } from '@/types/wordpress';
+// WordPress API Client for Jakselnews
 
-// Configure your WordPress site URL
 const WP_API_BASE = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
 
-class WordPressAPI {
+// Types
+export interface WPPost {
+  id: number;
+  slug: string;
+  title: { rendered: string };
+  content: { rendered: string };
+  excerpt: { rendered: string };
+  date: string;
+  modified: string;
+  featured_media: number;
+  categories: number[];
+  tags: number[];
+  _embedded?: {
+    'wp:featuredmedia'?: WPMedia[];
+    'wp:term'?: WPTerm[][];
+    author?: WPAuthor[];
+  };
+}
+
+export interface WPMedia {
+  id: number;
+  source_url: string;
+  alt_text: string;
+  media_details: {
+    sizes: {
+      thumbnail?: { source_url: string };
+      medium?: { source_url: string };
+      medium_large?: { source_url: string };
+      large?: { source_url: string };
+      full?: { source_url: string };
+    };
+  };
+}
+
+export interface WPCategory {
+  id: number;
+  name: string;
+  slug: string;
+  count: number;
+}
+
+export interface WPTag {
+  id: number;
+  name: string;
+  slug: string;
+  count: number;
+}
+
+export interface WPAuthor {
+  id: number;
+  name: string;
+  slug: string;
+  avatar_urls?: Record<string, string>;
+}
+
+export interface WPTerm {
+  id: number;
+  name: string;
+  slug: string;
+  taxonomy: string;
+}
+
+export interface WordPressResponse<T> {
+  success: boolean;
+  data: T;
+  pagination?: {
+    page: number;
+    perPage: number;
+    totalPages: number;
+    totalPosts: number;
+  };
+  error?: string;
+}
+
+class WordPressClient {
   private baseUrl: string;
+  private cache: Map<string, { data: any; timestamp: number }>;
+  private cacheDuration: number;
 
   constructor(baseUrl: string = WP_API_BASE) {
     this.baseUrl = baseUrl;
+    this.cache = new Map();
+    this.cacheDuration = 5 * 60 * 1000; // 5 minutes
   }
 
-  private async fetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
-    const url = new URL(`${this.baseUrl}${endpoint}`);
-    Object.entries(params).forEach(([key, value]) => {
-      url.searchParams.append(key, value);
-    });
+  private getFromCache<T>(key: string): T | null {
+    if (typeof window === 'undefined') return null; // No cache on server
 
-    const response = await fetch(url.toString(), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      next: {
-        revalidate: 60, // Cache for 60 seconds (ISR)
-      },
-    });
+    const cached = this.cache.get(key);
+    if (cached && Date.now() - cached.timestamp < this.cacheDuration) {
+      return cached.data as T;
+    }
+    return null;
+  }
 
-    if (!response.ok) {
-      throw new Error(`WP API Error: ${response.status} ${response.statusText}`);
+  private setCache(key: string, data: any): void {
+    if (typeof window === 'undefined') return;
+    this.cache.set(key, { data, timestamp: Date.now() });
+  }
+
+  private async fetch<T>(endpoint: string, params?: Record<string, string>): Promise<WordPressResponse<T>> {
+    const cacheKey = `${endpoint}?${new URLSearchParams(params)}`;
+
+    // Try cache first (client-side only)
+    const cached = this.getFromCache<WordPressResponse<T>>(cacheKey);
+    if (cached) {
+      return cached;
     }
 
-    return response.json();
+    try {
+      const url = new URL(`${this.baseUrl}${endpoint}`);
+      if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+          url.searchParams.append(key, value);
+        });
+      }
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          'Accept': 'application/json',
+        },
+        next: { revalidate: 60 }, // ISR for Next.js
+      });
+
+      if (!response.ok) {
+        return {
+          success: false,
+          data: [] as T,
+          error: `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      const data = await response.json();
+      const pagination = {
+        page: parseInt(response.headers.get('X-WP-TotalPages') || '1'),
+        perPage: parseInt(new URL(url.toString()).searchParams.get('per_page') || '10'),
+        totalPages: parseInt(response.headers.get('X-WP-TotalPages') || '1'),
+        totalPosts: parseInt(response.headers.get('X-WP-Total') || '0'),
+      };
+
+      const result: WordPressResponse<T> = {
+        success: true,
+        data,
+        pagination,
+      };
+
+      // Cache the result
+      this.setCache(cacheKey, result);
+
+      return result;
+    } catch (error: any) {
+      console.error('WordPress API Error:', error);
+      return {
+        success: false,
+        data: [] as T,
+        error: error.message || 'Failed to fetch from WordPress',
+      };
+    }
   }
 
-  // ============ POSTS ============
-
-  /**
-   * Get all posts with pagination
-   */
+  // Get posts with pagination
   async getPosts(options: {
     page?: number;
     perPage?: number;
-    categories?: number[];
-    tags?: number[];
+    categories?: number | number[];
+    tags?: number | number[];
     search?: string;
     orderBy?: 'date' | 'title' | 'modified';
     order?: 'asc' | 'desc';
-  } = {}): Promise<{ posts: WPPost[]; totalPages: number; totalPosts: number }> {
-    const {
-      page = 1,
-      perPage = 10,
-      categories,
-      tags,
-      search,
-      orderBy = 'date',
-      order = 'desc',
-    } = options;
-
+  } = {}): Promise<WordPressResponse<WPPost[]>> {
     const params: Record<string, string> = {
-      page: page.toString(),
-      per_page: perPage.toString(),
-      orderby: orderBy,
-      order,
-      _embed: '1', // Include featured media, terms, author
+      page: String(options.page || 1),
+      per_page: String(options.perPage || 10),
+      _embed: '1',
+      status: 'publish',
     };
 
-    if (categories?.length) {
-      params.categories = categories.join(',');
+    if (options.categories) {
+      params.categories = String(options.categories);
     }
-    if (tags?.length) {
-      params.tags = tags.join(',');
+    if (options.tags) {
+      params.tags = String(options.tags);
     }
-    if (search) {
-      params.search = search;
+    if (options.search) {
+      params.search = options.search;
+    }
+    if (options.orderBy) {
+      params.orderby = options.orderBy;
+    }
+    if (options.order) {
+      params.order = options.order;
     }
 
-    const posts = await this.fetch<WPPost[]>('/posts', params);
-    const totalPages = parseInt((posts as unknown as { headers: { get: (key: string) => string } }).headers?.get('X-WP-TotalPages') || '1');
-    const totalPosts = parseInt((posts as unknown as { headers: { get: (key: string) => string } }).headers?.get('X-WP-Total') || '0');
-
-    return { posts, totalPages, totalPosts };
+    return this.fetch<WPPost[]>('/posts', params);
   }
 
-  /**
-   * Get a single post by slug
-   */
-  async getPostBySlug(slug: string): Promise<WPPost | null> {
-    try {
-      const posts = await this.fetch<WPPost[]>('/posts', {
-        slug,
-        _embed: '1',
-      });
-      return posts[0] || null;
-    } catch {
-      return null;
-    }
+  // Get single post by slug
+  async getPost(slug: string): Promise<WordPressResponse<WPPost | null>> {
+    const result = await this.fetch<WPPost[]>('/posts', {
+      slug,
+      _embed: '1',
+      status: 'publish',
+    });
+
+    return {
+      success: result.success,
+      data: result.data[0] || null,
+      pagination: result.pagination,
+      error: result.error,
+    };
   }
 
-  /**
-   * Get a single post by ID
-   */
-  async getPostById(id: number): Promise<WPPost | null> {
-    try {
-      return await this.fetch<WPPost>(`/posts/${id}`, {
-        _embed: '1',
-      });
-    } catch {
-      return null;
-    }
+  // Get categories
+  async getCategories(): Promise<WordPressResponse<WPCategory[]>> {
+    return this.fetch<WPCategory[]>('/categories', {
+      per_page: '100',
+      hide_empty: 'true',
+    });
   }
 
-  /**
-   * Get latest posts (for homepage)
-   */
-  async getLatestPosts(limit: number = 10): Promise<{ posts: WPPost[]; totalPages: number; totalPosts: number }> {
+  // Get tags
+  async getTags(): Promise<WordPressResponse<WPTag[]>> {
+    return this.fetch<WPTag[]>('/tags', {
+      per_page: '100',
+      hide_empty: 'true',
+    });
+  }
+
+  // Search posts
+  async search(query: string, page: number = 1): Promise<WordPressResponse<WPPost[]>> {
+    return this.getPosts({ search: query, page, perPage: 10 });
+  }
+
+  // Get latest posts (for homepage)
+  async getLatest(limit: number = 10): Promise<WordPressResponse<WPPost[]>> {
     return this.getPosts({ perPage: limit });
   }
 
-  // ============ CATEGORIES ============
-
-  /**
-   * Get all categories
-   */
-  async getCategories(): Promise<WPCategory[]> {
-    return this.fetch<WPCategory[]>('/categories', { per_page: '100' });
+  // Get breaking news (latest 5)
+  async getBreakingNews(): Promise<WordPressResponse<WPPost[]>> {
+    return this.getPosts({ perPage: 5 });
   }
 
-  /**
-   * Get a single category by slug
-   */
-  async getCategoryBySlug(slug: string): Promise<WPCategory | null> {
-    try {
-      const categories = await this.fetch<WPCategory[]>('/categories', { slug });
-      return categories[0] || null;
-    } catch {
-      return null;
+  // Clear cache
+  clearCache(): void {
+    this.cache.clear();
+    if (typeof window !== 'undefined') {
+      // Also clear localStorage if used
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('wp_')) {
+          localStorage.removeItem(key);
+        }
+      });
     }
-  }
-
-  // ============ TAGS ============
-
-  /**
-   * Get all tags
-   */
-  async getTags(): Promise<WPTag[]> {
-    return this.fetch<WPTag[]>('/tags', { per_page: '100' });
-  }
-
-  // ============ MEDIA ============
-
-  /**
-   * Get media by ID
-   */
-  async getMedia(id: number): Promise<WPMedia | null> {
-    try {
-      return await this.fetch<WPMedia>(`/media/${id}`);
-    } catch {
-      return null;
-    }
-  }
-
-  // ============ PAGES ============
-
-  /**
-   * Get a page by slug
-   */
-  async getPageBySlug(slug: string): Promise<WPPage | null> {
-    try {
-      const pages = await this.fetch<WPPage[]>('/pages', { slug });
-      return pages[0] || null;
-    } catch {
-      return null;
-    }
-  }
-
-  // ============ SEARCH ============
-
-  /**
-   * Search posts
-   */
-  async searchPosts(query: string, limit: number = 10): Promise<WPPost[]> {
-    const { posts } = await this.getPosts({ search: query, perPage: limit });
-    return posts;
   }
 }
 
-// Export singleton instance
-export const wpAPI = new WordPressAPI();
+// Export singleton
+export const wp = new WordPressClient();
 
-// Export class for custom instances
-export { WordPressAPI };
-
-// Helper function to extract featured image from post
+// Helper functions
 export function getFeaturedImage(post: WPPost, size: 'thumbnail' | 'medium' | 'medium_large' | 'large' | 'full' = 'medium_large'): string | null {
   const media = post._embedded?.['wp:featuredmedia']?.[0];
   if (!media) return null;
   return media.media_details?.sizes?.[size]?.source_url || media.source_url || null;
 }
 
-// Helper function to get category from post
 export function getPostCategory(post: WPPost): WPTerm | null {
   return post._embedded?.['wp:term']?.[0]?.[0] || null;
 }
 
-// Helper function to get author from post
 export function getPostAuthor(post: WPPost): WPAuthor | null {
   return post._embedded?.author?.[0] || null;
 }
 
-// Helper function to format date
 export function formatPostDate(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();
@@ -224,19 +293,19 @@ export function formatPostDate(dateString: string): string {
   } else {
     return date.toLocaleDateString('id-ID', {
       day: 'numeric',
-      month: 'long',
+      month: 'short',
       year: 'numeric',
     });
   }
 }
 
-// Helper function to strip HTML tags
 export function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').trim();
 }
 
-// Helper function to truncate text
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength).trim() + '...';
 }
+
+export { WordPressClient };

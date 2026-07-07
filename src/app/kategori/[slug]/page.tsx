@@ -2,7 +2,12 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { wpAPI, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from '@/lib/wordpress';
 import Link from 'next/link';
-import { Clock, MapPin, ChevronRight, FileText } from 'lucide-react';
+import {
+  PhClock,
+  PhMapPin,
+  PhCaretRight,
+  PhFileText,
+} from '@phosphor-icons/react';
 
 interface PageProps {
   params: { slug: string };
@@ -54,11 +59,11 @@ function CategoryCard({ post }: { post: any }) {
         <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2 text-sm md:text-base">{title}</h3>
         <div className="flex items-center justify-between text-[10px] md:text-xs text-gray-500">
           <span className="flex items-center gap-1">
-            <MapPin size={12} className="md:size-3.5" />
+            <PhMapPin size={12} className="md:size-3.5" />
             Jakarta Selatan
           </span>
           <span className="flex items-center gap-1">
-            <Clock size={12} className="md:size-3.5" />
+            <PhClock size={12} className="md:size-3.5" />
             {date}
           </span>
         </div>
@@ -88,7 +93,7 @@ export default async function KategoriPage({ params }: PageProps) {
         <div className="container py-6 md:py-8">
           <div className="flex items-center gap-2 text-sm text-white/80 mb-2">
             <Link href="/" className="hover:text-white transition-colors">Beranda</Link>
-            <ChevronRight size={14} />
+            <PhCaretRight size={14} />
             <span>Kategori</span>
           </div>
           <div className="flex items-center gap-3">
@@ -111,13 +116,13 @@ export default async function KategoriPage({ params }: PageProps) {
           </div>
         ) : (
           <div className="text-center py-12">
-            <FileText size={48} className="mx-auto text-gray-300 mb-3" />
+            <PhFileText size={48} className="mx-auto text-gray-300 mb-3" />
             <p className="text-gray-500">Tidak ada berita di kategori ini</p>
             <Link
               href="/artikel"
               className="inline-flex items-center gap-1 text-primary text-sm font-medium mt-3 hover:underline"
             >
-              Lihat semua berita <ChevronRight size={14} />
+              Lihat semua berita <PhCaretRight size={14} />
             </Link>
           </div>
         )}

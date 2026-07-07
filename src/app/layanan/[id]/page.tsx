@@ -1,5 +1,12 @@
 import Link from 'next/link';
-import { ChevronLeft, ExternalLink, Phone, MapPin, Clock, Info } from 'lucide-react';
+import {
+  PhCaretLeft,
+  PhArrowSquareOut,
+  PhPhone,
+  PhMapPin,
+  PhClock,
+  PhInfo,
+} from '@phosphor-icons/react';
 
 // Layanan data - shared with parent page
 const layananData: Record<number, {
@@ -139,7 +146,7 @@ export default function LayananDetailPage({ params }: PageProps) {
       <div className="bg-white px-4 py-4 border-b border-gray-100 sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <Link href="/layanan" className="p-2 hover:bg-gray-100 rounded-full">
-            <ChevronLeft size={24} className="text-gray-600" />
+            <PhCaretLeft size={24} className="text-gray-600" />
           </Link>
           <h1 className="text-lg font-bold text-gray-900">{layanan.title}</h1>
         </div>
@@ -161,7 +168,7 @@ export default function LayananDetailPage({ params }: PageProps) {
         {layanan.description && (
           <div className="bg-white rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <Info size={20} className="text-gray-400" />
+              <PhInfo size={20} className="text-gray-400" />
               <h3 className="font-semibold text-gray-900">Deskripsi</h3>
             </div>
             <p className="text-gray-600 leading-relaxed">{layanan.description}</p>
@@ -172,7 +179,7 @@ export default function LayananDetailPage({ params }: PageProps) {
         {layanan.requirements && layanan.requirements.length > 0 && (
           <div className="bg-white rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <MapPin size={20} className="text-gray-400" />
+              <PhMapPin size={20} className="text-gray-400" />
               <h3 className="font-semibold text-gray-900">Persyaratan</h3>
             </div>
             <ul className="space-y-2">
@@ -190,7 +197,7 @@ export default function LayananDetailPage({ params }: PageProps) {
         {layanan.procedure && layanan.procedure.length > 0 && (
           <div className="bg-white rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <Clock size={20} className="text-gray-400" />
+              <PhClock size={20} className="text-gray-400" />
               <h3 className="font-semibold text-gray-900">Tata Cara</h3>
             </div>
             <ol className="space-y-3">
@@ -210,7 +217,7 @@ export default function LayananDetailPage({ params }: PageProps) {
         {layanan.contact && layanan.contact.length > 0 && (
           <div className="bg-white rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <Phone size={20} className="text-gray-400" />
+              <PhPhone size={20} className="text-gray-400" />
               <h3 className="font-semibold text-gray-900">Kontak</h3>
             </div>
             <div className="space-y-3">
@@ -236,7 +243,7 @@ export default function LayananDetailPage({ params }: PageProps) {
                 className="bg-white rounded-2xl p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <span className="font-medium text-gray-900">{link.name}</span>
-                <ExternalLink size={20} className="text-gray-400" />
+                <PhArrowSquareOut size={20} className="text-gray-400" />
               </a>
             ))}
           </div>
