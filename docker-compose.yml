@@ -1,0 +1,87 @@
+# ===========================================
+# Jakselnews Docker Compose Configuration
+# ===========================================
+
+version: '3.8'
+
+services:
+  # ===========================================
+  # API Backend Service
+  # ===========================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jakselnews-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-7d}
+      - WORDPRESS_URL=${WORDPRESS_URL:-https://jakselnews.com}
+      - WORDPRESS_API_URL=${WORDPRESS_API_URL:-https://jakselnews.com/wp-json/wp/v2}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - RATE_LIMIT_PUBLIC_WINDOW_MS=${RATE_LIMIT_PUBLIC_WINDOW_MS:-60000}
+      - RATE_LIMIT_PUBLIC_MAX=${RATE_LIMIT_PUBLIC_MAX:-100}
+      - RATE_LIMIT_AUTH_WINDOW_MS=${RATE_LIMIT_AUTH_WINDOW_MS:-900000}
+      - RATE_LIMIT_AUTH_MAX=${RATE_LIMIT_AUTH_MAX:-5}
+      - RATE_LIMIT_REPORTS_WINDOW_MS=${RATE_LIMIT_REPORTS_WINDOW_MS:-60000}
+      - RATE_LIMIT_REPORTS_MAX=${RATE_LIMIT_REPORTS_MAX:-10}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    env_file:
+      - .env.production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - jakselnews-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================
+  # Nginx Reverse Proxy (Optional - for production)
+  # ===========================================
+  nginx:
+    image: nginx:alpine
+    container_name: jakselnews-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+    networks:
+      - jakselnews-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ===========================================
+# Networks
+# ===========================================
+networks:
+  jakselnews-network:
+    driver: bridge
+
+# ===========================================
+# Volumes
+# ===========================================
+volumes:
+  nginx-ssl:

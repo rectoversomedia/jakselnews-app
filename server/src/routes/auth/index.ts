@@ -1,16 +1,15 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { supabase } from '../config/supabase';
+import { supabase, supabaseAdmin } from '../config/supabase';
 import { config } from '../config';
 import { ApiError } from '../middleware/errorHandler';
 import { validateRequest } from '../middleware/validate';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 
 const router = Router();
 
-// Register new admin/user (for initial setup)
+// Register new user
 router.post(
   '/register',
   [
@@ -24,7 +23,7 @@ router.post(
     try {
       const { email, password, name, phone } = req.body;
 
-      // Check if user already exists
+      // Check if user already exists in profiles
       const { data: existing } = await supabase
         .from('profiles')
         .select('id')
@@ -35,22 +34,37 @@ router.post(
         throw ApiError.badRequest('Email sudah terdaftar');
       }
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 12);
-
-      // Create user in auth.users
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Create user in Supabase Auth
+      // IMPORTANT: Supabase Auth will hash the password automatically
+      // DO NOT hash password before sending to Supabase Auth
+      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email,
-        password: hashedPassword,
+        password, // Send plain password - Supabase handles hashing
         email_confirm: true,
         user_metadata: {
           name,
-          phone,
+          phone: phone || null,
         },
       });
 
       if (authError) {
-        throw ApiError.badRequest('Gagal membuat akun');
+        console.error('Supabase Auth error:', authError);
+        throw ApiError.badRequest(authError.message === 'User already registered'
+          ? 'Email sudah terdaftar'
+          : 'Gagal membuat akun');
+      }
+
+      // Update profile with additional info
+      if (authData.user) {
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            name,
+            phone: phone || null,
+            email: email,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', authData.user.id);
       }
 
       res.status(201).json({
@@ -80,7 +94,8 @@ router.post(
     try {
       const { email, password } = req.body;
 
-      // Get user from auth
+      // Authenticate with Supabase
+      // Supabase handles password verification internally
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -90,14 +105,18 @@ router.post(
         throw ApiError.unauthorized('Email atau password salah');
       }
 
-      // Get user profile
+      // Get user profile for role
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', authData.user.id)
         .single();
 
-      // Create JWT token
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Profile fetch error:', profileError);
+      }
+
+      // Create JWT token for API authentication
       const token = jwt.sign(
         {
           id: authData.user.id,
@@ -118,6 +137,7 @@ router.post(
             email: authData.user.email,
             name: profile?.name || authData.user.user_metadata?.name,
             role: profile?.role || 'user',
+            avatar_url: profile?.avatar_url || null,
           },
         },
       });
@@ -160,25 +180,31 @@ router.put(
   [
     body('name').optional().isString(),
     body('phone').optional().isMobilePhone('id-ID').withMessage('Nomor telepon tidak valid'),
+    body('avatar_url').optional().isURL().withMessage('URL avatar tidak valid'),
   ],
   validateRequest,
   async (req: AuthRequest, res) => {
     try {
       const userId = req.user!.id;
-      const { name, phone } = req.body;
+      const { name, phone, avatar_url } = req.body;
+
+      const updateData: Record<string, any> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (name !== undefined) updateData.name = name;
+      if (phone !== undefined) updateData.phone = phone;
+      if (avatar_url !== undefined) updateData.avatar_url = avatar_url;
 
       const { data, error } = await supabase
         .from('profiles')
-        .update({
-          name,
-          phone,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', userId)
         .select()
         .single();
 
       if (error) {
+        console.error('Update profile error:', error);
         throw ApiError.internal('Gagal mengupdate profil');
       }
 
@@ -194,7 +220,63 @@ router.put(
   }
 );
 
-// Logout (client-side token removal, but we can invalidate if needed)
+// Change password
+router.post(
+  '/change-password',
+  authenticate,
+  [
+    body('currentPassword').isString().notEmpty().withMessage('Password saat ini harus diisi'),
+    body('newPassword').isLength({ min: 6 }).withMessage('Password baru minimal 6 karakter'),
+  ],
+  validateRequest,
+  async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const { currentPassword, newPassword } = req.body;
+
+      // Get user email
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', userId)
+        .single();
+
+      if (!profile?.email) {
+        throw ApiError.notFound('Email tidak ditemukan');
+      }
+
+      // Re-authenticate to verify current password
+      const { error: reauthError } = await supabase.auth.signInWithPassword({
+        email: profile.email,
+        password: currentPassword,
+      });
+
+      if (reauthError) {
+        throw ApiError.unauthorized('Password saat ini salah');
+      }
+
+      // Update password via Supabase Admin (bypass MFA if any)
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+        userId,
+        { password: newPassword }
+      );
+
+      if (updateError) {
+        throw ApiError.internal('Gagal mengubah password');
+      }
+
+      res.json({
+        success: true,
+        message: 'Password berhasil diubah',
+      });
+    } catch (error) {
+      console.error('Change password error:', error);
+      throw error;
+    }
+  }
+);
+
+// Logout (client-side token removal)
 router.post('/logout', authenticate, (req, res) => {
   res.json({
     success: true,
