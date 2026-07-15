@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { supabase, supabaseAdmin } from '../config/supabase';
+import { supabase, supabaseAdmin } from '../../config/supabase';
 import { config } from '../config';
 import { ApiError } from '../middleware/errorHandler';
 import { validateRequest } from '../middleware/validate';
