@@ -2,8 +2,8 @@ import sanitizeHtml from 'sanitize-html';
 import { Router } from 'express';
 import multer from 'multer';
 import { supabaseAdmin } from '../../config/supabase';
-import { ApiError } from '../middleware/errorHandler';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { ApiError } from '../../middleware/errorHandler';
+import { authenticate, AuthRequest } from '../../middleware/auth';
 
 // ===========================================
 // SANITIZATION UTILITIES

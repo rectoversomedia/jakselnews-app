@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { body, param, query } from 'express-validator';
 import { supabase } from '../../config/supabase';
-import { ApiError } from '../middleware/errorHandler';
-import { authenticate, optionalAuth, AuthRequest } from '../middleware/auth';
-import { validateRequest } from '../middleware/validate';
-import { autoCategorize, reportStatuses } from '../utils/categories';
+import { ApiError } from '../../middleware/errorHandler';
+import { authenticate, optionalAuth, AuthRequest } from '../../middleware/auth';
+import { validateRequest } from '../../middleware/validate';
+import { autoCategorize, reportStatuses } from '../../utils/categories';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = Router();

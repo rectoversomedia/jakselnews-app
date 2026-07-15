@@ -7,10 +7,11 @@ import {
   Heart,
   ChatCircle,
   Share,
-  Funnel,
   Newspaper,
   PaperPlaneRight,
   X,
+  Image as ImageIcon,
+  VideoCamera,
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
@@ -26,114 +27,130 @@ interface Comment {
 interface UGCReport {
   id: number;
   authorName: string;
+  authorInitial: string;
   location: string;
   time: string;
   content: string;
+  imageUrl?: string;
   likes: number;
   comments: number;
   shares: number;
   category: string;
-  gradient: string;
+  categoryName: string;
 }
 
 const mockPosts: UGCReport[] = [
   {
     id: 1,
     authorName: 'Warga Kemang',
+    authorInitial: 'W',
     location: 'Kemang',
     time: '10 menit lalu',
-    content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
+    content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada!',
+    imageUrl: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&q=80',
     likes: 24,
     comments: 8,
     shares: 5,
     category: 'banjir',
-    gradient: 'from-blue-500 to-cyan-400',
+    categoryName: 'Banjir',
   },
   {
     id: 2,
     authorName: 'Warga Blok M',
+    authorInitial: 'W',
     location: 'Blok M',
     time: '25 menit lalu',
-    content: 'Kemacetan parah di Jl. Melawai arah flyover. Estimated delay 30 menit. 🚗💨',
+    content: 'Kemacetan parah di Jl. Melawai arah flyover. Estimated delay 30 menit.',
+    imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80',
     likes: 18,
     comments: 12,
     shares: 3,
     category: 'lalu-lintas',
-    gradient: 'from-amber-500 to-orange-400',
+    categoryName: 'Lalu Lintas',
   },
   {
     id: 3,
     authorName: 'Warga Cilandak',
+    authorInitial: 'W',
     location: 'Cilandak',
     time: '45 menit lalu',
-    content: 'Listrik padam di kawasan TB Simatupang. PLN sedang melakukan perbaikan. ⚡',
+    content: 'Listrik padam di kawasan TB Simatupang. PLN sedang melakukan perbaikan.',
+    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80',
     likes: 15,
     comments: 6,
     shares: 2,
     category: 'penerangan',
-    gradient: 'from-yellow-400 to-amber-400',
+    categoryName: 'Penerangan',
   },
   {
     id: 4,
     authorName: 'Warga Kebayoran',
+    authorInitial: 'W',
     location: 'Kebayoran',
     time: '1 jam lalu',
-    content: 'Pohon tumbang di Jl. Trunojoyo. Arvodi dan tim kebersihan sudah di lokasi. 🌳',
+    content: 'Pohon tumbang di Jl. Trunojoyo. Arvodi dan tim kebersihan sudah di lokasi.',
+    imageUrl: 'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=800&q=80',
     likes: 32,
     comments: 15,
     shares: 8,
     category: 'lingkungan',
-    gradient: 'from-emerald-500 to-teal-400',
+    categoryName: 'Lingkungan',
   },
   {
     id: 5,
     authorName: 'Warga Pasar Minggu',
+    authorInitial: 'W',
     location: 'Pasar Minggu',
     time: '2 jam lalu',
-    content: 'Jalan berlubang di Jl. RM. Soedirdja. Mohon perhatian khusus untuk pengendara motor. 🏍️',
+    content: 'Jalan berlubang di Jl. RM. Soedirdja. Mohon perhatian khusus untuk pengendara motor.',
+    imageUrl: 'https://images.unsplash.com/photo-1505521377774-103a4d157444?w=800&q=80',
     likes: 20,
     comments: 9,
     shares: 4,
     category: 'jalan-rusak',
-    gradient: 'from-orange-500 to-amber-400',
+    categoryName: 'Jalan Rusak',
   },
   {
     id: 6,
     authorName: 'Warga Tebet',
+    authorInitial: 'W',
     location: 'Tebet',
     time: '3 jam lalu',
-    content: 'Ada aksi demonstrasi di Jl. Tebet Raya. Arus lalu lintas dialihkan. ⚠️',
+    content: 'Ada aksi demonstrasi di Jl. Tebet Raya. Arus lalu lintas dialihkan.',
+    imageUrl: 'https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?w=800&q=80',
     likes: 45,
     comments: 22,
     shares: 12,
     category: 'kemacetan',
-    gradient: 'from-red-500 to-rose-400',
+    categoryName: 'Kemacetan',
   },
 ];
 
 const categories = [
-  { id: 'semua', name: 'Semua', gradient: 'from-gray-500 to-gray-400' },
-  { id: 'banjir', name: 'Banjir', gradient: 'from-blue-500 to-cyan-400' },
-  { id: 'lalu-lintas', name: 'Lalu Lintas', gradient: 'from-amber-500 to-orange-400' },
-  { id: 'penerangan', name: 'Penerangan', gradient: 'from-yellow-400 to-amber-400' },
-  { id: 'lingkungan', name: 'Lingkungan', gradient: 'from-emerald-500 to-teal-400' },
-  { id: 'kemacetan', name: 'Kemacetan', gradient: 'from-red-500 to-rose-400' },
+  { id: 'semua', name: 'Semua' },
+  { id: 'banjir', name: 'Banjir' },
+  { id: 'lalu-lintas', name: 'Lalu Lintas' },
+  { id: 'penerangan', name: 'Penerangan' },
+  { id: 'lingkungan', name: 'Lingkungan' },
+  { id: 'kemacetan', name: 'Kemacetan' },
 ];
 
 // Comments Modal Component
 function CommentsModal({
   isOpen,
   onClose,
-  commentsCount,
-  postId
+  post,
+  onAddComment,
+  onAddReply,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  commentsCount: number;
-  postId: number;
+  post: UGCReport;
+  onAddComment: (postId: number, text: string) => void;
+  onAddReply: (postId: number, parentId: number, text: string) => void;
 }) {
   const [comments, setComments] = useState<Comment[]>([
-    { id: 1, author: 'Warga Blok M', text: 'Tetap waspada ya! 🙏', time: '5 menit lalu', replies: [
+    { id: 1, author: 'Warga Blok M', text: 'Tetap waspada ya!', time: '5 menit lalu', replies: [
       { id: 11, author: 'Warga Kemang', text: 'Iya makasih infonya!', time: '3 menit lalu' }
     ]},
     { id: 2, author: 'Warga Ragunan', text: 'Semoga cepat surut ya', time: '8 menit lalu', replies: [] },
@@ -146,15 +163,18 @@ function CommentsModal({
     if (!newComment.trim()) return;
     const comment: Comment = { id: Date.now(), author: 'Warga Jaksel', text: newComment, time: 'Baru saja' };
     setComments([...comments, comment]);
+    onAddComment(post.id, newComment);
     setNewComment('');
   };
 
   const handleReply = (parentId: number) => {
     if (!replyText.trim()) return;
     const reply: Comment = { id: Date.now(), author: 'Warga Jaksel', text: replyText, time: 'Baru saja' };
-    setComments(comments.map(c =>
+    const updatedComments = comments.map(c =>
       c.id === parentId ? { ...c, replies: [...(c.replies || []), reply] } : c
-    ));
+    );
+    setComments(updatedComments);
+    onAddReply(post.id, parentId, replyText);
     setReplyTo(null);
     setReplyText('');
   };
@@ -176,8 +196,8 @@ function CommentsModal({
           {comments.map((comment) => (
             <div key={comment.id} className="space-y-2">
               <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shrink-0">
-                  <span className="text-xs font-bold text-white">{comment.author.charAt(0)}</span>
+                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                  <span className="text-xs font-bold text-gray-600">{comment.author.charAt(0)}</span>
                 </div>
                 <div className="flex-1">
                   <div className="bg-gray-100 rounded-2xl rounded-tl-none p-3">
@@ -188,7 +208,7 @@ function CommentsModal({
                     <span className="text-xs text-gray-400">{comment.time}</span>
                     <button
                       onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-                      className="text-xs text-gray-500 hover:text-red-500"
+                      className="text-xs text-gray-500 hover:text-red-500 font-medium"
                     >
                       Balas
                     </button>
@@ -198,7 +218,7 @@ function CommentsModal({
 
               {comment.replies?.map((reply) => (
                 <div key={reply.id} className="flex gap-3 ml-8">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
                     <span className="text-xs font-bold text-gray-500">{reply.author.charAt(0)}</span>
                   </div>
                   <div className="flex-1">
@@ -257,13 +277,15 @@ function ShareModal({
   isOpen,
   onClose,
   url,
-  title
+  title,
 }: {
   isOpen: boolean;
   onClose: () => void;
   url: string;
   title: string;
 }) {
+  const [copied, setCopied] = useState(false);
+
   if (!isOpen) return null;
 
   const shareLinks = [
@@ -279,7 +301,7 @@ function ShareModal({
     },
     {
       name: 'Twitter',
-      color: 'bg-slate-800',
+      color: 'bg-black',
       icon: (
         <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -311,7 +333,11 @@ function ShareModal({
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(url);
-    onClose();
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+      onClose();
+    }, 1500);
   };
 
   return (
@@ -346,7 +372,7 @@ function ShareModal({
             className="w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"
           >
             <Share size={18} />
-            Salin Link
+            {copied ? 'Tersalin!' : 'Salin Link'}
           </button>
         </div>
       </div>
@@ -355,51 +381,92 @@ function ShareModal({
 }
 
 // Post Card Component
-function PostCard({ post }: { post: UGCReport }) {
-  const [likes, setLikes] = useState(post.likes);
+function PostCard({ post, onUpdatePost }: { post: UGCReport; onUpdatePost: (postId: number, updates: Partial<UGCReport>) => void }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [likeCount, setLikeCount] = useState(post.likes);
+  const [commentCount, setCommentCount] = useState(post.comments);
+  const [shareCount, setShareCount] = useState(post.shares);
 
   const handleLike = () => {
-    setLikes(prev => isLiked ? prev - 1 : prev + 1);
+    if (isLiked) {
+      setLikeCount(likeCount - 1);
+    } else {
+      setLikeCount(likeCount + 1);
+    }
     setIsLiked(!isLiked);
+    onUpdatePost(post.id, { likes: isLiked ? likeCount - 1 : likeCount + 1 });
   };
 
-  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com'}/info-terkini/${post.id}`;
+  const handleAddComment = () => {
+    setCommentCount(commentCount + 1);
+    onUpdatePost(post.id, { comments: commentCount + 1 });
+  };
+
+  const handleAddReply = () => {
+    setCommentCount(commentCount + 1);
+    onUpdatePost(post.id, { comments: commentCount + 1 });
+  };
+
+  const handleShare = () => {
+    setShareCount(shareCount + 1);
+    onUpdatePost(post.id, { shares: shareCount + 1 });
+    setIsShareOpen(true);
+  };
+
+  const shareUrl = `https://jakselnews.com/info-terkini/${post.id}`;
   const shareTitle = `${post.authorName}: ${post.content.substring(0, 50)}...`;
 
   return (
     <>
-      <article className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-        <div className="flex items-start gap-3">
-          <div className={`w-12 h-12 bg-gradient-to-br ${post.gradient} rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md`}>
-            {post.authorName.charAt(0)}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h4 className="font-bold text-gray-900">{post.authorName}</h4>
-              <span className={`px-2 py-0.5 bg-gradient-to-r ${post.gradient} text-white text-xs font-semibold rounded-full`}>
-                {categories.find(c => c.id === post.category)?.name || post.category}
-              </span>
+      <article className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        {/* Author Info */}
+        <div className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-sm">
+              {post.authorInitial}
             </div>
-            <p className="text-xs text-gray-500 flex items-center gap-2 mt-0.5">
-              <MapPin size={12} />
-              {post.location}
-              <span className="mx-1">•</span>
-              <Clock size={12} />
-              {post.time}
-            </p>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h4 className="font-bold text-gray-900 text-sm">{post.authorName}</h4>
+                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                  {post.categoryName}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 flex items-center gap-2 mt-0.5">
+                <MapPin size={12} />
+                {post.location}
+                <span className="mx-1">•</span>
+                <Clock size={12} />
+                {post.time}
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className={`mt-3 p-4 rounded-xl bg-gradient-to-r ${post.gradient} bg-opacity-5 border-l-4 border-gradient-to-b ${post.gradient}`}>
-          <p className="text-gray-700 leading-relaxed text-sm">
+          {/* Content */}
+          <p className="text-gray-700 leading-relaxed text-sm mt-3">
             {post.content}
           </p>
         </div>
 
-        <div className="flex items-center gap-1 mt-3 pt-3 border-t border-gray-100">
+        {/* Image */}
+        {post.imageUrl && (
+          <div className="relative">
+            <img
+              src={post.imageUrl}
+              alt=""
+              className="w-full h-48 object-cover"
+            />
+            <div className="absolute top-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+              <ImageIcon size={12} />
+              Foto
+            </div>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center gap-1 px-4 py-3 border-t border-gray-100">
           <button
             onClick={handleLike}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
@@ -409,23 +476,23 @@ function PostCard({ post }: { post: UGCReport }) {
             }`}
           >
             <Heart size={18} weight={isLiked ? 'fill' : 'regular'} />
-            <span>{likes + (isLiked ? 1 : 0)}</span>
+            <span>{likeCount}</span>
           </button>
 
           <button
             onClick={() => setIsCommentsOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-violet-500 hover:bg-violet-50 transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-red-500 hover:bg-red-50 transition-all"
           >
             <ChatCircle size={18} />
-            <span>{post.comments}</span>
+            <span>{commentCount}</span>
           </button>
 
           <button
-            onClick={() => setIsShareOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-blue-500 hover:bg-blue-50 transition-all ml-auto"
+            onClick={handleShare}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-red-500 hover:bg-red-50 transition-all ml-auto"
           >
             <Share size={18} />
-            <span>{post.shares}</span>
+            <span>{shareCount}</span>
           </button>
         </div>
       </article>
@@ -433,8 +500,9 @@ function PostCard({ post }: { post: UGCReport }) {
       <CommentsModal
         isOpen={isCommentsOpen}
         onClose={() => setIsCommentsOpen(false)}
-        commentsCount={post.comments}
-        postId={post.id}
+        post={post}
+        onAddComment={handleAddComment}
+        onAddReply={handleAddReply}
       />
       <ShareModal
         isOpen={isShareOpen}
@@ -448,27 +516,31 @@ function PostCard({ post }: { post: UGCReport }) {
 
 export default function InfoTerkiniPage() {
   const [selectedCategory, setSelectedCategory] = useState('semua');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [posts, setPosts] = useState(mockPosts);
 
   const filteredPosts = selectedCategory === 'semua'
-    ? mockPosts
-    : mockPosts.filter(post => post.category === selectedCategory);
+    ? posts
+    : posts.filter(post => post.category === selectedCategory);
+
+  const handleUpdatePost = (postId: number, updates: Partial<UGCReport>) => {
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...updates } : p));
+  };
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24 lg:pb-0 lg:pt-20">
+    <main className="min-h-screen bg-gray-50 pb-24 lg:pb-0">
       <Header title="Info Terkini" />
       <BottomNav />
 
-      {/* Category Filter */}
-      <div className="sticky top-14 lg:top-16 z-30 bg-white border-b px-4 py-3">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+      {/* Category Filter - Fixed at top */}
+      <div className="sticky top-14 lg:top-20 z-30 bg-white border-b px-4 py-3 mt-14 lg:mt-20">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide max-w-2xl mx-auto">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
+              className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
                 selectedCategory === cat.id
-                  ? `bg-gradient-to-r ${cat.gradient} text-white shadow-lg`
+                  ? 'bg-red-500 text-white shadow-lg shadow-red-500/30'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
@@ -479,20 +551,20 @@ export default function InfoTerkiniPage() {
       </div>
 
       {/* Feed */}
-      <div className="px-4 py-4 space-y-4">
+      <div className="px-4 py-4 space-y-4 max-w-2xl mx-auto">
         {filteredPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard key={post.id} post={post} onUpdatePost={handleUpdatePost} />
         ))}
 
         {filteredPosts.length === 0 && (
           <div className="text-center py-16">
-            <div className={`w-20 h-20 bg-gradient-to-br ${categories.find(c => c.id === selectedCategory)?.gradient || 'from-gray-400 to-gray-300'} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-              <Newspaper size={40} className="text-white" />
+            <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Newspaper size={40} className="text-gray-400" />
             </div>
             <p className="text-gray-500 mb-4">Tidak ada info terkini untuk kategori ini</p>
             <button
               onClick={() => setSelectedCategory('semua')}
-              className="px-6 py-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30"
+              className="px-6 py-2.5 bg-red-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30"
             >
               Lihat Semua
             </button>

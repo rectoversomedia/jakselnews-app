@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { supabase } from '../../config/supabase';
-import { ApiError } from '../middleware/errorHandler';
-import { reportCategories } from '../utils/categories';
+import { ApiError } from '../../middleware/errorHandler';
+import { reportCategories } from '../../utils/categories';
 
 const router = Router();
 

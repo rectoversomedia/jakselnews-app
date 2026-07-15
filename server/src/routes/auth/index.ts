@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { supabase, supabaseAdmin } from '../../config/supabase';
-import { config } from '../config';
-import { ApiError } from '../middleware/errorHandler';
-import { validateRequest } from '../middleware/validate';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { config } from '../../config';
+import { ApiError } from '../../middleware/errorHandler';
+import { validateRequest } from '../../middleware/validate';
+import { authenticate, AuthRequest } from '../../middleware/auth';
 import jwt from 'jsonwebtoken';
 
 const router = Router();

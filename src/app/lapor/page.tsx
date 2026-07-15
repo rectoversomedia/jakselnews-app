@@ -276,16 +276,9 @@ export default function LaporPage() {
 
           {/* Selected Category Display */}
           {selectedCategory && formData.type !== 'lainnya' && (
-            <div className={`bg-gradient-to-r ${selectedCategory.gradient} bg-opacity-10 rounded-xl p-4 border border-gray-100`}>
-              <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 bg-gradient-to-br ${selectedCategory.gradient} rounded-xl flex items-center justify-center text-2xl shadow-lg`}>
-                  {selectedCategory.icon}
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">Kategori: {selectedCategory.name}</p>
-                  <p className="text-sm text-gray-500">Laporkan kejadian terkait {selectedCategory.name.toLowerCase()}</p>
-                </div>
-              </div>
+            <div className="bg-gradient-to-r from-red-400 to-rose-500 rounded-xl p-5 shadow-lg shadow-red-400/30 text-center">
+              <p className="font-bold text-white text-base">Kategori: {selectedCategory.name}</p>
+              <p className="text-sm text-white/90 mt-1">Laporkan kejadian terkait {selectedCategory.name.toLowerCase()}</p>
             </div>
           )}
 
