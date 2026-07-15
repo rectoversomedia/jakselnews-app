@@ -1,14 +1,10 @@
 'use client';
 
 import HomeContent from '@/components/HomeContent';
-import Header from '@/components/layout/Header';
-import BottomNav from '@/components/layout/BottomNav';
 
 export default function HomePage() {
   return (
-    <main className="pb-20 lg:pb-0 bg-gray-50 min-h-screen">
-      <Header />
-      <BottomNav />
+    <main className="pt-14 lg:pt-16 pb-20 md:pb-0 bg-gray-50 min-h-screen">
       <HomeContent />
     </main>
   );

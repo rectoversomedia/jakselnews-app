@@ -1,4 +1,3 @@
-import { Inter, Poppins } from "next/font/google";
 import dynamic from "next/dynamic";
 import "./globals.css";
 
@@ -10,19 +9,6 @@ const Header = dynamic(() => import("@/components/layout/Header").then(mod => mo
 const BottomNav = dynamic(() => import("@/components/layout/BottomNav").then(mod => mod.default), {
   ssr: false,
   loading: () => <div className="h-16 bg-white border-t" />,
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
-  display: "swap",
 });
 
 export const metadata = {
@@ -70,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${inter.variable} ${poppins.variable}`}>
+    <html lang="id">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <meta name="theme-color" content="#DC2626" />
@@ -84,7 +70,7 @@ export default function RootLayout({
           Langsung ke konten utama
         </a>
         <Header />
-        <main id="main-content" className="flex-1 pb-20 md:pb-0" tabIndex={-1}>
+        <main id="main-content" className="flex-1">
           {children}
         </main>
         <BottomNav />

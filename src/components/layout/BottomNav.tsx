@@ -7,10 +7,8 @@ import { usePathname } from 'next/navigation';
 import {
   House,
   Newspaper,
-  Warning,
   Bell,
   SquaresFour,
-  Plus,
   MagnifyingGlass,
 } from '@phosphor-icons/react';
 
@@ -20,15 +18,14 @@ interface NavItem {
   icon: React.ReactNode;
   href: string;
   isCenter?: boolean;
-  isLogo?: boolean;
   gradient?: string;
 }
 
 const navItems: NavItem[] = [
   { id: 'beranda', label: 'Beranda', icon: <House size={22} weight="fill" />, href: '/' },
   { id: 'artikel', label: 'Artikel', icon: <Newspaper size={22} weight="fill" />, href: '/artikel' },
-  { id: 'lapor', label: 'Lapor', icon: <Plus size={26} weight="bold" />, href: '/lapor', isCenter: true, gradient: 'from-red-500 to-rose-600' },
-  { id: 'info', label: 'Info', icon: <Bell size={22} weight="fill" />, href: '/info-terkini' },
+  { id: 'lapor', label: 'Lapor', icon: null, href: '/lapor', isCenter: true, gradient: 'from-red-500 to-rose-600' },
+  { id: 'info', label: 'Info Terkini', icon: <Bell size={22} weight="fill" />, href: '/info-terkini' },
   { id: 'layanan', label: 'Layanan', icon: <SquaresFour size={22} weight="fill" />, href: '/layanan' },
 ];
 
@@ -73,13 +70,14 @@ export default function BottomNav() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20 group-hover:shadow-red-500/30 transition-shadow">
-                <span className="text-white font-black text-lg">J</span>
-              </div>
-              <div>
-                <span className="font-bold text-gray-900 text-lg tracking-tight">Jaksel</span>
-                <span className="font-bold text-red-500 text-lg">news</span>
-              </div>
+              <Image
+                src="/logo-utama.png"
+                alt="Jakselnews"
+                width={140}
+                height={36}
+                className="object-contain"
+                priority
+              />
             </Link>
 
             {/* Search Bar */}
@@ -102,7 +100,7 @@ export default function BottomNav() {
                   href={item.href}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     isActive(item.href)
-                      ? `${getColorClass(item.id)} bg-gray-50`
+                      ? 'text-red-500 bg-red-50'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
@@ -114,11 +112,9 @@ export default function BottomNav() {
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation - STICKY */}
       <nav
-        className={`lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-xl border-t border-gray-100 transition-transform duration-300 ${
-          isVisible ? 'translate-y-0' : 'translate-y-full'
-        }`}
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-xl border-t border-gray-100"
         aria-label="Navigasi utama"
         role="navigation"
       >
@@ -129,29 +125,30 @@ export default function BottomNav() {
               href={item.href}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-200 ${
                 isActive(item.href)
-                  ? 'text-gray-900'
-                  : 'text-gray-400'
+                  ? 'text-red-500'
+                  : 'text-gray-400 hover:text-gray-600'
               }`}
               aria-current={isActive(item.href) ? 'page' : undefined}
             >
               {item.isCenter ? (
                 <div
-                  className={`flex items-center justify-center w-14 h-14 -mt-5 rounded-2xl bg-gradient-to-br ${item.gradient} shadow-lg shadow-red-500/30 hover:shadow-red-500/50 hover:scale-105 transition-all duration-200 ring-4 ring-white`}
+                  className="flex items-center justify-center w-14 h-14 -mt-6 transition-all duration-200"
                   aria-hidden="true"
                 >
-                  {item.id === 'lapor' ? (
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                      <span className="text-red-500 font-black text-lg">J</span>
-                    </div>
-                  ) : (
-                    <span className="text-white">{item.icon}</span>
-                  )}
+                  <Image
+                    src="/logo-jakselnews.png"
+                    alt="Lapor"
+                    width={44}
+                    height={44}
+                    className="object-contain drop-shadow-lg"
+                    priority
+                  />
                 </div>
               ) : (
                 <>
                   <div className={`p-1.5 rounded-xl transition-all duration-200 ${
                     isActive(item.href)
-                      ? `bg-gradient-to-br ${item.id === 'beranda' ? 'from-red-500 to-rose-600' : item.id === 'artikel' ? 'from-blue-500 to-cyan-600' : item.id === 'info' ? 'from-violet-500 to-purple-600' : 'from-emerald-500 to-teal-600'} text-white shadow-lg`
+                      ? 'bg-red-50'
                       : ''
                   }`} aria-hidden="true">
                     {item.icon}

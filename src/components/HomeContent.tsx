@@ -8,8 +8,6 @@ import {
   MapPin,
   Warning,
   X,
-  Lightning,
-  Star,
   ArrowRight,
 } from '@phosphor-icons/react';
 import { UGCPostCard } from './UGCPost';
@@ -106,7 +104,7 @@ const staticWarnings: WarningReport[] = [
     gradient: 'from-blue-500 to-cyan-500',
     hotline: '112',
     description: 'Genangan air setinggi 20cm akibat hujan deras. Arus kendaraan dihimbau berhati-hati.',
-    related: ['Jl. TB Simatupang', 'Jl. Cilandak', 'Jl. Pasar Minggu']
+    related: ['Jl. TB Simatupang', 'Jl. Cilandak', 'Jl. pasar minggu']
   },
   {
     id: 3,
@@ -156,22 +154,22 @@ function formatDate(dateStr: string): string {
   }
 }
 
-// Breaking News Card Component
-function BreakingNewsCard({ post, height = 'h-[200px]' }: { post: BreakingPost; height?: string }) {
+// Breaking News Card Component - Square aspect ratio
+function BreakingNewsCard({ post, aspectRatio = 'aspect-[4/3]' }: { post: BreakingPost; aspectRatio?: string }) {
   const [imageError, setImageError] = useState(false);
   const imageUrl = getFeaturedImageUrl(post);
   const title = stripHtml(post.title.rendered);
   const date = formatDate(post.date);
 
   return (
-    <div className={`relative w-full ${height} overflow-hidden rounded-none`}>
-      {/* Background Image - Use standard img for reliability */}
-      <div className="absolute inset-0 bg-gray-800">
+    <Link href={`/artikel/${post.slug}`} className="block group">
+      <div className={`relative w-full ${aspectRatio} overflow-hidden rounded-2xl bg-gray-800`}>
+        {/* Background Image */}
         {!imageError ? (
           <img
             src={imageUrl}
             alt={title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             onError={() => setImageError(true)}
           />
         ) : (
@@ -179,18 +177,16 @@ function BreakingNewsCard({ post, height = 'h-[200px]' }: { post: BreakingPost; 
             <span className="text-gray-500 text-4xl">📰</span>
           </div>
         )}
-      </div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-      {/* Content */}
-      <Link href={`/artikel/${post.slug}`} className="absolute inset-0">
+        {/* Content - Bottom positioned */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <span className="inline-block px-2.5 py-1 bg-red-600 text-white text-[10px] font-bold rounded mb-2">
             BREAKING
           </span>
-          <h2 className="text-white font-bold text-base line-clamp-2 mb-1 drop-shadow-lg">
+          <h2 className="text-white font-bold text-sm line-clamp-2 mb-1 drop-shadow-lg">
             {title}
           </h2>
           <p className="text-white/80 text-xs flex items-center gap-1.5">
@@ -198,8 +194,8 @@ function BreakingNewsCard({ post, height = 'h-[200px]' }: { post: BreakingPost; 
             {date}
           </p>
         </div>
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 }
 
@@ -217,8 +213,8 @@ function BreakingNewsSection({ posts }: { posts: BreakingPost[] }) {
 
   if (posts.length === 0) {
     return (
-      <section className="w-full">
-        <div className="h-[200px] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+      <section className="px-4 py-4">
+        <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
           <p className="text-gray-500">Tidak ada berita terbaru</p>
         </div>
       </section>
@@ -226,7 +222,7 @@ function BreakingNewsSection({ posts }: { posts: BreakingPost[] }) {
   }
 
   return (
-    <section className="w-full">
+    <section className="px-4 py-4">
       {/* Mobile: Single Card with Slides */}
       <div className="lg:hidden">
         {/* Main Card */}
@@ -238,14 +234,14 @@ function BreakingNewsSection({ posts }: { posts: BreakingPost[] }) {
                 index === currentSlide ? 'opacity-100' : 'opacity-0 absolute inset-0'
               }`}
             >
-              <BreakingNewsCard post={post} />
+              <BreakingNewsCard post={post} aspectRatio="aspect-[4/3]" />
             </div>
           ))}
         </div>
 
         {/* Dots */}
         {posts.length > 1 && (
-          <div className="flex justify-center gap-1.5 py-2 bg-white border-b">
+          <div className="flex justify-center gap-1.5 py-3">
             {posts.slice(0, 3).map((_, index) => (
               <button
                 key={index}
@@ -261,16 +257,16 @@ function BreakingNewsSection({ posts }: { posts: BreakingPost[] }) {
 
       {/* Desktop: Grid */}
       <div className="hidden lg:block">
-        <div className="grid grid-cols-3 gap-3 p-4">
+        <div className="grid grid-cols-3 gap-4">
           {/* Main Featured */}
           <div className="col-span-2">
-            {posts[0] && <BreakingNewsCard post={posts[0]} height="h-[360px]" />}
+            <BreakingNewsCard post={posts[0]} aspectRatio="aspect-[16/9]" />
           </div>
 
           {/* Side Cards */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {posts.slice(1, 3).map((post) => (
-              <BreakingNewsCard key={post.id} post={post} height="h-[172px]" />
+              <BreakingNewsCard key={post.id} post={post} aspectRatio="aspect-[4/3]" />
             ))}
           </div>
         </div>
@@ -331,9 +327,8 @@ function PeringatanSection() {
 
   return (
     <>
-      <section className="w-full px-4 py-5 bg-white border-b">
-        <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-          <Warning size={18} weight="fill" className="text-red-500" />
+      <section className="px-4 py-5 bg-white border-b">
+        <h2 className="text-base font-bold text-gray-900 mb-3">
           PERINGATAN WARGA
         </h2>
         <div className="space-y-2">
@@ -372,12 +367,11 @@ function InfoTerkiniSection() {
   ];
 
   return (
-    <section className="w-full px-4 py-5">
+    <section className="px-4 py-5">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-          <Lightning size={18} className="text-amber-500" />
+        <Link href="/info-terkini" className="text-base font-bold text-gray-900">
           INFO TERKINI
-        </h2>
+        </Link>
         <Link href="/info-terkini" className="text-sm text-gray-500 flex items-center gap-1">
           Lihat Semua <ArrowRight size={14} />
         </Link>
@@ -405,10 +399,9 @@ function LayananPopulerSection() {
   ];
 
   return (
-    <section className="w-full px-4 py-5 bg-white">
+    <section className="px-4 py-5 bg-white">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-          <Star size={18} weight="fill" className="text-amber-500" />
+        <h2 className="text-base font-bold text-gray-900">
           LAYANAN POPULER
         </h2>
         <Link href="/layanan" className="text-sm text-gray-500 flex items-center gap-1">
@@ -427,6 +420,82 @@ function LayananPopulerSection() {
             </div>
           </Link>
         ))}
+      </div>
+    </section>
+  );
+}
+
+// Artikel Terbaru Section
+function ArtikelTerbaruSection() {
+  const [articles, setArticles] = useState<BreakingPost[]>([]);
+
+  useEffect(() => {
+    async function fetchArticles() {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
+        const response = await fetch(`${apiUrl}/posts?per_page=5&_embed&status=publish`);
+        if (response.ok) {
+          const posts = await response.json();
+          if (posts && posts.length > 0) {
+            setArticles(posts.slice(0, 5));
+          }
+        }
+      } catch (error) {
+        // Silently fail
+      }
+    }
+    fetchArticles();
+  }, []);
+
+  if (articles.length === 0) return null;
+
+  return (
+    <section className="px-4 py-5">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-base font-bold text-gray-900">
+          ARTIKEL TERBARU
+        </h2>
+        <Link href="/artikel" className="text-sm text-gray-500 flex items-center gap-1">
+          Lihat Semua <ArrowRight size={14} />
+        </Link>
+      </div>
+      <div className="space-y-3">
+        {articles.map((article, index) => {
+          const title = stripHtml(article.title.rendered);
+          const imageUrl = getFeaturedImageUrl(article);
+          const date = formatDate(article.date);
+
+          return (
+            <Link
+              key={article.id}
+              href={`/artikel/${article.slug}`}
+              className="flex items-center gap-3 p-3 bg-white rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                <img
+                  src={imageUrl}
+                  alt={title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect fill="%23e5e7eb" width="100" height="100"/%3E%3Ctext x="50" y="55" text-anchor="middle" fill="%239ca3af" font-size="30"%3E📰%3C/text%3E%3C/svg%3E';
+                  }}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-[10px] font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded uppercase">
+                  {index === 0 ? 'Terbaru' : 'Artikel'}
+                </span>
+                <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mt-1">
+                  {title}
+                </h3>
+                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                  <Clock size={12} />
+                  {date}
+                </p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
@@ -512,10 +581,13 @@ export default function HomeContent() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <div className="h-[200px] lg:h-[360px] bg-gray-200 animate-pulse" />
-        <div className="h-32 bg-gray-200 animate-pulse mx-4 rounded-xl" />
-        <div className="h-44 bg-gray-200 animate-pulse mx-4 rounded-xl" />
+      <div className="space-y-4 px-4 py-4">
+        <div className="aspect-[4/3] bg-gray-200 animate-pulse rounded-2xl" />
+        <div className="flex justify-center gap-1.5 py-3">
+          <div className="w-4 h-2 bg-gray-300 rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse" />
+        </div>
       </div>
     );
   }
@@ -526,6 +598,7 @@ export default function HomeContent() {
       <PeringatanSection />
       <InfoTerkiniSection />
       <LayananPopulerSection />
+      <ArtikelTerbaruSection />
       <NotificationBanner />
     </>
   );

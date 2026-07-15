@@ -17,9 +17,8 @@ import {
   ArrowsClockwise,
   CheckCircle,
   SignOut,
-  ShieldWarning,
-  TriangleAlert,
-  ArrowLeft,
+Warning,
+} from '@phosphor-icons/react';
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 
@@ -435,7 +434,7 @@ export default function AdminDashboard() {
                         </span>
                         {report.priority === 'high' || report.priority === 'urgent' ? (
                           <span className="px-2 py-0.5 bg-red-100 text-red-600 rounded-full text-xs font-bold flex items-center gap-1">
-                            <TriangleAlert size={10} aria-hidden="true" />
+                            <Warning size={10} aria-hidden="true" />
                             {report.priority === 'urgent' ? 'Urgent' : 'High'}
                           </span>
                         ) : null}

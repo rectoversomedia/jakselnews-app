@@ -50,9 +50,10 @@ export default function Header({
               <Image
                 src="/logo-utama.png"
                 alt="Jakselnews"
-                width={140}
-                height={36}
+                width={168}
+                height={43}
                 className="object-contain"
+                priority
               />
             </Link>
 
@@ -131,9 +132,10 @@ export default function Header({
                 <Image
                   src="/logo-utama.png"
                   alt="Jakselnews"
-                  width={110}
-                  height={28}
+                  width={132}
+                  height={34}
                   className="object-contain"
+                  priority
                 />
               </Link>
             ) : title ? (
@@ -169,9 +171,10 @@ export default function Header({
                 <Image
                   src="/logo-utama.png"
                   alt="Jakselnews"
-                  width={100}
-                  height={26}
+                  width={200}
+                  height={52}
                   className="object-contain bg-white/20 rounded p-1"
+                  priority
                 />
               </div>
               <button

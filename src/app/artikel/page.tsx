@@ -123,7 +123,7 @@ export default function ArtikelPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24 lg:pb-0 lg:pt-20">
+    <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-14 lg:pt-16">
       <Header title="Artikel" />
       <BottomNav />
 
