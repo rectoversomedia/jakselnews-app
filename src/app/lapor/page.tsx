@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   MapPin,
@@ -13,8 +13,10 @@ import {
   Warning,
   CaretDown,
   Image as ImageIcon,
+  Camera,
+  Upload,
+  Trash,
 } from '@phosphor-icons/react';
-import { api, Category } from '@/lib/api';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
 
@@ -24,64 +26,92 @@ const kecamatanList = [
   'Setiabudi', 'Tebet'
 ];
 
-const categoryConfig: Record<string, { icon: string; gradient: string; bgGradient: string }> = {
-  'keamanan': { icon: '🛡️', gradient: 'from-red-500 to-rose-500', bgGradient: 'bg-red-50 border-red-100' },
-  'lalu-lintas': { icon: '🚦', gradient: 'from-amber-500 to-orange-500', bgGradient: 'bg-amber-50 border-amber-100' },
-  'banjir': { icon: '🌊', gradient: 'from-blue-500 to-cyan-500', bgGradient: 'bg-blue-50 border-blue-100' },
-  'kebakaran': { icon: '🔥', gradient: 'from-orange-500 to-red-500', bgGradient: 'bg-orange-50 border-orange-100' },
-  'penerangan': { icon: '💡', gradient: 'from-yellow-400 to-amber-400', bgGradient: 'bg-yellow-50 border-yellow-100' },
-  'lingkungan': { icon: '🌿', gradient: 'from-emerald-500 to-teal-500', bgGradient: 'bg-emerald-50 border-emerald-100' },
-  'kemacetan': { icon: '🚗', gradient: 'from-gray-500 to-gray-600', bgGradient: 'bg-gray-50 border-gray-100' },
-  'jalan-rusak': { icon: '🕳️', gradient: 'from-orange-600 to-amber-600', bgGradient: 'bg-orange-50 border-orange-100' },
-  'kriminal': { icon: '🚨', gradient: 'from-red-600 to-red-700', bgGradient: 'bg-red-50 border-red-100' },
-  'sampah': { icon: '🗑️', gradient: 'from-lime-500 to-green-500', bgGradient: 'bg-lime-50 border-lime-100' },
-  'fenomena': { icon: '👁️', gradient: 'from-purple-500 to-violet-500', bgGradient: 'bg-purple-50 border-purple-100' },
-  'lainnya': { icon: '📌', gradient: 'from-gray-400 to-gray-500', bgGradient: 'bg-gray-50 border-gray-100' },
+const kelurahanMap: Record<string, string[]> = {
+  'Cilandak': ['Cilandak Barat', 'Cilandak Timur', 'Lebak Bulus', 'Pondok Labu', 'Radang'],
+  'Jagakarsa': ['Bogor', 'Ciganjur', 'Cipedak', 'Jatisari', 'Lenteng Agung', 'Srengseng Sawah', 'Tanjung Barat'],
+  'Kebayoran Baru': ['Senayan', 'Gedonggi', 'Melawai', 'Pulo', 'Rawa Barat', 'Kramat Pela', 'Pinding'],
+  'Kebayoran Lama': ['Cipete Utara', 'Duri Kelambl', 'Duri Kosambi', 'Grokgalong Utara', 'Grokgalong Selatan', 'Kalibata', 'Pondok Pinang'],
+  'Mampang Prapatan': ['Bangka', 'Kuningan Barat', 'Mampang Prapatan', 'Pancoran', 'Tegal Parang'],
+  'Pancoran': ['Bojong', 'Duren Tiga', 'Gillard', 'Kalibata', 'Pancoran', 'Rawa Jati', 'Susukan'],
+  'Pasar Minggu': ['Cilandak Timur', 'Jatipadang', 'Kebbap', 'Pasar Minggu', 'Pejaten Timur', 'Pejaten Barat', 'Tanjung Barat'],
+  'Pesanggrahan': ['Bintaro', 'Pesanggrahan', 'Petukangan Selatan', 'Petukangan Utara', 'Ulujami'],
+  'Setiabudi': ['Gadobangkong', 'Karet', 'Karet Kuningan', 'Kuningan Timur', 'Menteng', 'Pasar Manggis', 'Setiabudi'],
+  'Tebet': ['Bogor Dalam', 'Bukit Duri', 'Kebon Baru', 'Manggarai Selatan', 'Manggarai', 'Tebet Barat', 'Tebet Timur', 'Utan Kayu'],
 };
+
+// 8 main categories with "Lainnya" as #8
+const mainCategories = [
+  { slug: 'keamanan', name: 'Keamanan', icon: '🛡️', gradient: 'from-red-500 to-rose-500', bgGradient: 'bg-red-50 border-red-100' },
+  { slug: 'lalu-lintas', name: 'Lalu Lintas', icon: '🚦', gradient: 'from-amber-500 to-orange-500', bgGradient: 'bg-amber-50 border-amber-100' },
+  { slug: 'banjir', name: 'Banjir', icon: '🌊', gradient: 'from-blue-500 to-cyan-500', bgGradient: 'bg-blue-50 border-blue-100' },
+  { slug: 'kebakaran', name: 'Kebakaran', icon: '🔥', gradient: 'from-orange-500 to-red-500', bgGradient: 'bg-orange-50 border-orange-100' },
+  { slug: 'penerangan', name: 'Penerangan', icon: '💡', gradient: 'from-yellow-400 to-amber-400', bgGradient: 'bg-yellow-50 border-yellow-100' },
+  { slug: 'lingkungan', name: 'Lingkungan', icon: '🌿', gradient: 'from-emerald-500 to-teal-500', bgGradient: 'bg-emerald-50 border-emerald-100' },
+  { slug: 'kemacetan', name: 'Kemacetan', icon: '🚗', gradient: 'from-gray-500 to-gray-600', bgGradient: 'bg-gray-50 border-gray-100' },
+  { slug: 'lainnya', name: 'Lainnya', icon: '📌', gradient: 'from-gray-400 to-gray-500', bgGradient: 'bg-gray-50 border-gray-100' },
+];
 
 export default function LaporPage() {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const [formData, setFormData] = useState({
     type: '',
+    customCategory: '',
     description: '',
     kecamatan: '',
+    kelurahan: '',
     reporter_name: '',
     reporter_phone: '',
     reporter_email: '',
     is_anonymous: false,
   });
 
+  const [mediaFiles, setMediaFiles] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showKecamatanDropdown, setShowKecamatanDropdown] = useState(false);
+  const [showKelurahanDropdown, setShowKelurahanDropdown] = useState(false);
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const result = await api.getCategories();
-        if (result.success && result.data) {
-          setCategories(result.data);
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      } finally {
-        setLoading(false);
-      }
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+    const files = Array.from(e.target.files || []);
+    const maxFiles = 3;
+    const currentCount = mediaFiles.length;
+
+    if (currentCount + files.length > maxFiles) {
+      alert(`Maksimal ${maxFiles} file`);
+      return;
     }
-    fetchCategories();
-  }, []);
+
+    const newFiles = files.slice(0, maxFiles - currentCount).map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+      type
+    }));
+
+    setMediaFiles(prev => [...prev, ...newFiles]);
+  };
+
+  const removeMedia = (index: number) => {
+    setMediaFiles(prev => {
+      const newFiles = [...prev];
+      URL.revokeObjectURL(newFiles[index].preview);
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.type) {
       newErrors.type = 'Pilih kategori laporan';
+    }
+    if (formData.type === 'lainnya' && !formData.customCategory.trim()) {
+      newErrors.customCategory = 'Masukkan kategori lainnya';
     }
     if (!formData.description || formData.description.length < 10) {
       newErrors.description = 'Deskripsi minimal 10 karakter';
@@ -114,32 +144,14 @@ export default function LaporPage() {
 
     setSubmitting(true);
 
-    try {
-      const result = await api.createReport({
-        type: formData.type,
-        description: formData.description,
-        kecamatan: formData.kecamatan,
-        reporter_name: formData.is_anonymous ? undefined : formData.reporter_name,
-        reporter_phone: formData.is_anonymous ? undefined : formData.reporter_phone,
-        reporter_email: formData.is_anonymous ? undefined : formData.reporter_email,
-        is_anonymous: formData.is_anonymous,
-      });
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
-      if (result.success) {
-        setSubmitted(true);
-      } else {
-        setErrors({ submit: result.error || 'Gagal mengirim laporan' });
-      }
-    } catch (error) {
-      console.error('Error submitting report:', error);
-      setErrors({ submit: 'Terjadi kesalahan. Silakan coba lagi.' });
-    } finally {
-      setSubmitting(false);
-    }
+    setSubmitted(true);
+    setSubmitting(false);
   };
 
-  const selectedCategory = categories.find(c => c.slug === formData.type);
-  const selectedConfig = categoryConfig[formData.type] || categoryConfig['lainnya'];
+  const selectedCategory = mainCategories.find(c => c.slug === formData.type);
 
   if (submitted) {
     return (
@@ -160,6 +172,7 @@ export default function LaporPage() {
                   setSubmitted(false);
                   setFormData({
                     type: '',
+                    customCategory: '',
                     description: '',
                     kecamatan: '',
                     reporter_name: '',
@@ -167,6 +180,7 @@ export default function LaporPage() {
                     reporter_email: '',
                     is_anonymous: false,
                   });
+                  setMediaFiles([]);
                 }}
                 className="w-full py-3 bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30"
               >
@@ -207,54 +221,65 @@ export default function LaporPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Category Selection - Grid Style */}
+          {/* Category Selection - 8 Categories Grid */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-3">
               Kategori Laporan *
             </label>
-            {loading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-16 bg-gray-200 rounded-xl animate-pulse" />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {categories.map((cat) => {
-                  const config = categoryConfig[cat.slug] || categoryConfig['lainnya'];
-                  const isSelected = formData.type === cat.slug;
-                  return (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      onClick={() => {
-                        setFormData({ ...formData, type: cat.slug });
-                        setErrors({ ...errors, type: '' });
-                      }}
-                      className={`p-3 rounded-xl border-2 transition-all text-left ${
-                        isSelected
-                          ? `border-gradient-to-r ${config.gradient} bg-gradient-to-r ${config.bgGradient}`
-                          : 'border-gray-200 hover:border-gray-300 bg-white'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">{config.icon}</span>
-                        <span className="text-sm font-medium text-gray-700">{cat.name}</span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {mainCategories.map((cat) => {
+                const isSelected = formData.type === cat.slug;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => {
+                      setFormData({ ...formData, type: cat.slug });
+                      setErrors({ ...errors, type: '' });
+                    }}
+                    className={`p-4 rounded-xl transition-all text-center ${
+                      isSelected
+                        ? 'bg-gradient-to-br from-red-500 to-rose-600 text-white shadow-lg shadow-red-500/30'
+                        : 'bg-white border-2 border-gray-200 hover:border-red-300'
+                    }`}
+                  >
+                    <span className="text-2xl block mb-2">{cat.icon}</span>
+                    <span className="text-xs font-semibold">{cat.name}</span>
+                  </button>
+                );
+              })}
+            </div>
             {errors.type && <p className="text-red-500 text-sm mt-2">{errors.type}</p>}
           </div>
 
+          {/* Custom Category Input (when "Lainnya" is selected) */}
+          {formData.type === 'lainnya' && (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Kategori Lainnya *
+              </label>
+              <input
+                type="text"
+                value={formData.customCategory}
+                onChange={(e) => {
+                  setFormData({ ...formData, customCategory: e.target.value });
+                  setErrors({ ...errors, customCategory: '' });
+                }}
+                placeholder="Ketik kategori laporan..."
+                className={`w-full px-4 py-3 border-2 rounded-xl text-sm focus:outline-none transition-all ${
+                  errors.customCategory ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white focus:border-red-300'
+                }`}
+              />
+              {errors.customCategory && <p className="text-red-500 text-sm mt-1">{errors.customCategory}</p>}
+            </div>
+          )}
+
           {/* Selected Category Display */}
-          {selectedCategory && (
-            <div className={`bg-gradient-to-r ${selectedConfig.gradient} bg-opacity-10 rounded-xl p-4 border border-gradient-to-r ${selectedConfig.gradient} border-opacity-20`}>
+          {selectedCategory && formData.type !== 'lainnya' && (
+            <div className={`bg-gradient-to-r ${selectedCategory.gradient} bg-opacity-10 rounded-xl p-4 border border-gray-100`}>
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 bg-gradient-to-br ${selectedConfig.gradient} rounded-xl flex items-center justify-center text-2xl shadow-lg`}>
-                  {selectedConfig.icon}
+                <div className={`w-12 h-12 bg-gradient-to-br ${selectedCategory.gradient} rounded-xl flex items-center justify-center text-2xl shadow-lg`}>
+                  {selectedCategory.icon}
                 </div>
                 <div>
                   <p className="font-semibold text-gray-900">Kategori: {selectedCategory.name}</p>
@@ -289,6 +314,72 @@ export default function LaporPage() {
                 {formData.description.length}/2000
               </span>
             </div>
+          </div>
+
+          {/* Media Upload - Optional */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
+              Upload Foto/Video <span className="text-gray-400 font-normal">(opsional)</span>
+            </label>
+
+            {/* Media Previews */}
+            {mediaFiles.length > 0 && (
+              <div className="flex gap-2 mb-3 flex-wrap">
+                {mediaFiles.map((media, index) => (
+                  <div key={index} className="relative w-20 h-20 rounded-xl overflow-hidden bg-gray-100">
+                    {media.type === 'image' ? (
+                      <img src={media.preview} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <video src={media.preview} className="w-full h-full object-cover" />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeMedia(index)}
+                      className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Upload Buttons */}
+            <div className="flex gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => handleFileSelect(e, 'image')}
+                className="hidden"
+              />
+              <input
+                ref={videoInputRef}
+                type="file"
+                accept="video/*"
+                multiple
+                onChange={(e) => handleFileSelect(e, 'video')}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-1 py-3 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center gap-2 text-gray-500 hover:border-red-400 hover:text-red-500 hover:bg-red-50 transition-all"
+              >
+                <Camera size={20} />
+                <span className="text-sm font-medium">Tambah Foto</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => videoInputRef.current?.click()}
+                className="flex-1 py-3 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center gap-2 text-gray-500 hover:border-red-400 hover:text-red-500 hover:bg-red-50 transition-all"
+              >
+                <ImageIcon size={20} />
+                <span className="text-sm font-medium">Tambah Video</span>
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-2">Maksimal 3 file. Format: JPG, PNG, MP4</p>
           </div>
 
           {/* Location - Dropdown */}
@@ -336,6 +427,50 @@ export default function LaporPage() {
             )}
             {errors.kecamatan && <p className="text-red-500 text-sm mt-1">{errors.kecamatan}</p>}
           </div>
+
+          {/* Kelurahan Dropdown */}
+          {formData.kecamatan && (
+            <div className="relative -mt-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Kelurahan
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowKelurahanDropdown(!showKelurahanDropdown)}
+                className="w-full flex items-center justify-between px-4 py-3 border-2 rounded-xl text-sm transition-all border-gray-200 bg-white hover:border-gray-300"
+              >
+                <span className={formData.kelurahan ? 'text-gray-900' : 'text-gray-400'}>
+                  {formData.kelurahan || 'Pilih Kelurahan'}
+                </span>
+                <CaretDown size={18} className={`text-gray-400 transition-transform ${showKelurahanDropdown ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showKelurahanDropdown && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowKelurahanDropdown(false)} />
+                  <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-60 overflow-y-auto">
+                    {(kelurahanMap[formData.kecamatan] || []).map((kel) => (
+                      <button
+                        key={kel}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, kelurahan: kel });
+                          setShowKelurahanDropdown(false);
+                        }}
+                        className={`w-full px-4 py-3 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-3 ${
+                          formData.kelurahan === kel ? 'bg-red-50 text-red-600' : 'text-gray-700'
+                        }`}
+                      >
+                        <MapPin size={16} className={formData.kelurahan === kel ? 'text-red-500' : 'text-gray-400'} />
+                        {kel}
+                        {formData.kelurahan === kel && <Check size={16} className="ml-auto text-red-500" />}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Reporter Info Card */}
           <div className="bg-gray-50 rounded-2xl p-5 space-y-4">
