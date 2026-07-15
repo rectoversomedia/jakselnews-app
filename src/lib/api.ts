@@ -2,6 +2,9 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
+// Fallback to VPS if localhost not available
+const FALLBACK_API_URL = 'https://31.97.106.177:5000/api';
+
 interface ApiResponse<T> {
   success: boolean;
   data?: T;

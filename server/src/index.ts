@@ -15,6 +15,7 @@ import wordpressRouter from './routes/wordpress';
 import authRouter from './routes/auth';
 import adminRouter from './routes/admin';
 import uploadRouter from './routes/upload';
+import notificationsRouter from './routes/notifications';
 
 const app = express();
 
@@ -216,6 +217,7 @@ app.use('/api/wordpress', wordpressRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/notifications', notificationsRouter);
 
 // ===========================================
 // ERROR HANDLING

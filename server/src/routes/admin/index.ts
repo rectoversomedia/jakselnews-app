@@ -5,6 +5,7 @@ import { ApiError } from '../../middleware/errorHandler';
 import { authenticate, requireAdmin, AuthRequest } from '../../middleware/auth';
 import { validateRequest } from '../../middleware/validate';
 import { v4 as uuidv4 } from 'uuid';
+import { sendReportStatusEmail } from '../../services/email';
 
 const router = Router();
 
@@ -92,7 +93,24 @@ router.put(
       const { id } = req.params;
       const { status, priority, assigned_to, admin_notes, verified } = req.body;
 
-      const updateData: any = {
+      // Validate status if provided
+      const validStatuses = ['pending', 'verified', 'processing', 'resolved', 'rejected'];
+      const validPriorities = ['low', 'normal', 'high', 'urgent'];
+
+      if (status && !validStatuses.includes(status)) {
+        throw ApiError.badRequest(`Status harus salah satu dari: ${validStatuses.join(', ')}`);
+      }
+      if (priority && !validPriorities.includes(priority)) {
+        throw ApiError.badRequest(`Priority harus salah satu dari: ${validPriorities.join(', ')}`);
+      }
+      if (admin_notes && typeof admin_notes !== 'string') {
+        throw ApiError.badRequest('admin_notes harus string');
+      }
+      if (admin_notes && admin_notes.length > 2000) {
+        throw ApiError.badRequest('admin_notes maksimal 2000 karakter');
+      }
+
+      const updateData: Record<string, unknown> = {
         updated_at: new Date().toISOString(),
       };
 
@@ -103,9 +121,16 @@ router.put(
         }
       }
       if (priority) updateData.priority = priority;
-      if (assigned_to !== undefined) updateData.assigned_to = assigned_to;
+      if (assigned_to !== undefined) updateData.assigned_to = assigned_to || null;
       if (admin_notes !== undefined) updateData.admin_notes = admin_notes;
       if (verified !== undefined) updateData.verified = verified;
+
+      // Get current report to check if status changed
+      const { data: currentReport } = await supabaseAdmin
+        .from('reports')
+        .select('status, reporter_email, reporter_name, type, description')
+        .eq('id', id)
+        .single();
 
       const { data, error } = await supabaseAdmin
         .from('reports')
@@ -116,6 +141,19 @@ router.put(
 
       if (error || !data) {
         throw ApiError.notFound('Laporan tidak ditemukan');
+      }
+
+      // Send email notification if status changed and reporter has email
+      if (status && status !== currentReport?.status && currentReport?.reporter_email && !currentReport?.is_anonymous) {
+        sendReportStatusEmail({
+          recipientEmail: currentReport.reporter_email,
+          recipientName: currentReport.reporter_name || 'Warga Jaksel',
+          reportType: currentReport.type,
+          reportDescription: currentReport.description,
+          newStatus: status as 'pending' | 'verified' | 'processing' | 'resolved' | 'rejected',
+          reportId: id,
+          adminNotes: admin_notes,
+        }).catch((err) => console.error('Failed to send status email:', err));
       }
 
       res.json({
