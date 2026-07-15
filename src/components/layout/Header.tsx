@@ -54,7 +54,7 @@ export default function Header({
                 height={40}
                 className="object-contain"
               />
-              <span className="font-bold text-xl text-gray-900">Jaksel<span className="text-red-500">news</span></span>
+              <span className="font-bold text-xl text-gray-900">Jaksel<span className="text-pink-500">news</span></span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -63,7 +63,7 @@ export default function Header({
                 { href: '/', icon: House, label: 'Beranda' },
                 { href: '/artikel', icon: Newspaper, label: 'Artikel' },
                 { href: '/lapor', icon: Warning, label: 'Lapor' },
-                { href: '/info-terkini', icon: Bell, label: 'Info' },
+                { href: '/info-terkini', icon: Bell, label: 'Info Terkini' },
                 { href: '/layanan', icon: SquaresFour, label: 'Layanan' },
               ].map(({ href, icon: Icon, label }) => (
                 <Link
@@ -132,11 +132,11 @@ export default function Header({
                 <Image
                   src="/logo-button.png"
                   alt="Jakselnews"
-                  width={32}
-                  height={32}
+                  width={28}
+                  height={28}
                   className="object-contain"
                 />
-                <span className="font-bold text-gray-900">Jaksel<span className="text-red-500">news</span></span>
+                <span className="font-bold text-gray-900 text-sm">Jaksel<span className="text-pink-500">news</span></span>
               </Link>
             ) : title ? (
               <h1 className="font-bold text-gray-900 truncate max-w-[180px]">
@@ -166,7 +166,7 @@ export default function Header({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-red-500 to-rose-500">
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-pink-400 to-pink-500">
               <div className="flex items-center gap-3">
                 <Image
                   src="/logo-button.png"
@@ -190,7 +190,7 @@ export default function Header({
               {[
                 { href: '/', icon: House, label: 'Beranda', color: 'from-red-500 to-rose-500' },
                 { href: '/artikel', icon: Newspaper, label: 'Artikel', color: 'from-blue-500 to-cyan-500' },
-                { href: '/lapor', icon: Warning, label: 'Lapor Kejadian', color: 'from-amber-500 to-orange-500' },
+                { href: '/lapor', icon: Warning, label: 'Lapor Kejadian', color: 'from-pink-400 to-pink-500' },
                 { href: '/info-terkini', icon: Bell, label: 'Info Terkini', color: 'from-violet-500 to-purple-500' },
                 { href: '/layanan', icon: SquaresFour, label: 'Layanan', color: 'from-emerald-500 to-teal-500' },
               ].map(({ href, icon: Icon, label, color }) => (

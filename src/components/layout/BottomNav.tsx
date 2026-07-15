@@ -2,18 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   House,
   Newspaper,
-  Warning,
   Bell,
   SquaresFour,
-  Plus,
-  List,
-  X,
-  MagnifyingGlass,
-  User,
 } from '@phosphor-icons/react';
 
 interface NavItem {
@@ -26,17 +21,16 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { id: 'beranda', label: 'Beranda', icon: <House size={24} weight="fill" />, href: '/', gradient: 'from-red-500 to-rose-500' },
-  { id: 'artikel', label: 'Artikel', icon: <Newspaper size={24} weight="fill" />, href: '/artikel', gradient: 'from-blue-500 to-cyan-500' },
-  { id: 'lapor', label: 'Lapor', icon: <Plus size={28} weight="bold" />, href: '/lapor', isCenter: true, gradient: 'from-red-500 to-rose-500' },
-  { id: 'info', label: 'Info', icon: <Bell size={24} weight="fill" />, href: '/info-terkini', gradient: 'from-violet-500 to-purple-500' },
-  { id: 'layanan', label: 'Layanan', icon: <SquaresFour size={24} weight="fill" />, href: '/layanan', gradient: 'from-emerald-500 to-teal-500' },
+  { id: 'beranda', label: 'Beranda', icon: <House size={22} weight="fill" />, href: '/', gradient: 'from-red-500 to-rose-500' },
+  { id: 'artikel', label: 'Artikel', icon: <Newspaper size={22} weight="fill" />, href: '/artikel', gradient: 'from-blue-500 to-cyan-500' },
+  { id: 'lapor', label: 'Lapor', icon: null, href: '/lapor', isCenter: true, gradient: 'from-pink-400 to-pink-500' },
+  { id: 'info', label: 'Info Terkini', icon: <Bell size={22} weight="fill" />, href: '/info-terkini', gradient: 'from-violet-500 to-purple-500' },
+  { id: 'layanan', label: 'Layanan', icon: <SquaresFour size={22} weight="fill" />, href: '/layanan', gradient: 'from-emerald-500 to-teal-500' },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showTopNav, setShowTopNav] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,9 +47,6 @@ export default function BottomNav() {
 
   return (
     <>
-      {/* Desktop Header - Hidden on mobile */}
-      {/* Note: Header is now in Header.tsx component */}
-
       {/* Mobile Bottom Navigation */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-gray-100 pb-safe">
         <div className="flex items-center justify-around h-16 relative">
@@ -63,15 +54,25 @@ export default function BottomNav() {
             <Link
               key={item.id}
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all duration-300 ${
+              className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-300 ${
                 isActive(item.href)
                   ? 'text-gray-900'
                   : 'text-gray-400'
               }`}
             >
               {item.isCenter ? (
-                <div className={`flex items-center justify-center w-14 h-14 -mt-6 rounded-2xl bg-gradient-to-br ${item.gradient} shadow-lg shadow-red-500/30 hover:shadow-red-500/50 hover:scale-110 transition-all duration-300`}>
-                  <span className="text-white">{item.icon}</span>
+                <div className="flex flex-col items-center -mt-4">
+                  <div className="w-12 h-12 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden ring-4 ring-white">
+                    <Image
+                      src="/logo-button.png"
+                      alt="Lapor"
+                      width={48}
+                      height={48}
+                      className="object-contain"
+                      priority
+                    />
+                  </div>
+                  <span className="text-[10px] font-bold mt-0.5">Lapor</span>
                 </div>
               ) : (
                 <>
@@ -82,7 +83,7 @@ export default function BottomNav() {
                   }`}>
                     {item.icon}
                   </div>
-                  <span className="text-[10px] font-semibold">{item.label}</span>
+                  <span className="text-[10px] font-semibold leading-tight">{item.label}</span>
                 </>
               )}
             </Link>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -8,15 +8,9 @@ import {
   MapPin,
   Warning,
   X,
-  Heart,
-  ChatCircle,
-  Share,
-  CaretRight,
-  Bell,
-  Star,
-  ListChecks,
-  Phone,
   Lightning,
+  Star,
+  ArrowRight,
 } from '@phosphor-icons/react';
 import { UGCPostCard } from './UGCPost';
 
@@ -32,6 +26,7 @@ interface BreakingPost {
         sizes?: {
           medium_large?: { source_url: string };
           large?: { source_url: string };
+          full?: { source_url: string };
         };
       };
     }>;
@@ -60,7 +55,7 @@ const fallbackPosts: BreakingPost[] = [
     _embedded: {
       'wp:featuredmedia': [{
         source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/Fajar-Rectoverso-Media.png',
-        media_details: { sizes: { medium_large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/Fajar-Rectoverso-Media-768x615.png' } } }
+        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/Fajar-Rectoverso-Media.png' } } }
       }]
     }
   },
@@ -72,7 +67,7 @@ const fallbackPosts: BreakingPost[] = [
     _embedded: {
       'wp:featuredmedia': [{
         source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/festival-jaksel.jpg',
-        media_details: { sizes: { medium_large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/festival-jaksel-768x615.jpg' } } }
+        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/festival-jaksel.jpg' } } }
       }]
     }
   },
@@ -84,7 +79,7 @@ const fallbackPosts: BreakingPost[] = [
     _embedded: {
       'wp:featuredmedia': [{
         source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/mrt-jakarta.jpg',
-        media_details: { sizes: { medium_large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/mrt-jakarta-768x615.jpg' } } }
+        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/mrt-jakarta.jpg' } } }
       }]
     }
   }
@@ -130,8 +125,8 @@ const staticWarnings: WarningReport[] = [
 function getFeaturedImageUrl(post: BreakingPost): string {
   const media = post._embedded?.['wp:featuredmedia']?.[0];
   if (!media) return '/placeholder.jpg';
-  return media.media_details?.sizes?.medium_large?.source_url ||
-         media.media_details?.sizes?.large?.source_url ||
+  return media.media_details?.sizes?.large?.source_url ||
+         media.media_details?.sizes?.medium_large?.source_url ||
          media.source_url;
 }
 
@@ -161,7 +156,54 @@ function formatDate(dateStr: string): string {
   }
 }
 
-// Breaking News Section
+// Breaking News Card Component
+function BreakingNewsCard({ post, height = 'h-[200px]' }: { post: BreakingPost; height?: string }) {
+  const [imageError, setImageError] = useState(false);
+  const imageUrl = getFeaturedImageUrl(post);
+  const title = stripHtml(post.title.rendered);
+  const date = formatDate(post.date);
+
+  return (
+    <div className={`relative w-full ${height} overflow-hidden rounded-none`}>
+      {/* Background Image - Use standard img for reliability */}
+      <div className="absolute inset-0 bg-gray-800">
+        {!imageError ? (
+          <img
+            src={imageUrl}
+            alt={title}
+            className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+            <span className="text-gray-500 text-4xl">📰</span>
+          </div>
+        )}
+      </div>
+
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+      {/* Content */}
+      <Link href={`/artikel/${post.slug}`} className="absolute inset-0">
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <span className="inline-block px-2.5 py-1 bg-red-600 text-white text-[10px] font-bold rounded mb-2">
+            BREAKING
+          </span>
+          <h2 className="text-white font-bold text-base line-clamp-2 mb-1 drop-shadow-lg">
+            {title}
+          </h2>
+          <p className="text-white/80 text-xs flex items-center gap-1.5">
+            <Clock size={12} />
+            {date}
+          </p>
+        </div>
+      </Link>
+    </div>
+  );
+}
+
+// Breaking News Hero Section
 function BreakingNewsSection({ posts }: { posts: BreakingPost[] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -175,8 +217,8 @@ function BreakingNewsSection({ posts }: { posts: BreakingPost[] }) {
 
   if (posts.length === 0) {
     return (
-      <section className="relative w-full">
-        <div className="h-56 md:h-72 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+      <section className="w-full">
+        <div className="h-[200px] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
           <p className="text-gray-500">Tidak ada berita terbaru</p>
         </div>
       </section>
@@ -184,68 +226,60 @@ function BreakingNewsSection({ posts }: { posts: BreakingPost[] }) {
   }
 
   return (
-    <section className="relative w-full">
-      <div className="relative w-full h-56 md:h-72 overflow-hidden">
-        {posts.slice(0, 5).map((post, index) => (
-          <div
-            key={post.id}
-            className={`absolute inset-0 transition-opacity duration-500 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <Link href={`/artikel/${post.slug}`} className="block w-full h-full">
-              <Image
-                src={getFeaturedImageUrl(post)}
-                alt={stripHtml(post.title.rendered)}
-                fill
-                className="object-cover"
-                priority={index === 0}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-            </Link>
-
-            {/* Breaking Badge */}
-            {index === currentSlide && (
-              <div className="absolute top-4 left-4 md:top-6 md:left-6">
-                <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded">
-                  BREAKING
-                </span>
-              </div>
-            )}
-
-            {/* Content */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-              <h2 className="text-white font-bold text-lg md:text-xl line-clamp-2 drop-shadow">
-                {stripHtml(post.title.rendered)}
-              </h2>
-              <p className="text-white/80 text-xs md:text-sm mt-1 flex items-center gap-2">
-                <Clock size={12} />
-                {formatDate(post.date)}
-              </p>
+    <section className="w-full">
+      {/* Mobile: Single Card with Slides */}
+      <div className="lg:hidden">
+        {/* Main Card */}
+        <div className="relative w-full">
+          {posts.slice(0, 3).map((post, index) => (
+            <div
+              key={post.id}
+              className={`transition-opacity duration-500 ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0 absolute inset-0'
+              }`}
+            >
+              <BreakingNewsCard post={post} />
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {/* Slider Dots */}
+        {/* Dots */}
         {posts.length > 1 && (
-          <div className="absolute bottom-4 right-4 flex gap-2">
-            {posts.slice(0, 5).map((_, index) => (
+          <div className="flex justify-center gap-1.5 py-2 bg-white border-b">
+            {posts.slice(0, 3).map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
                 className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentSlide ? 'bg-white w-4' : 'bg-white/50'
+                  index === currentSlide ? 'bg-red-500 w-4' : 'bg-gray-300'
                 }`}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* Desktop: Grid */}
+      <div className="hidden lg:block">
+        <div className="grid grid-cols-3 gap-3 p-4">
+          {/* Main Featured */}
+          <div className="col-span-2">
+            {posts[0] && <BreakingNewsCard post={posts[0]} height="h-[360px]" />}
+          </div>
+
+          {/* Side Cards */}
+          <div className="space-y-3">
+            {posts.slice(1, 3).map((post) => (
+              <BreakingNewsCard key={post.id} post={post} height="h-[172px]" />
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
 
-// Peringatan Popup Component
+// Warning Modal
 function WarningModal({ warning, onClose }: { warning: WarningReport; onClose: () => void }) {
   return (
     <>
@@ -315,7 +349,7 @@ function PeringatanSection() {
                 <span className="text-white/80 text-xs ml-2">{warning.location}</span>
               </div>
               <span className="text-xs bg-white/20 px-2 py-0.5 rounded">{warning.reports}x</span>
-              <CaretRight size={16} className="text-white/70" />
+              <ArrowRight size={16} className="text-white/70" />
             </button>
           ))}
         </div>
@@ -331,46 +365,10 @@ function PeringatanSection() {
 // Info Terkini Section
 function InfoTerkiniSection() {
   const mockReports = [
-    {
-      id: 1,
-      authorName: 'Warga Kemang',
-      location: 'Kemang',
-      time: '10 menit lalu',
-      content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊',
-      likes: 24,
-      comments: 8,
-      shares: 5
-    },
-    {
-      id: 2,
-      authorName: 'Warga Blok M',
-      location: 'Blok M',
-      time: '25 menit lalu',
-      content: 'Kemacetan parah di Jl. Melawai arah flyover. Estimated delay 30 menit. 🚗💨',
-      likes: 18,
-      comments: 12,
-      shares: 3
-    },
-    {
-      id: 3,
-      authorName: 'Warga Cilandak',
-      location: 'Cilandak',
-      time: '45 menit lalu',
-      content: 'Listrik padam di kawasan TB Simatupang. PLN sedang melakukan perbaikan. ⚡',
-      likes: 15,
-      comments: 6,
-      shares: 2
-    },
-    {
-      id: 4,
-      authorName: 'Warga Kebayoran',
-      location: 'Kebayoran',
-      time: '1 jam lalu',
-      content: 'Pohon tumbang di Jl. Trunojoyo. Arvodi dan tim kebersihan sudah di lokasi. 🌳',
-      likes: 32,
-      comments: 15,
-      shares: 8
-    }
+    { id: 1, authorName: 'Warga Kemang', location: 'Kemang', time: '10 menit lalu', content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊', likes: 24, comments: 8, shares: 5 },
+    { id: 2, authorName: 'Warga Blok M', location: 'Blok M', time: '25 menit lalu', content: 'Kemacetan parah di Jl. Melawai arah flyover. Estimated delay 30 menit. 🚗💨', likes: 18, comments: 12, shares: 3 },
+    { id: 3, authorName: 'Warga Cilandak', location: 'Cilandak', time: '45 menit lalu', content: 'Listrik padam di kawasan TB Simatupang. PLN sedang melakukan perbaikan. ⚡', likes: 15, comments: 6, shares: 2 },
+    { id: 4, authorName: 'Warga Kebayoran', location: 'Kebayoran', time: '1 jam lalu', content: 'Pohon tumbang di Jl. Trunojoyo. Arvodi dan tim kebersihan sudah di lokasi. 🌳', likes: 32, comments: 15, shares: 8 }
   ];
 
   return (
@@ -381,7 +379,7 @@ function InfoTerkiniSection() {
           INFO TERKINI
         </h2>
         <Link href="/info-terkini" className="text-sm text-gray-500 flex items-center gap-1">
-          Lihat Semua <CaretRight size={14} />
+          Lihat Semua <ArrowRight size={14} />
         </Link>
       </div>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2">
@@ -414,7 +412,7 @@ function LayananPopulerSection() {
           LAYANAN POPULER
         </h2>
         <Link href="/layanan" className="text-sm text-gray-500 flex items-center gap-1">
-          Lihat Semua <CaretRight size={14} />
+          Lihat Semua <ArrowRight size={14} />
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -434,45 +432,28 @@ function LayananPopulerSection() {
   );
 }
 
-// Notification Subscription Banner
+// Notification Banner
 function NotificationBanner() {
   const [dismissed, setDismissed] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
-    // Check if already subscribed
-    const saved = localStorage.getItem('notification_subscribed');
-    if (saved === 'true') setSubscribed(true);
-    const dismissed = localStorage.getItem('notification_banner_dismissed');
-    if (dismissed === 'true') setDismissed(true);
+    const saved = localStorage.getItem('notification_banner_dismissed');
+    if (saved === 'true') setDismissed(true);
   }, []);
-
-  const handleSubscribe = async () => {
-    if (!('Notification' in window)) {
-      alert('Browser tidak mendukung notifications');
-      return;
-    }
-
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      setSubscribed(true);
-      localStorage.setItem('notification_subscribed', 'true');
-    }
-  };
 
   const handleDismiss = () => {
     setDismissed(true);
     localStorage.setItem('notification_banner_dismissed', 'true');
   };
 
-  if (dismissed || subscribed) return null;
+  if (dismissed) return null;
 
   return (
     <section className="px-4 pb-6">
       <div className="bg-gradient-to-r from-red-50 to-rose-50 border border-red-100 rounded-2xl p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl flex items-center justify-center">
-            <Bell size={20} weight="fill" className="text-white" />
+            <span className="text-xl">🔔</span>
           </div>
           <div>
             <h3 className="font-bold text-gray-900 text-sm">Aktifkan Notifikasi</h3>
@@ -480,16 +461,10 @@ function NotificationBanner() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleDismiss}
-            className="p-2 text-gray-400 hover:text-gray-600"
-          >
+          <button onClick={handleDismiss} className="p-2 text-gray-400 hover:text-gray-600">
             <X size={18} />
           </button>
-          <button
-            onClick={handleSubscribe}
-            className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-500 text-white text-xs font-semibold rounded-full"
-          >
+          <button className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-500 text-white text-xs font-semibold rounded-full">
             Aktifkan
           </button>
         </div>
@@ -527,7 +502,6 @@ export default function HomeContent() {
           setBreakingPosts(fallbackPosts);
         }
       } catch (error) {
-        console.log('Using fallback posts');
         setBreakingPosts(fallbackPosts);
       } finally {
         setLoading(false);
@@ -539,7 +513,7 @@ export default function HomeContent() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-56 md:h-72 bg-gray-200 animate-pulse" />
+        <div className="h-[200px] lg:h-[360px] bg-gray-200 animate-pulse" />
         <div className="h-32 bg-gray-200 animate-pulse mx-4 rounded-xl" />
         <div className="h-44 bg-gray-200 animate-pulse mx-4 rounded-xl" />
       </div>
