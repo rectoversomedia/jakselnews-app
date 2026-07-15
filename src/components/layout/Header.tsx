@@ -48,13 +48,12 @@ export default function Header({
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
               <Image
-                src="/logo-button.png"
+                src="/logo-utama.png"
                 alt="Jakselnews"
-                width={40}
-                height={40}
+                width={140}
+                height={36}
                 className="object-contain"
               />
-              <span className="font-bold text-xl text-gray-900">Jaksel<span className="text-pink-500">news</span></span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -128,15 +127,14 @@ export default function Header({
           {/* Center */}
           <div className="flex items-center">
             {showLogo ? (
-              <Link href="/" className="flex items-center gap-2">
+              <Link href="/" className="flex items-center">
                 <Image
-                  src="/logo-button.png"
+                  src="/logo-utama.png"
                   alt="Jakselnews"
-                  width={28}
+                  width={110}
                   height={28}
                   className="object-contain"
                 />
-                <span className="font-bold text-gray-900 text-sm">Jaksel<span className="text-pink-500">news</span></span>
               </Link>
             ) : title ? (
               <h1 className="font-bold text-gray-900 truncate max-w-[180px]">
@@ -169,13 +167,12 @@ export default function Header({
             <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-pink-400 to-pink-500">
               <div className="flex items-center gap-3">
                 <Image
-                  src="/logo-button.png"
+                  src="/logo-utama.png"
                   alt="Jakselnews"
-                  width={40}
-                  height={40}
-                  className="object-contain bg-white rounded-lg p-1"
+                  width={100}
+                  height={26}
+                  className="object-contain bg-white/20 rounded p-1"
                 />
-                <span className="font-bold text-xl text-white">Jakselnews</span>
               </div>
               <button
                 onClick={() => setShowMenu(false)}
