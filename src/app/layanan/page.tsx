@@ -1,17 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import {
   MagnifyingGlass,
-  Phone,
   CaretRight,
-  Heart,
-  Star,
-  ListChecks,
-  X,
-  Clock,
+  Train,
+  Bus,
+  Cardholder,
+  FirstAid,
+  GraduationCap,
+  Buildings,
+  CurrencyCircleDollar,
+  ShieldCheck,
+  House,
+  Passport,
+  Wallet,
+  Tree,
+  WifiHigh,
+  Phone,
+  Newspaper,
   MapPin,
+  Star,
+  ChCircle,
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
@@ -19,381 +30,256 @@ import BottomNav from '@/components/layout/BottomNav';
 interface Service {
   id: number;
   name: string;
-  slug: string;
   desc: string;
-  icon: string;
-  gradient: string;
+  icon: React.ReactNode;
+  url: string;
   category: string;
-  featured?: boolean;
+  categoryName: string;
 }
 
-interface ServiceDetail {
-  id: number;
-  slug: string;
-  title: string;
-  description: string;
-  steps: string[];
-  gradient: string;
-  icon: string;
-  url?: string;
+interface ServiceCategory {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
 }
 
+// All Jakarta services with official URLs
 const allServices: Service[] = [
-  { id: 1, name: 'Cek Bansos Jakarta', slug: 'cek-bansos', desc: 'Cek penerima & status bantuan sosial', icon: '💰', gradient: 'from-emerald-500 to-teal-500', category: 'bansos', featured: true },
-  { id: 2, name: 'KJP Plus', slug: 'kjp-plus', desc: 'Cek status dan saldo KJP Plus', icon: '🎓', gradient: 'from-violet-500 to-purple-500', category: 'pendidikan', featured: true },
-  { id: 3, name: 'Cek ETLE', slug: 'cek-etle', desc: 'Cek tilang elektronik dan denda', icon: '📸', gradient: 'from-blue-500 to-cyan-500', category: 'transportasi', featured: true },
-  { id: 4, name: 'Pajak Kendaraan', slug: 'pajak-kendaraan', desc: 'Cek & bayar pajak kendaraan', icon: '🚗', gradient: 'from-amber-500 to-orange-500', category: 'transportasi', featured: true },
-  { id: 5, name: 'Info KRL', slug: 'info-krl', desc: 'Jadwal & rute KRL', icon: '🚆', gradient: 'from-blue-600 to-blue-400', category: 'transportasi' },
-  { id: 6, name: 'TransJakarta', slug: 'transjakarta', desc: 'Rute & halte terdekat', icon: '🚌', gradient: 'from-red-500 to-rose-500', category: 'transportasi' },
-  { id: 7, name: 'Cuaca Jaksel', slug: 'cuaca', desc: 'Info cuaca terkini Jaksel', icon: '🌤️', gradient: 'from-cyan-500 to-blue-400', category: 'info' },
-  { id: 8, name: 'Nomor Darurat', slug: 'darurat', desc: 'Call center penting', icon: '📞', gradient: 'from-red-600 to-red-400', category: 'darurat' },
-  { id: 9, name: 'Administrasi', slug: 'administrasi', desc: 'KTP, KK, akta lahir', icon: '📄', gradient: 'from-emerald-600 to-teal-500', category: 'administrasi' },
-  { id: 10, name: 'PPDB Online', slug: 'ppdb', desc: 'Penerimaan peserta didik baru', icon: '📚', gradient: 'from-violet-600 to-purple-500', category: 'pendidikan' },
-  { id: 11, name: 'RT/RW Digital', slug: 'rt-rw', desc: 'Layanan RT dan RW', icon: '🏠', gradient: 'from-amber-600 to-orange-500', category: 'administrasi' },
-  { id: 12, name: 'Izin Usaha', slug: 'izin-usaha', desc: 'OSS & perizinan usaha', icon: '🏢', gradient: 'from-blue-700 to-blue-500', category: 'usaha' },
+  // Transportasi
+  { id: 1, name: 'KRL Commuterline', desc: 'Jadwal, rute & tarif KRL Jabodetabek', url: 'https://www.krl.co.id', category: 'transportasi', categoryName: 'Transportasi', icon: <Train size={28} /> },
+  { id: 2, name: 'TransJakarta', desc: 'Rute bus & halte terdekat', url: 'https://transjakarta.co.id', category: 'transportasi', categoryName: 'Transportasi', icon: <Bus size={28} /> },
+  { id: 3, name: 'MRT Jakarta', desc: 'Rute & jadwal MRT Jakarta', url: 'https://jakartamrt.co.id', category: 'transportasi', categoryName: 'Transportasi', icon: <Train size={28} /> },
+  { id: 4, name: 'LRT Jakarta', desc: 'Rute & jadwal LRT Jabodebek', url: 'https://lrtjabodebek.com', category: 'transportasi', categoryName: 'Transportasi', icon: <Train size={28} /> },
+  { id: 5, name: 'Grab Indonesia', desc: 'Taksi & ojol online', url: 'https://grab.com/id', category: 'transportasi', categoryName: 'Transportasi', icon: <Bus size={28} /> },
+  { id: 6, name: 'Gojek Indonesia', desc: 'Transportasi & layanan everyday', url: 'https://gojek.com', category: 'transportasi', categoryName: 'Transportasi', icon: <Bus size={28} /> },
+
+  // Keuangan & Pajak
+  { id: 7, name: 'Cek ETLE', desc: 'Tilang elektronik & histori pelanggaran', url: 'https://ettributtrafik.id', category: 'keuangan', categoryName: 'Keuangan & Pajak', icon: <ChCircle size={28} /> },
+  { id: 8, name: 'Pajak Kendaraan', desc: 'Cek & bayar pajak kendaraan online', url: 'https://bapenda.jakarta.go.id', category: 'keuangan', categoryName: 'Keuangan & Pajak', icon: <CurrencyCircleDollar size={28} /> },
+  { id: 9, name: 'Samsat Online', desc: 'Pendaftaran pajak kendaraan', url: 'https://pajak.kendaraanmu.com', category: 'keuangan', categoryName: 'Keuangan & Pajak', icon: <Wallet size={28} /> },
+
+  // Bantuan Sosial
+  { id: 10, name: 'Bansos Jakarta', desc: 'Cek penerima & status bantuan sosial', url: 'https://bansos.jakarta.go.id', category: 'bansos', categoryName: 'Bantuan Sosial', icon: <Cardholder size={28} /> },
+  { id: 11, name: 'KJP Plus', desc: 'Kartu Jakarta Pintar Plus', url: 'https://kjp.jakarta.go.id', category: 'bansos', categoryName: 'Bantuan Sosial', icon: <GraduationCap size={28} /> },
+  { id: 12, name: 'Kartu Jakarta Sehat', desc: 'BPJS & kesehatan gratis', url: 'https://kjs.jakarta.go.id', category: 'bansos', categoryName: 'Bantuan Sosial', icon: <FirstAid size={28} /> },
+  { id: 13, name: 'KIP Kuliah', desc: 'Beasiswa kuliah & bantuan pendidikan', url: 'https://kip-kuliah.kemendikbud.go.id', category: 'bansos', categoryName: 'Bantuan Sosial', icon: <GraduationCap size={28} /> },
+
+  // Kesehatan
+  { id: 14, name: 'RSUD Jakarta', desc: 'Rumah sakit umum daerah', url: 'https://www.jakartasatu.jakarta.go.id', category: 'kesehatan', categoryName: 'Kesehatan', icon: <FirstAid size={28} /> },
+  { id: 15, name: 'Puskesmas Jaksel', desc: 'Pusat kesehatan masyarakat', url: 'https://www.jakartasatu.jakarta.go.id', category: 'kesehatan', categoryName: 'Kesehatan', icon: <FirstAid size={28} /> },
+  { id: 16, name: 'SIGIZI', desc: 'Stunting & gizi buruk', url: 'https://humas.jakarta.go.id', category: 'kesehatan', categoryName: 'Kesehatan', icon: <FirstAid size={28} /> },
+
+  // Pendidikan
+  { id: 17, name: 'PPDB Jakarta', desc: 'Penerimaan peserta didik baru', url: 'https://ppdb.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={28} /> },
+  { id: 18, name: 'Jakarta Edukasi', desc: 'Portal pendidikan Jakarta', url: 'https://dki jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={28} /> },
+  { id: 19, name: 'JakOne', desc: 'Kartu siswa & pelajar Jakarta', url: 'https://jak-one.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <Cardholder size={28} /> },
+
+  // Administrasi
+  { id: 20, name: 'KTP Online', desc: 'Pembuatan & perpanjangan KTP', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <Passport size={28} /> },
+  { id: 21, name: 'KK Online', desc: 'Kartu keluarga online', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <Passport size={28} /> },
+  { id: 22, name: 'Akta Kelahiran', desc: 'Surat kelahiran & kematian', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <Passport size={28} /> },
+  { id: 23, name: 'IMKEL', desc: 'Isoman & isolasiCOVID', url: 'https://corona.jakarta.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <ShieldCheck size={28} /> },
+
+  // Layanan Jakarta
+  { id: 24, name: 'JakWifi', desc: 'Internet gratis di Jakarta', url: 'https://jaki.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <WifiHigh size={28} /> },
+  { id: 25, name: 'JakLingko', desc: 'Integrasi transportasi Jakarta', url: 'https://jaklingkojakarta.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Bus size={28} /> },
+  { id: 26, name: 'Jakarta Satu', desc: 'Portal data & layanan Jakarta', url: 'https://www.jakartasatu.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Buildings size={28} /> },
+  { id: 27, name: 'DKI Open Data', desc: 'Data terbuka Jakarta', url: 'https://data.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Newspaper size={28} /> },
+  { id: 28, name: 'RT/RW Digital', desc: 'Layanan digital RT/RW', url: 'https://jaki.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <House size={28} /> },
+
+  // Lingkungan
+  { id: 29, name: 'Bank Sampah', desc: 'Tukar sampah jadi uang', url: 'https://jaki.jakarta.go.id', category: 'lingkungan', categoryName: 'Lingkungan', icon: <Tree size={28} /> },
+  { id: 30, name: 'DKI Green', desc: 'Program hijau & konservasi', url: 'https://www.jakartasatu.jakarta.go.id', category: 'lingkungan', categoryName: 'Lingkungan', icon: <Tree size={28} /> },
+  { id: 31, name: 'PDPS', desc: 'Penerangan & sampah Jakarta', url: 'https://www.jakartasatu.jakarta.go.id', category: 'lingkungan', categoryName: 'Lingkungan', icon: <Tree size={28} /> },
+
+  // Usaha
+  { id: 32, name: 'OSS UBBN', desc: 'Izin usaha online', url: 'https://oss.go.id', category: 'usaha', categoryName: 'Usaha', icon: <Buildings size={28} /> },
+  { id: 33, name: 'JakClinic', desc: 'OSS & izin berusaha', url: 'https://pelayanan.jakarta.go.id', category: 'usaha', categoryName: 'Usaha', icon: <Buildings size={28} /> },
 ];
 
-const serviceDetails: Record<string, ServiceDetail> = {
-  'cek-bansos': {
-    id: 1,
-    slug: 'cek-bansos',
-    title: 'Cek Bansos Jakarta',
-    description: 'Cek status penerimaan bantuan sosial dari Pemerintah Provinsi DKI Jakarta',
-    gradient: 'from-emerald-500 to-teal-500',
-    icon: '💰',
-    steps: [
-      'Masukkan NIK (Nomor Induk Kependudukan)',
-      'Sistem akan memverifikasi data',
-      'Lihat status penerimaan bansos',
-      'Cek jenis bantuan yang diterima'
-    ],
-    url: 'https://bansos.jakarta.go.id'
-  },
-  'kjp-plus': {
-    id: 2,
-    slug: 'kjp-plus',
-    title: 'KJP Plus',
-    description: 'Cek saldo dan status Kartu Jakarta Pintar Plus',
-    gradient: 'from-violet-500 to-purple-500',
-    icon: '🎓',
-    steps: [
-      'Masukkan nomor kartu KJP',
-      'Masukkan NISN siswa',
-      'Cek saldo yang tersedia',
-      'Lihat riwayat transaksi'
-    ],
-    url: 'https://kjp.jakarta.go.id'
-  },
-  'cek-etle': {
-    id: 3,
-    slug: 'cek-etle',
-    title: 'Cek ETLE',
-    description: 'Cek tilang elektronik dan histori pelanggaran lalu lintas',
-    gradient: 'from-blue-500 to-cyan-500',
-    icon: '📸',
-    steps: [
-      'Masukkan nomor plat kendaraan',
-      'Pilih jenis kendaraan',
-      'Lihat daftar pelanggaran',
-      'Cek nominal denda yang harus dibayar'
-    ],
-    url: 'https://etle.infobrimo.id'
-  },
-  'pajak-kendaraan': {
-    id: 4,
-    slug: 'pajak-kendaraan',
-    title: 'Pajak Kendaraan',
-    description: 'Cek dan bayar pajak kendaraan bermotor online',
-    gradient: 'from-amber-500 to-orange-500',
-    icon: '🚗',
-    steps: [
-      'Masukkan nomor plat kendaraan',
-      'Cek jatuh tempo pajak',
-      'Hitung otomatis PKB dan SWDKLLJ',
-      'Bayar melalui berbagai metode'
-    ],
-    url: 'https://samsat-pkb2.jakarta.go.id'
-  },
-};
-
-const categories = [
-  { id: 'all', name: 'Semua', gradient: 'from-gray-500 to-gray-400' },
-  { id: 'bansos', name: 'Bansos', gradient: 'from-emerald-500 to-teal-500' },
-  { id: 'transportasi', name: 'Transportasi', gradient: 'from-blue-500 to-cyan-500' },
-  { id: 'pendidikan', name: 'Pendidikan', gradient: 'from-violet-500 to-purple-500' },
-  { id: 'administrasi', name: 'Admin', gradient: 'from-amber-500 to-orange-500' },
-  { id: 'darurat', name: 'Darurat', gradient: 'from-red-500 to-rose-500' },
-  { id: 'info', name: 'Info', gradient: 'from-cyan-500 to-blue-400' },
-  { id: 'usaha', name: 'Usaha', gradient: 'from-blue-700 to-blue-500' },
+const categories: ServiceCategory[] = [
+  { id: 'semua', name: 'Semua', icon: <Star size={16} /> },
+  { id: 'transportasi', name: 'Transportasi', icon: <Bus size={16} /> },
+  { id: 'keuangan', name: 'Keuangan', icon: <CurrencyCircleDollar size={16} /> },
+  { id: 'bansos', name: 'Bansos', icon: <Cardholder size={16} /> },
+  { id: 'kesehatan', name: 'Kesehatan', icon: <FirstAid size={16} /> },
+  { id: 'pendidikan', name: 'Pendidikan', icon: <GraduationCap size={16} /> },
+  { id: 'administrasi', name: 'Admin', icon: <Passport size={16} /> },
+  { id: 'jakarta', name: 'Layanan Jakarta', icon: <Buildings size={16} /> },
+  { id: 'lingkungan', name: 'Lingkungan', icon: <Tree size={16} /> },
+  { id: 'usaha', name: 'Usaha', icon: <Wallet size={16} /> },
 ];
 
 const emergencyNumbers = [
-  { name: '112', label: 'Call Center', gradient: 'from-red-500 to-rose-500', desc: 'Nomor darurat utama' },
-  { name: '110', label: 'Polisi', gradient: 'from-blue-500 to-blue-400', desc: 'Kejadian kriminal' },
-  { name: '118/119', label: 'Ambulans', gradient: 'from-emerald-500 to-teal-500', desc: 'Kondisi medis darurat' },
-  { name: '113', label: 'Pemadam', gradient: 'from-orange-500 to-amber-400', desc: 'Kebakaran & bencana' },
+  { name: '112', label: 'Call Center', desc: 'Nomor darurat utama' },
+  { name: '110', label: 'Polisi', desc: 'Kejadian kriminal' },
+  { name: '119', label: 'Ambulans', desc: 'Kondisi medis darurat' },
+  { name: '113', label: 'Pemadam', desc: 'Kebakaran & bencana' },
 ];
 
-// Service Detail Modal
-function ServiceDetailModal({ service, onClose }: { service: ServiceDetail; onClose: () => void }) {
+// Service Card Component
+function ServiceCard({ service }: { service: Service }) {
   return (
-    <>
-      <div className="fixed inset-0 bg-black/60 z-50" onClick={onClose} />
-      <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-white rounded-2xl z-50 max-h-[85vh] overflow-y-auto">
-        <div className={`bg-gradient-to-r ${service.gradient} p-5`}>
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl backdrop-blur-sm">
-              {service.icon}
-            </div>
-            <div className="text-white">
-              <h2 className="text-xl font-bold">{service.title}</h2>
-              <p className="text-white/80 text-sm mt-1">{service.description}</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="p-5 space-y-5">
-          <div>
-            <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <ListChecks size={18} className="text-emerald-500" />
-              Langkah-langkah
-            </h3>
-            <div className="space-y-3">
-              {service.steps.map((step, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className={`w-7 h-7 bg-gradient-to-br ${service.gradient} rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0`}>
-                    {index + 1}
-                  </div>
-                  <p className="text-gray-700 text-sm pt-0.5">{step}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {service.url && (
-            <a
-              href={service.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`block w-full py-3.5 bg-gradient-to-r ${service.gradient} text-white font-bold rounded-xl text-center shadow-lg hover:shadow-xl transition-shadow`}
-            >
-              Buka Aplikasi
-            </a>
-          )}
-        </div>
+    <a
+      href={service.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all duration-200 flex flex-col items-center text-center"
+    >
+      <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-700 group-hover:bg-red-50 group-hover:text-red-500 transition-colors mb-3">
+        {service.icon}
       </div>
-    </>
+      <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1">{service.name}</h3>
+      <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{service.desc}</p>
+    </a>
   );
 }
 
 // Featured Service Card
-function FeaturedServiceCard({ service }: { service: Service }) {
+function FeaturedCard({ service }: { service: Service }) {
   return (
-    <Link
-      href={`/layanan/${service.slug}`}
-      className="group bg-white rounded-2xl p-4 text-center shadow-md border border-gray-100 hover:shadow-xl hover:border-emerald-100 hover:-translate-y-1 transition-all duration-300"
+    <a
+      href={service.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-lg hover:border-red-200 transition-all duration-200"
     >
-      <div className={`w-14 h-14 bg-gradient-to-br ${service.gradient} rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+      <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center text-red-500 mb-4">
         {service.icon}
       </div>
-      <p className="font-bold text-gray-900 text-sm">{service.name}</p>
-      <p className="text-xs text-gray-500 mt-0.5">{service.desc}</p>
-    </Link>
-  );
-}
-
-// Service List Item
-function ServiceListItem({ service }: { service: Service }) {
-  return (
-    <Link
-      href={`/layanan/${service.slug}`}
-      className="group bg-white rounded-2xl p-4 shadow-md border border-gray-100 hover:shadow-xl hover:border-red-100 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4"
-    >
-      <div className={`w-14 h-14 bg-gradient-to-br ${service.gradient} rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg group-hover:scale-110 transition-all duration-300`}>
-        {service.icon}
-      </div>
-      <div className="flex-1 min-w-0">
-        <h3 className="font-bold text-gray-900 group-hover:text-red-500 transition-colors">{service.name}</h3>
-        <p className="text-sm text-gray-500 truncate">{service.desc}</p>
-      </div>
-      <CaretRight size={20} className="text-gray-400 group-hover:text-red-500 group-hover:translate-x-1 transition-all" />
-    </Link>
+      <h3 className="font-bold text-gray-900 mb-1">{service.name}</h3>
+      <p className="text-sm text-gray-500">{service.desc}</p>
+    </a>
   );
 }
 
 export default function LayananPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedService, setSelectedService] = useState<ServiceDetail | null>(null);
-  const [showSearch, setShowSearch] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('semua');
 
   const filteredServices = allServices.filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          service.desc.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || service.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'semua' || service.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const featuredServices = allServices.filter(s => s.featured);
-  const recentServices = allServices.slice(4, 8);
+  // Featured services (most popular)
+  const featuredServices = allServices.filter(s =>
+    ['KRL Commuterline', 'TransJakarta', 'Bansos Jakarta', 'KJP Plus', 'Cek ETLE', 'Pajak Kendaraan'].includes(s.name)
+  );
 
-  const handleServiceClick = (slug: string) => {
-    const detail = serviceDetails[slug];
-    if (detail) {
-      setSelectedService(detail);
+  // Group services by category
+  const groupedServices = allServices.reduce((acc, service) => {
+    if (!acc[service.category]) {
+      acc[service.category] = [];
     }
-  };
+    acc[service.category].push(service);
+    return acc;
+  }, {} as Record<string, Service[]>);
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24 lg:pb-0 lg:pt-20">
+    <main className="min-h-screen bg-gray-50 pb-24 lg:pb-0">
       <Header title="Layanan" />
       <BottomNav />
 
-      {/* Search Bar - Mobile */}
-      <div className="lg:hidden sticky top-14 z-30 bg-white border-b px-4 py-3">
-        <div className="relative">
-          <MagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Cari layanan..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setShowSearch(true)}
-            className="w-full pl-12 pr-4 py-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
-          />
-        </div>
-
-        {/* Category Filter */}
-        <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
-                selectedCategory === cat.id
-                  ? `bg-gradient-to-r ${cat.gradient} text-white shadow-lg`
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Desktop Search & Filter */}
-      <div className="hidden lg:block sticky top-16 z-30 bg-white border-b px-6 py-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-md">
-              <MagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Cari layanan..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
-              />
-            </div>
-            <div className="flex gap-2 overflow-x-auto">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
-                    selectedCategory === cat.id
-                      ? `bg-gradient-to-r ${cat.gradient} text-white shadow-lg`
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
+      {/* Search Bar */}
+      <div className="sticky top-14 lg:top-20 z-30 bg-white border-b px-4 py-3">
+        <div className="max-w-2xl mx-auto">
+          <div className="relative">
+            <MagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Cari layanan..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
+            />
           </div>
         </div>
       </div>
 
-      <div className="px-4 lg:px-6 py-4 max-w-6xl mx-auto">
-        {/* Popular Services */}
-        {!searchQuery && selectedCategory === 'all' && (
+      {/* Category Filter */}
+      <div className="bg-white border-b px-4 py-3">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  selectedCategory === cat.id
+                    ? 'bg-red-500 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {cat.icon}
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 py-4 max-w-2xl mx-auto">
+        {/* Featured Services */}
+        {!searchQuery && selectedCategory === 'semua' && (
           <section className="mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center shadow-lg">
-                <Star size={18} weight="fill" className="text-white" />
-              </div>
-              <h2 className="text-lg font-bold text-gray-900">Layanan Populer</h2>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Layanan Populer</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {featuredServices.map((service) => (
-                <FeaturedServiceCard key={service.id} service={service} />
+                <FeaturedCard key={service.id} service={service} />
               ))}
             </div>
           </section>
         )}
 
-        {/* Recent Services */}
-        {!searchQuery && selectedCategory === 'all' && (
+        {/* Emergency Numbers */}
+        {!searchQuery && selectedCategory === 'semua' && (
           <section className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Clock size={18} className="text-blue-500" />
-                Baru Dilihat
-              </h2>
-            </div>
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2">
-              {recentServices.map((service) => (
-                <Link
-                  key={service.id}
-                  href={`/layanan/${service.slug}`}
-                  className="shrink-0 w-40 bg-white rounded-xl p-3 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Phone size={20} className="text-red-500" />
+              Nomor Darurat
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {emergencyNumbers.map((num) => (
+                <a
+                  key={num.name}
+                  href={`tel:${num.name.replace('/', '-')}`}
+                  className="bg-red-500 rounded-2xl p-4 text-center hover:bg-red-600 transition-colors"
                 >
-                  <div className={`w-10 h-10 bg-gradient-to-br ${service.gradient} rounded-lg flex items-center justify-center text-xl mb-2`}>
-                    {service.icon}
-                  </div>
-                  <p className="font-semibold text-gray-900 text-xs truncate">{service.name}</p>
-                  <p className="text-[10px] text-gray-500 truncate">{service.desc}</p>
-                </Link>
+                  <p className="font-bold text-white text-xl mb-1">{num.name}</p>
+                  <p className="text-red-100 text-xs">{num.label}</p>
+                </a>
               ))}
             </div>
           </section>
         )}
 
-        {/* All Services */}
+        {/* All Services Grid */}
         <section>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-lg">
-              <ListChecks size={18} weight="fill" className="text-white" />
-            </div>
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-gray-900">
-              {searchQuery || selectedCategory !== 'all' ? 'Hasil Pencarian' : 'Semua Layanan'}
-              <span className="font-normal text-gray-500 ml-2">({filteredServices.length})</span>
+              {searchQuery ? 'Hasil Pencarian' : selectedCategory === 'semua' ? 'Semua Layanan' : categories.find(c => c.id === selectedCategory)?.name}
             </h2>
+            <span className="text-sm text-gray-500">{filteredServices.length} layanan</span>
           </div>
 
           {filteredServices.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
               {filteredServices.map((service) => (
-                <div key={service.id} onClick={() => handleServiceClick(service.slug)}>
-                  <ServiceListItem service={service} />
-                </div>
+                <ServiceCard key={service.id} service={service} />
               ))}
             </div>
           ) : (
             <div className="text-center py-16">
-              <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <MagnifyingGlass size={40} className="text-gray-400" />
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MagnifyingGlass size={32} className="text-gray-400" />
               </div>
               <p className="text-gray-500 mb-4">Layanan tidak ditemukan</p>
               <button
-                onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
-                className="px-6 py-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30"
+                onClick={() => { setSearchQuery(''); setSelectedCategory('semua'); }}
+                className="px-6 py-2.5 bg-red-500 text-white font-medium rounded-xl hover:bg-red-600 transition-colors"
               >
                 Reset Pencarian
               </button>
@@ -401,51 +287,54 @@ export default function LayananPage() {
           )}
         </section>
 
-        {/* Emergency Numbers */}
-        {!searchQuery && selectedCategory === 'all' && (
-          <section className="mt-8">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-500 rounded-lg flex items-center justify-center shadow-lg animate-pulse">
-                <Phone size={18} weight="fill" className="text-white" />
-              </div>
-              <h2 className="text-lg font-bold text-gray-900">Nomor Darurat</h2>
-            </div>
+        {/* Category Sections when "Semua" */}
+        {!searchQuery && selectedCategory === 'semua' && (
+          <>
+            {Object.entries(groupedServices).map(([category, services]) => {
+              const catInfo = categories.find(c => c.id === category);
+              if (!catInfo || services.length === 0) return null;
 
-            <div className="bg-gradient-to-br from-red-500 to-rose-500 rounded-3xl p-5 shadow-xl shadow-red-500/30 relative overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-              <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-white/10 rounded-full blur-xl" />
-
-              <div className="relative grid grid-cols-2 md:grid-cols-4 gap-3">
-                {emergencyNumbers.map((num) => (
-                  <a
-                    key={num.name}
-                    href={`tel:${num.name.replace('/', '-')}`}
-                    className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/30 transition-all duration-300 group"
-                  >
-                    <div className={`w-12 h-12 bg-gradient-to-br ${num.gradient} rounded-xl flex items-center justify-center mx-auto mb-2 shadow-lg group-hover:scale-110 transition-transform`}>
-                      <Phone size={24} weight="fill" className="text-white" />
-                    </div>
-                    <p className="font-bold text-white text-lg">{num.name}</p>
-                    <p className="text-white/80 text-xs">{num.label}</p>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+              return (
+                <section key={category} className="mt-8 first:mt-0">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600">
+                      {catInfo.icon}
+                    </span>
+                    {catInfo.name}
+                    <span className="text-sm font-normal text-gray-400">({services.length})</span>
+                  </h2>
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+                    {services.slice(0, 8).map((service) => (
+                      <ServiceCard key={service.id} service={service} />
+                    ))}
+                  </div>
+                  {services.length > 8 && (
+                    <button
+                      onClick={() => setSelectedCategory(category)}
+                      className="mt-3 text-sm text-red-500 font-medium hover:text-red-600 flex items-center gap-1"
+                    >
+                      Lihat semua {services.length} layanan
+                      <CaretRight size={16} />
+                    </button>
+                  )}
+                </section>
+              );
+            })}
+          </>
         )}
 
-        {/* Quick Info */}
-        {!searchQuery && selectedCategory === 'all' && (
+        {/* Info Footer */}
+        {!searchQuery && selectedCategory === 'semua' && (
           <section className="mt-8 mb-4">
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 rounded-2xl p-4">
+            <div className="bg-white rounded-2xl p-4 border border-gray-100">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                  <MapPin size={20} className="text-blue-600" />
+                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
+                  <MapPin size={20} className="text-gray-500" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1">Layanan Jaksel</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Jakselnews menyediakan berbagai informasi dan link ke layanan publik untuk warga Jakarta Selatan.
+                  <h3 className="font-semibold text-gray-900 mb-1">Layanan Jaksel</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    Jakselnews menyediakan link ke layanan publik resmi untuk warga Jakarta Selatan.
                     Semua layanan dikelola oleh instansi terkait.
                   </p>
                 </div>
@@ -454,14 +343,6 @@ export default function LayananPage() {
           </section>
         )}
       </div>
-
-      {/* Service Detail Modal */}
-      {selectedService && (
-        <ServiceDetailModal
-          service={selectedService}
-          onClose={() => setSelectedService(null)}
-        />
-      )}
     </main>
   );
 }
