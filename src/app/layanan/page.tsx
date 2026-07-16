@@ -64,14 +64,14 @@ const allServices: Service[] = [
   { id: 1, name: 'KRL Commuterline', desc: 'Jadwal, rute & tarif KRL', url: 'https://www.krl.co.id', category: 'transportasi', categoryName: 'Transportasi', icon: <Train size={24} />, iconColor: categoryColors.transportasi },
   { id: 2, name: 'TransJakarta', desc: 'Rute bus & halte', url: 'https://transjakarta.co.id', category: 'transportasi', categoryName: 'Transportasi', icon: <Bus size={24} />, iconColor: categoryColors.transportasi },
   { id: 3, name: 'MRT Jakarta', desc: 'Rute & jadwal MRT', url: 'https://jakartamrt.co.id', category: 'transportasi', categoryName: 'Transportasi', icon: <Train size={24} />, iconColor: categoryColors.transportasi },
-  { id: 4, name: 'LRT Jakarta', desc: 'Rute & jadwal LRT', url: 'https://lrtjabodebek.com', category: 'transportasi', categoryName: 'Transportasi', icon: <Train size={24} />, iconColor: categoryColors.transportasi },
+  { id: 4, name: 'LRT Jakarta', desc: 'Rute & jadwal LRT', url: 'https://lrtjakarta.com', category: 'transportasi', categoryName: 'Transportasi', icon: <Train size={24} />, iconColor: categoryColors.transportasi },
   { id: 5, name: 'Grab', desc: 'Taksi & ojol online', url: 'https://grab.com/id', category: 'transportasi', categoryName: 'Transportasi', icon: <Bus size={24} />, iconColor: categoryColors.transportasi },
   { id: 6, name: 'Gojek', desc: 'Transportasi & layanan', url: 'https://gojek.com', category: 'transportasi', categoryName: 'Transportasi', icon: <Bus size={24} />, iconColor: categoryColors.transportasi },
 
   // Keuangan & Pajak
   { id: 7, name: 'Cek ETLE', desc: 'Tilang elektronik', url: 'https://ettributtrafik.id', category: 'keuangan', categoryName: 'Keuangan', icon: <Camera size={24} />, iconColor: categoryColors.keuangan },
   { id: 8, name: 'Pajak Kendaraan', desc: 'Cek & bayar pajak', url: 'https://bapenda.jakarta.go.id', category: 'keuangan', categoryName: 'Keuangan', icon: <CurrencyCircleDollar size={24} />, iconColor: categoryColors.keuangan },
-  { id: 9, name: 'Samsat Online', desc: 'Pendaftaran pajak', url: 'https://pajak.kendaraanmu.com', category: 'keuangan', categoryName: 'Keuangan', icon: <Wallet size={24} />, iconColor: categoryColors.keuangan },
+  { id: 9, name: 'Samsat Online', desc: 'Pendaftaran pajak kendaraan', url: 'https://bapenda.jakarta.go.id', category: 'keuangan', categoryName: 'Keuangan', icon: <Wallet size={24} />, iconColor: categoryColors.keuangan },
 
   // Bantuan Sosial
   { id: 10, name: 'Bansos Jakarta', desc: 'Cek penerima bansos', url: 'https://bansos.jakarta.go.id', category: 'bansos', categoryName: 'Bansos', icon: <Cardholder size={24} />, iconColor: categoryColors.bansos },
@@ -85,7 +85,7 @@ const allServices: Service[] = [
 
   // Pendidikan
   { id: 17, name: 'PPDB Jakarta', desc: 'Penerimaan peserta didik', url: 'https://ppdb.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={24} />, iconColor: categoryColors.pendidikan },
-  { id: 18, name: 'Jakarta Edukasi', desc: 'Portal pendidikan', url: 'https://dki jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={24} />, iconColor: categoryColors.pendidikan },
+  { id: 18, name: 'Jakarta Edukasi', desc: 'Portal pendidikan', url: 'https://dki.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={24} />, iconColor: categoryColors.pendidikan },
   { id: 19, name: 'JakOne', desc: 'Kartu siswa & pelajar', url: 'https://jak-one.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <Cardholder size={24} />, iconColor: categoryColors.pendidikan },
 
   // Administrasi
@@ -95,7 +95,7 @@ const allServices: Service[] = [
 
   // Layanan Jakarta
   { id: 24, name: 'JakWifi', desc: 'Internet gratis', url: 'https://jaki.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <WifiHigh size={24} />, iconColor: categoryColors.jakarta },
-  { id: 25, name: 'JakLingko', desc: 'Integrasi transportasi', url: 'https://jaklingkojakarta.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Bus size={24} />, iconColor: categoryColors.jakarta },
+  { id: 25, name: 'JakLingko', desc: 'Integrasi transportasi', url: 'https://jaklingko.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Bus size={24} />, iconColor: categoryColors.jakarta },
   { id: 26, name: 'Jakarta Satu', desc: 'Portal data & layanan', url: 'https://www.jakartasatu.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Buildings size={24} />, iconColor: categoryColors.jakarta },
   { id: 27, name: 'DKI Open Data', desc: 'Data terbuka', url: 'https://data.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Newspaper size={24} />, iconColor: categoryColors.jakarta },
 
@@ -105,7 +105,7 @@ const allServices: Service[] = [
 
   // Usaha
   { id: 32, name: 'OSS UBBN', desc: 'Izin usaha online', url: 'https://oss.go.id', category: 'usaha', categoryName: 'Usaha', icon: <Buildings size={24} />, iconColor: categoryColors.usaha },
-  { id: 33, name: 'JakClinic', desc: 'OSS & izin berusaha', url: 'https://pelayanan.jakarta.go.id', category: 'usaha', categoryName: 'Usaha', icon: <ShieldCheck size={24} />, iconColor: categoryColors.usaha },
+  { id: 33, name: 'JakClinic', desc: 'OSS & izin berusaha', url: 'https://jakclinic.jakarta.go.id', category: 'usaha', categoryName: 'Usaha', icon: <ShieldCheck size={24} />, iconColor: categoryColors.usaha },
 ];
 
 const categories: ServiceCategory[] = [
