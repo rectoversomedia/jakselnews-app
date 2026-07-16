@@ -1,0 +1,57 @@
+{
+  "name": "Jakselnews - Portal Berita Jakarta Selatan",
+  "short_name": "Jakselnews",
+  "description": "Portal berita dan informasi hyperlocal untuk warga Jakarta Selatan. Berita terkini, layanan publik, dan informasi penting seputar Jaksel.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#DC2626",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "id-ID",
+  "categories": ["news", "local"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lapor Kejadian",
+      "short_name": "Lapor",
+      "description": "Laporkan kejadian di sekitar Anda",
+      "url": "/lapor",
+      "icons": [{ "src": "/lapor.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Info Terkini",
+      "short_name": "Info",
+      "description": "Lihat informasi terkini",
+      "url": "/info-terkini",
+      "icons": [{ "src": "/icon-192.png", "sizes": "96x96" }]
+    }
+  ]
+}
