@@ -22,6 +22,8 @@ import {
   Sun,
   CaretRight,
 } from '@phosphor-icons/react';
+import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface HeaderProps {
   title?: string;
@@ -38,7 +40,8 @@ export default function Header({
 }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,9 +52,9 @@ export default function Header({
   }, []);
 
   const menuItems = [
-    { href: '/tentang', icon: Info, label: 'Tentang Jakselnews' },
-    { href: '/pedoman-media-siber', icon: FileText, label: 'Pedoman Media Siber' },
-    { href: '/kebijakan-privasi', icon: Shield, label: 'Kebijakan Privasi' },
+    { href: '/tentang', icon: Info, label: t('menu.tentang') === 'Tentang' ? 'Tentang Jakselnews' : 'About Jakselnews' },
+    { href: '/pedoman-media-siber', icon: FileText, label: t('menu.tentang') === 'Tentang' ? 'Pedoman Media Siber' : 'Media Guidelines' },
+    { href: '/kebijakan-privasi', icon: Shield, label: t('menu.tentang') === 'Tentang' ? 'Kebijakan Privasi' : 'Privacy Policy' },
   ];
 
   return (
@@ -244,14 +247,14 @@ export default function Header({
               <nav className="space-y-1">
                 {/* Dark Mode Toggle */}
                 <button
-                  onClick={() => setDarkMode(!darkMode)}
+                  onClick={toggleTheme}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
                 >
                   <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
-                    {darkMode ? <Moon size={20} className="text-indigo-500" /> : <Sun size={20} className="text-amber-500" />}
+                    {theme === 'dark' ? <Moon size={20} className="text-indigo-500" /> : <Sun size={20} className="text-amber-500" />}
                   </div>
                   <span className="flex-1 text-left">Tampilan</span>
-                  <span className="text-sm text-gray-400">{darkMode ? 'Gelap' : 'Terang'}</span>
+                  <span className="text-sm text-gray-400">{theme === 'dark' ? 'Gelap' : 'Terang'}</span>
                 </button>
 
                 {/* Notification Settings */}
@@ -268,13 +271,17 @@ export default function Header({
                 </Link>
 
                 {/* Language */}
-                <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors">
+                <Link
+                  href="/bahasa"
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
+                >
                   <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
                     <GlobeHemisphereWest size={20} className="text-gray-500" />
                   </div>
                   <span className="flex-1 text-left">Bahasa</span>
-                  <span className="text-sm text-gray-400">Indonesia</span>
-                </button>
+                  <span className="text-sm text-gray-400">{language === 'id' ? 'Indonesia' : 'English'}</span>
+                </Link>
               </nav>
             </div>
 

@@ -1,4 +1,7 @@
 import dynamic from "next/dynamic";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { NotificationProvider } from "@/context/NotificationContext";
 import "./globals.css";
 
 // Dynamic import to avoid SSR issues with Phosphor Icons
@@ -56,24 +59,44 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <meta name="theme-color" content="#DC2626" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('jakselnews-theme');
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
-      <body className="min-h-screen flex flex-col antialiased bg-gray-50 font-sans">
-        {/* Skip to main content link for accessibility */}
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white focus:text-red-600 focus:font-semibold focus:rounded-lg focus:shadow-lg"
-        >
-          Langsung ke konten utama
-        </a>
-        <Header />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <BottomNav />
+      <body className="min-h-screen flex flex-col antialiased bg-gray-50 font-sans dark:bg-gray-900">
+        <ThemeProvider>
+          <LanguageProvider>
+            <NotificationProvider>
+              {/* Skip to main content link for accessibility */}
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white focus:text-red-600 focus:font-semibold focus:rounded-lg focus:shadow-lg"
+              >
+                Langsung ke konten utama
+              </a>
+              <Header />
+              <main id="main-content" className="flex-1">
+                {children}
+              </main>
+              <BottomNav />
+            </NotificationProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

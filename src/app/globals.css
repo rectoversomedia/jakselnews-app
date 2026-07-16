@@ -8,7 +8,7 @@
   --primary-dark: #B91C1C;
   --primary-light: #EF4444;
 
-  /* Neutrals */
+  /* Neutrals - Light Mode */
   --gray-50: #F9FAFB;
   --gray-100: #F3F4F6;
   --gray-200: #E5E7EB;
@@ -35,6 +35,20 @@
   --category-lalu-lintas: #F59E0B;
 }
 
+/* Dark Mode Variables */
+.dark {
+  --gray-50: #111827;
+  --gray-100: #1F2937;
+  --gray-200: #374151;
+  --gray-300: #4B5563;
+  --gray-400: #6B7280;
+  --gray-500: #9CA3AF;
+  --gray-600: #D1D5DB;
+  --gray-700: #E5E7EB;
+  --gray-800: #F3F4F6;
+  --gray-900: #F9FAFB;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -52,6 +66,29 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Dark mode text colors */
+  .dark body {
+    background-color: var(--gray-50);
+    color: var(--gray-900);
+  }
+
+  .dark [class*="text-gray-"] {
+    color: var(--gray-500) !important;
+  }
+
+  .dark [class*="bg-white"] {
+    background-color: #1F2937 !important;
+  }
+
+  .dark [class*="bg-gray-50"],
+  .dark [class*="bg-gray-100"] {
+    background-color: var(--gray-100) !important;
+  }
+
+  .dark [class*="border-gray-"] {
+    border-color: var(--gray-200) !important;
   }
 }
 
@@ -309,4 +346,62 @@
 
 .animate-scaleIn {
   animation: scaleIn 0.25s ease-out forwards;
+}
+
+/* Dark mode specific overrides */
+.dark .bg-white,
+.dark [class*="bg-white"] {
+  background-color: #1F2937 !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #111827 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #1F2937 !important;
+}
+
+.dark .bg-gray-200 {
+  background-color: #374151 !important;
+}
+
+.dark .border-gray-100 {
+  border-color: #374151 !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #4B5563 !important;
+}
+
+.dark .text-gray-900 {
+  color: #F9FAFB !important;
+}
+
+.dark .text-gray-700 {
+  color: #E5E7EB !important;
+}
+
+.dark .text-gray-600 {
+  color: #D1D5DB !important;
+}
+
+.dark .text-gray-500 {
+  color: #9CA3AF !important;
+}
+
+.dark .text-gray-400 {
+  color: #6B7280 !important;
+}
+
+.dark input,
+.dark textarea {
+  background-color: #374151 !important;
+  color: #F9FAFB !important;
+  border-color: #4B5563 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #9CA3AF !important;
 }
