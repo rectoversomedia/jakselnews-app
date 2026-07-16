@@ -1,3 +1,4 @@
+declare let clients: any;
 // Push Notification Service
 // Handles FCM token management and notification permissions
 
@@ -94,7 +95,7 @@ class NotificationService {
     try {
       const subscription = await this.swRegistration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(firebaseConfig.messagingSenderId),
+        applicationServerKey: this.urlBase64ToUint8Array(firebaseConfig.messagingSenderId) as any,
       });
 
       // Extract FCM token from subscription
@@ -149,7 +150,6 @@ class NotificationService {
         icon: payload.icon || '/logo-button.png',
         badge: payload.badge || '/placeholder.jpg',
         tag: payload.tag || 'default',
-        data: payload.data,
         data: {
           ...payload.data,
           url: payload.url,
@@ -171,13 +171,13 @@ class NotificationService {
   handleNotificationClick(callback: (url: string) => void): void {
     if (!navigator.serviceWorker) return;
 
-    navigator.serviceWorker.addEventListener('notificationclick', (event) => {
+    navigator.serviceWorker.addEventListener('notificationclick', (event: any) => {
       event.notification.close();
 
       const url = event.notification.data?.url || '/';
 
       event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList: any[]) => {
           // Focus existing window if available
           for (const client of clientList) {
             if (client.url === url && 'focus' in client) {

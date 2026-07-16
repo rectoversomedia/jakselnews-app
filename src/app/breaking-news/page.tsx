@@ -190,7 +190,7 @@ export default function BreakingNewsPage() {
       const result = await api.getReports({ limit: 50 });
 
       if (result.success && result.data) {
-        setReports(result.data);
+        setReports(result.data as any);
       } else {
         // If API fails, show a helpful message
         setError('Tidak dapat memuat laporan. Pastikan Anda terhubung ke internet.');
@@ -212,7 +212,7 @@ export default function BreakingNewsPage() {
     : reports;
 
   // Get unique report types for filter
-  const reportTypes = [...new Set(reports.map(r => r.type))];
+  const reportTypes = [...new Set<string>(reports.map(r => r.type))];
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0">

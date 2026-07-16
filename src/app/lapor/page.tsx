@@ -68,7 +68,7 @@ export default function LaporPage() {
     reporter_name: '',
     reporter_phone: '',
     reporter_email: '',
-    is_anonymous: false,
+    is_anonymous: false as boolean,
   });
 
   const [mediaFiles, setMediaFiles] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
@@ -179,7 +179,7 @@ export default function LaporPage() {
                     reporter_phone: '',
                     reporter_email: '',
                     is_anonymous: false,
-                  });
+                  } as any);
                   setMediaFiles([]);
                 }}
                 className="w-full py-3 bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30"
@@ -231,7 +231,7 @@ export default function LaporPage() {
                 const isSelected = formData.type === cat.slug;
                 return (
                   <button
-                    key={cat.id}
+                    key={cat.slug}
                     type="button"
                     onClick={() => {
                       setFormData({ ...formData, type: cat.slug });

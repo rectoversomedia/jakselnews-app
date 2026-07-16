@@ -16,7 +16,9 @@ import {
   Timer,
   ArrowsClockwise,
   CheckCircle,
+  Check,
   SignOut,
+  ShieldWarning,
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 
@@ -612,7 +614,7 @@ export default function AdminDashboard() {
                         Proses
                       </button>
                     )}
-                    {selectedReport.status !== 'resolved' && (
+                    {(selectedReport as any).status !== 'resolved' && (
                       <button
                         onClick={() => handleUpdateStatus(selectedReport.id, 'resolved')}
                         disabled={updatingStatus === selectedReport.id}
