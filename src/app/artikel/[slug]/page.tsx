@@ -52,7 +52,7 @@ export default async function ArticlePage({ params }: PageProps) {
   const post = result.data;
 
   // Get popular articles
-  const popularResult = await wp.getPosts({ per_page: 5, _embed: true });
+  const popularResult = await wp.getPosts({ perPage: 5, _embed: true });
   const popularArticles = popularResult.success ? popularResult.data.filter(p => p.id !== post.id).slice(0, 5) : [];
 
   const featuredImage = getFeaturedImage(post, "large");
