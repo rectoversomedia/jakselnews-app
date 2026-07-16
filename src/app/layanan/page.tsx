@@ -14,7 +14,7 @@ import {
   CurrencyCircleDollar,
   ShieldCheck,
   House,
-  Passport,
+  IdentificationCard,
   Wallet,
   Tree,
   WifiHigh,
@@ -22,7 +22,7 @@ import {
   Newspaper,
   MapPin,
   Star,
-  ChCircle,
+  Camera,
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
@@ -54,7 +54,7 @@ const allServices: Service[] = [
   { id: 6, name: 'Gojek Indonesia', desc: 'Transportasi & layanan everyday', url: 'https://gojek.com', category: 'transportasi', categoryName: 'Transportasi', icon: <Bus size={28} /> },
 
   // Keuangan & Pajak
-  { id: 7, name: 'Cek ETLE', desc: 'Tilang elektronik & histori pelanggaran', url: 'https://ettributtrafik.id', category: 'keuangan', categoryName: 'Keuangan & Pajak', icon: <ChCircle size={28} /> },
+  { id: 7, name: 'Cek ETLE', desc: 'Tilang elektronik & histori pelanggaran', url: 'https://ettributtrafik.id', category: 'keuangan', categoryName: 'Keuangan & Pajak', icon: <Camera size={28} /> },
   { id: 8, name: 'Pajak Kendaraan', desc: 'Cek & bayar pajak kendaraan online', url: 'https://bapenda.jakarta.go.id', category: 'keuangan', categoryName: 'Keuangan & Pajak', icon: <CurrencyCircleDollar size={28} /> },
   { id: 9, name: 'Samsat Online', desc: 'Pendaftaran pajak kendaraan', url: 'https://pajak.kendaraanmu.com', category: 'keuangan', categoryName: 'Keuangan & Pajak', icon: <Wallet size={28} /> },
 
@@ -75,9 +75,9 @@ const allServices: Service[] = [
   { id: 19, name: 'JakOne', desc: 'Kartu siswa & pelajar Jakarta', url: 'https://jak-one.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <Cardholder size={28} /> },
 
   // Administrasi
-  { id: 20, name: 'KTP Online', desc: 'Pembuatan & perpanjangan KTP', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <Passport size={28} /> },
-  { id: 21, name: 'KK Online', desc: 'Kartu keluarga online', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <Passport size={28} /> },
-  { id: 22, name: 'Akta Kelahiran', desc: 'Surat kelahiran & kematian', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <Passport size={28} /> },
+  { id: 20, name: 'KTP Online', desc: 'Pembuatan & perpanjangan KTP', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <IdentificationCard size={28} /> },
+  { id: 21, name: 'KK Online', desc: 'Kartu keluarga online', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <IdentificationCard size={28} /> },
+  { id: 22, name: 'Akta Kelahiran', desc: 'Surat kelahiran & kematian', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <IdentificationCard size={28} /> },
   { id: 23, name: 'IMKEL', desc: 'Isoman & isolasiCOVID', url: 'https://corona.jakarta.go.id', category: 'administrasi', categoryName: 'Administrasi', icon: <ShieldCheck size={28} /> },
 
   // Layanan Jakarta
@@ -104,7 +104,7 @@ const categories: ServiceCategory[] = [
   { id: 'bansos', name: 'Bansos', icon: <Cardholder size={16} /> },
   { id: 'kesehatan', name: 'Kesehatan', icon: <FirstAid size={16} /> },
   { id: 'pendidikan', name: 'Pendidikan', icon: <GraduationCap size={16} /> },
-  { id: 'administrasi', name: 'Admin', icon: <Passport size={16} /> },
+  { id: 'administrasi', name: 'Admin', icon: <IdentificationCard size={16} /> },
   { id: 'jakarta', name: 'Layanan Jakarta', icon: <Buildings size={16} /> },
   { id: 'lingkungan', name: 'Lingkungan', icon: <Tree size={16} /> },
   { id: 'usaha', name: 'Usaha', icon: <Wallet size={16} /> },

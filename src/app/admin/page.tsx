@@ -17,8 +17,6 @@ import {
   ArrowsClockwise,
   CheckCircle,
   SignOut,
-Warning,
-} from '@phosphor-icons/react';
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 
