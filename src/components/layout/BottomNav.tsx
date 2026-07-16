@@ -114,7 +114,7 @@ export default function BottomNav() {
 
       {/* Mobile Bottom Navigation - STICKY */}
       <nav
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-xl border-t border-gray-100"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white backdrop-blur-xl border-t border-gray-100"
         aria-label="Navigasi utama"
         role="navigation"
       >

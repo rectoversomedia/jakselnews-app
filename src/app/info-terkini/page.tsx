@@ -13,8 +13,6 @@ import {
   Image as ImageIcon,
   VideoCamera,
 } from '@phosphor-icons/react';
-import Header from '@/components/layout/Header';
-import BottomNav from '@/components/layout/BottomNav';
 
 interface Comment {
   id: number;
@@ -186,104 +184,121 @@ function CommentsModal({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 z-[60]" onClick={onClose} />
-      <div className="fixed inset-x-4 bottom-16 max-w-md mx-auto bg-white rounded-t-3xl z-[60] pb-6 max-h-[70vh] flex flex-col overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-gray-900">Komentar ({comments.length})</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
-          </button>
-        </div>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/60 z-[60] animate-fadeIn"
+        onClick={onClose}
+      />
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {comments.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-400">Belum ada komentar. Jadilah yang pertama!</p>
-            </div>
-          ) : (
-            comments.map((comment) => (
-              <div key={comment.id} className="space-y-2">
-                <div className="flex gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shrink-0">
-                    <span className="text-sm font-bold text-white">{comment.author.charAt(0)}</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="bg-gray-100 rounded-2xl rounded-tl-none p-4">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-semibold text-sm text-gray-900">{comment.author}</p>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-400">{comment.time}</span>
-                      </div>
-                      <p className="text-sm text-gray-700">{comment.text}</p>
-                    </div>
-                    <button
-                      onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-                      className="text-xs text-gray-500 hover:text-red-500 font-medium ml-1 mt-1"
-                    >
-                      Balas
-                    </button>
-                  </div>
+      {/* Centered Modal */}
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
+        <div
+          className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] flex flex-col shadow-2xl animate-scaleIn pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="p-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+            <h3 className="text-lg font-bold text-gray-900">Komentar ({comments.length})</h3>
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <X size={20} className="text-gray-500" />
+            </button>
+          </div>
+
+          {/* Comments List */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {comments.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ChatCircle size={32} className="text-gray-400" />
                 </div>
-
-                {comment.replies?.map((reply) => (
-                  <div key={reply.id} className="flex gap-3 ml-10">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                      <span className="text-xs font-bold text-gray-600">{reply.author.charAt(0)}</span>
+                <p className="text-gray-500">Belum ada komentar. Jadilah yang pertama!</p>
+              </div>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="space-y-2">
+                  <div className="flex gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shrink-0">
+                      <span className="text-sm font-bold text-white">{comment.author.charAt(0)}</span>
                     </div>
                     <div className="flex-1">
-                      <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3">
+                      <div className="bg-gray-100 rounded-2xl rounded-tl-none p-4">
                         <div className="flex items-center gap-2 mb-1">
-                          <p className="font-semibold text-sm text-gray-900">{reply.author}</p>
+                          <p className="font-semibold text-sm text-gray-900">{comment.author}</p>
                           <span className="text-xs text-gray-400">•</span>
-                          <span className="text-xs text-gray-400">{reply.time}</span>
+                          <span className="text-xs text-gray-400">{comment.time}</span>
                         </div>
-                        <p className="text-sm text-gray-700">{reply.text}</p>
+                        <p className="text-sm text-gray-700">{comment.text}</p>
                       </div>
+                      <button
+                        onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
+                        className="text-xs text-gray-500 hover:text-red-500 font-medium ml-1 mt-1 transition-colors"
+                      >
+                        Balas
+                      </button>
                     </div>
                   </div>
-                ))}
 
-                {replyTo === comment.id && (
-                  <div className="flex gap-2 ml-10">
-                    <input
-                      type="text"
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleReply(comment.id)}
-                      placeholder="Tulis balasan..."
-                      className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-                    />
-                    <button
-                      onClick={() => handleReply(comment.id)}
-                      disabled={!replyText.trim()}
-                      className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:opacity-50"
-                    >
-                      <PaperPlaneRight size={16} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
+                  {comment.replies?.map((reply) => (
+                    <div key={reply.id} className="flex gap-3 ml-10">
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                        <span className="text-xs font-bold text-gray-600">{reply.author.charAt(0)}</span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-semibold text-sm text-gray-900">{reply.author}</p>
+                            <span className="text-xs text-gray-400">•</span>
+                            <span className="text-xs text-gray-400">{reply.time}</span>
+                          </div>
+                          <p className="text-sm text-gray-700">{reply.text}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
 
-        <div className="p-4 border-t border-gray-100">
-          <div className="flex gap-2 items-center bg-gray-100 rounded-full px-4 py-2">
-            <input
-              type="text"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSubmitComment()}
-              placeholder="Tulis komentar..."
-              className="flex-1 bg-transparent text-sm focus:outline-none"
-            />
-            <button
-              onClick={handleSubmitComment}
-              disabled={!newComment.trim() || isSubmitting}
-              className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <PaperPlaneRight size={16} />
-            </button>
+                  {replyTo === comment.id && (
+                    <div className="flex gap-2 ml-10">
+                      <input
+                        type="text"
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleReply(comment.id)}
+                        placeholder="Tulis balasan..."
+                        className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+                      />
+                      <button
+                        onClick={() => handleReply(comment.id)}
+                        disabled={!replyText.trim()}
+                        className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:opacity-50 transition-colors"
+                      >
+                        <PaperPlaneRight size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Input */}
+          <div className="p-4 border-t border-gray-100 shrink-0">
+            <div className="flex gap-2 items-center bg-gray-100 rounded-full px-4 py-2">
+              <input
+                type="text"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSubmitComment()}
+                placeholder="Tulis komentar..."
+                className="flex-1 bg-transparent text-sm focus:outline-none"
+              />
+              <button
+                onClick={handleSubmitComment}
+                disabled={!newComment.trim() || isSubmitting}
+                className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <PaperPlaneRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -361,38 +376,52 @@ function ShareModal({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 z-[60]" onClick={onClose} />
-      <div className="fixed inset-x-4 bottom-16 max-w-md mx-auto bg-white rounded-t-3xl z-[60] pb-6">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-gray-900">Bagikan</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
-          </button>
-        </div>
-        <div className="p-6">
-          <div className="flex justify-around mb-6">
-            {shareLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center gap-2"
-              >
-                <div className={`w-14 h-14 ${link.color} rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform`}>
-                  {link.icon}
-                </div>
-                <span className="text-xs text-gray-600 font-medium">{link.name}</span>
-              </a>
-            ))}
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/60 z-[60] animate-fadeIn"
+        onClick={onClose}
+      />
+
+      {/* Centered Modal */}
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
+        <div
+          className="bg-white rounded-2xl w-full max-w-sm shadow-2xl animate-scaleIn pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-gray-900">Bagikan</h3>
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <X size={20} className="text-gray-500" />
+            </button>
           </div>
-          <button
-            onClick={handleCopyLink}
-            className="w-full py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"
-          >
-            <Share size={18} />
-            {copied ? 'Tersalin!' : 'Salin Link'}
-          </button>
+
+          {/* Share Options */}
+          <div className="p-6">
+            <div className="flex justify-around mb-6">
+              {shareLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className={`w-14 h-14 ${link.color} rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform`}>
+                    {link.icon}
+                  </div>
+                  <span className="text-xs text-gray-600 font-medium">{link.name}</span>
+                </a>
+              ))}
+            </div>
+            <button
+              onClick={handleCopyLink}
+              className="w-full py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"
+            >
+              <Share size={18} />
+              {copied ? 'Tersalin!' : 'Salin Link'}
+            </button>
+          </div>
         </div>
       </div>
     </>
@@ -547,11 +576,8 @@ export default function InfoTerkiniPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 pb-24 lg:pb-0">
-      <Header title="Info Terkini" />
-      <BottomNav />
-
       {/* Category Filter - Fixed at top */}
-      <div className="sticky top-14 lg:top-20 z-30 bg-white border-b px-4 py-3 mt-14 lg:mt-20">
+      <div className="sticky top-14 lg:top-16 z-30 bg-white border-b px-4 py-3">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide max-w-2xl mx-auto">
           {categories.map((cat) => (
             <button
