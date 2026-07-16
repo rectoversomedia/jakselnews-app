@@ -70,10 +70,11 @@ interface Comment {
 interface CommentsSectionProps {
   isOpen: boolean;
   onClose: () => void;
-  postId: number;
+  report: UGCReport;
 }
 
-function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
+// Comments Modal with Post Context
+function CommentsSection({ isOpen, onClose, report }: { isOpen: boolean; onClose: () => void; report: UGCReport }) {
   const [comments, setComments] = useState<Comment[]>([
     { id: 1, author: 'Warga Blok M', text: 'Tetap waspada ya! 🙏', time: '5 menit lalu', replies: [
       { id: 11, author: 'Warga Kemang', text: 'Iya makasih infonya!', time: '3 menit lalu' }
@@ -106,82 +107,118 @@ function CommentsSection({ isOpen, onClose, postId }: CommentsSectionProps) {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
-      <div className="fixed inset-x-0 bottom-0 top-[40%] bg-white rounded-t-3xl z-50 flex flex-col">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-gray-900">Komentar ({comments.length})</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
-          </button>
-        </div>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/60 z-[60] animate-fadeIn" onClick={onClose} />
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {comments.map((comment) => (
-            <div key={comment.id} className="space-y-2">
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                  <span className="text-xs font-bold text-gray-500">W</span>
-                </div>
-                <div className="flex-1">
-                  <div className="bg-gray-100 rounded-2xl rounded-tl-none p-3">
-                    <p className="font-semibold text-sm text-gray-900">{comment.author}</p>
-                    <p className="text-sm text-gray-700">{comment.text}</p>
+      {/* Centered Modal */}
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
+        <div
+          className="bg-white rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl animate-scaleIn pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="p-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+            <h3 className="text-lg font-bold text-gray-900">Komentar</h3>
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <X size={20} className="text-gray-500" />
+            </button>
+          </div>
+
+          {/* Post Context Preview */}
+          <div className="bg-gray-50 border-b border-gray-100 shrink-0">
+            <p className="text-xs text-gray-400 px-4 pt-3 pb-2">Commenting on:</p>
+            <div className="px-4 pb-3">
+              <div className="bg-white rounded-xl p-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shrink-0">
+                    <span className="text-sm font-bold text-white">W</span>
                   </div>
-                  <div className="flex items-center gap-3 mt-1 ml-1">
-                    <span className="text-xs text-gray-400">{comment.time}</span>
-                    <button onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)} className="text-xs text-gray-500 hover:text-red-500">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-gray-900">{report.authorName}</p>
+                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                      <MapPin size={10} />
+                      {report.location}
+                      <span className="mx-1">•</span>
+                      {report.time}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-700 mt-2 leading-relaxed">{report.content}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Comments List */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {comments.map((comment) => (
+              <div key={comment.id} className="space-y-2">
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-bold text-gray-500">{comment.author.charAt(0)}</span>
+                  </div>
+                  <div className="flex-1">
+                    <div className="bg-gray-100 rounded-2xl rounded-tl-none p-3">
+                      <p className="font-semibold text-sm text-gray-900">{comment.author}</p>
+                      <p className="text-sm text-gray-700">{comment.text}</p>
+                    </div>
+                    <button
+                      onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
+                      className="text-xs text-gray-500 hover:text-red-500 ml-1 mt-1"
+                    >
                       Balas
                     </button>
                   </div>
                 </div>
-              </div>
 
-              {/* Replies */}
-              {comment.replies?.map((reply) => (
-                <div key={reply.id} className="flex gap-3 ml-8">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-bold text-gray-500">W</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="bg-gray-100 rounded-2xl rounded-tl-none p-3">
-                      <p className="font-semibold text-sm text-gray-900">{reply.author}</p>
-                      <p className="text-sm text-gray-700">{reply.text}</p>
+                {/* Replies */}
+                {comment.replies?.map((reply) => (
+                  <div key={reply.id} className="flex gap-3 ml-10">
+                    <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                      <span className="text-[10px] font-bold text-gray-500">{reply.author.charAt(0)}</span>
                     </div>
-                    <span className="text-xs text-gray-400 ml-1">{reply.time}</span>
+                    <div className="flex-1">
+                      <div className="bg-gray-50 rounded-2xl rounded-tl-none p-2">
+                        <p className="font-semibold text-xs text-gray-900">{reply.author}</p>
+                        <p className="text-xs text-gray-700">{reply.text}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
 
-              {/* Reply Input */}
-              {replyTo === comment.id && (
-                <div className="flex gap-2 ml-8">
-                  <input
-                    type="text"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Tulis balasan..."
-                    className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                  <button onClick={() => handleReply(comment.id)} className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600">
-                    <PaperPlaneRight size={16} />
-                  </button>
-                </div>
-              )}
+                {/* Reply Input */}
+                {replyTo === comment.id && (
+                  <div className="flex gap-2 ml-10">
+                    <input
+                      type="text"
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder="Tulis balasan..."
+                      className="flex-1 px-3 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                    <button onClick={() => handleReply(comment.id)} className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600">
+                      <PaperPlaneRight size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Input */}
+          <div className="p-4 border-t border-gray-100 shrink-0">
+            <div className="flex gap-2 items-center bg-gray-100 rounded-full px-4 py-2">
+              <input
+                type="text"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Tulis komentar..."
+                className="flex-1 bg-transparent text-sm focus:outline-none"
+              />
+              <button onClick={handleSubmitComment} className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors">
+                <PaperPlaneRight size={16} />
+              </button>
             </div>
-          ))}
-        </div>
-
-        <div className="p-4 border-t border-gray-100 flex gap-2">
-          <input
-            type="text"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Tulis komentar..."
-            className="flex-1 px-4 py-3 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <button onClick={handleSubmitComment} className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600">
-            <PaperPlaneRight size={16} />
-          </button>
+          </div>
         </div>
       </div>
     </>
@@ -252,9 +289,9 @@ function UGCPostCard({ report }: { report: UGCReport }) {
       </div>
 
       <SharePopup isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} url={shareUrl} title={shareTitle} />
-      <CommentsSection isOpen={isCommentsOpen} onClose={() => setIsCommentsOpen(false)} postId={report.id} />
+      <CommentsSection isOpen={isCommentsOpen} onClose={() => setIsCommentsOpen(false)} report={report} />
     </>
   );
 }
 
-export { UGCPostCard, CommentsSection };
+export { UGCPostCard };

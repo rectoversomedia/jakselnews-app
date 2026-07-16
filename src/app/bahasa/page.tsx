@@ -18,10 +18,10 @@ export default function BahasaPage() {
   return (
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-14 lg:pt-16">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-        <div className="max-w-2xl mx-auto px-4 py-10 text-center">
-          <h1 className="text-2xl font-bold mb-2">{t('lang.title')}</h1>
-          <p className="text-white/80 text-sm">{t('lang.subtitle')}</p>
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-2xl mx-auto px-4 py-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">{t('lang.title')}</h1>
+          <p className="text-gray-500 text-sm">{t('lang.subtitle')}</p>
         </div>
       </div>
 

@@ -270,18 +270,19 @@ export default function Header({
                   <CaretRight size={16} className="text-gray-400" />
                 </Link>
 
-                {/* Language */}
-                <Link
-                  href="/bahasa"
-                  onClick={() => setShowMenu(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
+                {/* Language Toggle */}
+                <button
+                  onClick={() => {
+                    setLanguage(language === 'id' ? 'en' : 'id');
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
                 >
                   <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
                     <GlobeHemisphereWest size={20} className="text-gray-500" />
                   </div>
                   <span className="flex-1 text-left">Bahasa</span>
-                  <span className="text-sm text-gray-400">{language === 'id' ? 'Indonesia' : 'English'}</span>
-                </Link>
+                  <span className="text-sm font-medium text-red-500">{language === 'id' ? 'ID' : 'EN'}</span>
+                </button>
               </nav>
             </div>
 
