@@ -131,10 +131,7 @@ export default function BottomNav() {
               aria-current={isActive(item.href) ? 'page' : undefined}
             >
               {item.isCenter ? (
-                <div
-                  className="flex items-center justify-center w-14 h-14 -mt-6 transition-all duration-200"
-                  aria-hidden="true"
-                >
+                <div className="flex flex-col items-center justify-center -mt-6 transition-all duration-200">
                   <Image
                     src="/logo-jakselnews.png"
                     alt="Lapor"
@@ -143,6 +140,7 @@ export default function BottomNav() {
                     className="object-contain drop-shadow-lg"
                     priority
                   />
+                  <span className="text-[10px] font-semibold mt-0.5">Lapor</span>
                 </div>
               ) : (
                 <>
