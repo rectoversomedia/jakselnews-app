@@ -205,15 +205,63 @@ function CommentsModal({
           </div>
 
           {/* Post Context Preview */}
-          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 shrink-0">
-            <p className="text-xs text-gray-500 mb-1.5">Commenting on:</p>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shrink-0">
-                <span className="text-xs font-bold text-white">{post.authorInitial}</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">{post.authorName}</p>
-                <p className="text-xs text-gray-500 line-clamp-2">{post.content}</p>
+          <div className="bg-gray-50 border-b border-gray-100 shrink-0">
+            <p className="text-xs text-gray-400 px-4 pt-3 pb-2">Commenting on:</p>
+            <div className="px-4 pb-3">
+              <div className="bg-white rounded-xl overflow-hidden border border-gray-100">
+                {/* Author Info */}
+                <div className="p-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shrink-0">
+                      <span className="text-sm font-bold text-white">{post.authorInitial}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-semibold text-sm text-gray-900">{post.authorName}</p>
+                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                          {post.categoryName}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                        <MapPin size={10} />
+                        {post.location}
+                        <span className="mx-1">•</span>
+                        <Clock size={10} />
+                        {post.time}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700 mt-2 leading-relaxed">{post.content}</p>
+                </div>
+                {/* Image */}
+                {post.imageUrl && (
+                  <div className="relative">
+                    <img
+                      src={post.imageUrl}
+                      alt=""
+                      className="w-full h-36 object-cover"
+                    />
+                    <div className="absolute top-2 right-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                      <ImageIcon size={10} />
+                      Foto
+                    </div>
+                  </div>
+                )}
+                {/* Stats */}
+                <div className="flex items-center gap-4 px-3 py-2 border-t border-gray-100">
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <Heart size={14} />
+                    <span>{post.likes}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <ChatCircle size={14} />
+                    <span>{comments.length}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <Share size={14} />
+                    <span>{post.shares}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
