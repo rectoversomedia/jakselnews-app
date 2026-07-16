@@ -187,7 +187,7 @@ function CommentsModal({
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-[60]" onClick={onClose} />
-      <div className="fixed inset-x-4 bottom-4 max-w-md mx-auto bg-white rounded-t-3xl z-[60] pb-6 max-h-[70vh] flex flex-col overflow-hidden">
+      <div className="fixed inset-x-4 bottom-20 max-w-md mx-auto bg-white rounded-t-3xl z-[60] pb-6 max-h-[70vh] flex flex-col overflow-hidden">
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-gray-900">Komentar ({comments.length})</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
@@ -362,7 +362,7 @@ function ShareModal({
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-[60]" onClick={onClose} />
-      <div className="fixed inset-x-4 bottom-4 max-w-md mx-auto bg-white rounded-t-3xl z-[60] pb-6">
+      <div className="fixed inset-x-4 bottom-20 max-w-md mx-auto bg-white rounded-t-3xl z-[60] pb-6">
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-gray-900">Bagikan</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
