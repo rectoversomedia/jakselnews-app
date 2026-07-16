@@ -54,11 +54,9 @@ export default function KebijakanPrivasiPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white">
         <div className="max-w-2xl mx-auto px-4 py-12 text-center">
-          <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Shield size={40} weight="fill" />
-          </div>
-          <h1 className="text-3xl font-bold mb-2">{t('privacy.title')}</h1>
-          <p className="text-white/80">{t('privacy.lastUpdated')}</p>
+          <p className="text-4xl font-black mb-4 tracking-tight">Jakselnews</p>
+          <h1 className="text-2xl font-bold mb-2">{t('privacy.title')}</h1>
+          <p className="text-white/80 text-sm">{t('privacy.lastUpdated')}</p>
         </div>
       </div>
 

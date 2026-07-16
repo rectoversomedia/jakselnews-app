@@ -49,11 +49,9 @@ export default function TentangPage() {
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-red-500 to-rose-600 text-white">
         <div className="max-w-2xl mx-auto px-4 py-12 text-center">
-          <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Newspaper size={40} weight="fill" />
-          </div>
-          <h1 className="text-3xl font-bold mb-2">{t('about.title')}</h1>
-          <p className="text-white/80 text-lg">{t('about.subtitle')}</p>
+          <p className="text-4xl font-black mb-4 tracking-tight">Jakselnews</p>
+          <h1 className="text-2xl font-bold mb-2">{t('about.title')}</h1>
+          <p className="text-white/80 text-base">{t('about.subtitle')}</p>
         </div>
       </div>
 
