@@ -69,8 +69,7 @@ export default function NotificationSettingsPage() {
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-14 lg:pt-16">
       {/* Hero */}
       <div className="bg-gradient-to-br from-amber-500 to-orange-600 text-white">
-        <div className="max-w-2xl mx-auto px-4 py-12 text-center">
-          <p className="text-4xl font-black mb-4 tracking-tight">Jakselnews</p>
+        <div className="max-w-2xl mx-auto px-4 py-10 text-center">
           <h1 className="text-2xl font-bold mb-2">{t('notif.title')}</h1>
           <p className="text-white/80 text-sm">{t('notif.subtitle')}</p>
         </div>
