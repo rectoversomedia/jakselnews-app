@@ -17,13 +17,11 @@ import {
   FileText,
   Shield,
   BellRinging,
-  GlobeHemisphereWest,
   Moon,
   Sun,
   CaretRight,
 } from '@phosphor-icons/react';
 import { useTheme } from '@/context/ThemeContext';
-import { useLanguage } from '@/context/LanguageContext';
 
 interface HeaderProps {
   title?: string;
@@ -41,7 +39,6 @@ export default function Header({
   const [isScrolled, setIsScrolled] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { t, language } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -269,20 +266,6 @@ export default function Header({
                   <span className="flex-1">Pengaturan Notifikasi</span>
                   <CaretRight size={16} className="text-gray-400" />
                 </Link>
-
-                {/* Language Toggle */}
-                <button
-                  onClick={() => {
-                    setLanguage(language === 'id' ? 'en' : 'id');
-                  }}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
-                    <GlobeHemisphereWest size={20} className="text-gray-500" />
-                  </div>
-                  <span className="flex-1 text-left">Bahasa</span>
-                  <span className="text-sm font-medium text-red-500">{language === 'id' ? 'ID' : 'EN'}</span>
-                </button>
               </nav>
             </div>
 
