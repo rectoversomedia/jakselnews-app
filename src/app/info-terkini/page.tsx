@@ -193,15 +193,29 @@ function CommentsModal({
       {/* Centered Modal */}
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
         <div
-          className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] flex flex-col shadow-2xl animate-scaleIn pointer-events-auto"
+          className="bg-white rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl animate-scaleIn pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="p-4 border-b border-gray-100 flex items-center justify-between shrink-0">
-            <h3 className="text-lg font-bold text-gray-900">Komentar ({comments.length})</h3>
+            <h3 className="text-lg font-bold text-gray-900">Komentar</h3>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <X size={20} className="text-gray-500" />
             </button>
+          </div>
+
+          {/* Post Context Preview */}
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 shrink-0">
+            <p className="text-xs text-gray-500 mb-1.5">Commenting on:</p>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shrink-0">
+                <span className="text-xs font-bold text-white">{post.authorInitial}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900 truncate">{post.authorName}</p>
+                <p className="text-xs text-gray-500 line-clamp-2">{post.content}</p>
+              </div>
+            </div>
           </div>
 
           {/* Comments List */}
