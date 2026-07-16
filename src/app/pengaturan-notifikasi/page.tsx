@@ -10,7 +10,7 @@ import {
   MapPin,
   ChatCircle,
   CalendarBlank,
-  Push,
+  Bell,
   Envelope,
   Check,
   X,
@@ -119,7 +119,7 @@ export default function NotificationSettingsPage() {
                       : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                   }`}
                 >
-                  <Push size={18} />
+                  <Bell size={18} />
                   {t('notif.push')}
                   {settings[cat.key].push && <Check size={16} />}
                 </button>
