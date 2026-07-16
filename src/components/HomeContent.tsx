@@ -281,30 +281,31 @@ function WarningModal({ warning, onClose }: { warning: WarningReport; onClose: (
     <>
       <div className="fixed inset-0 bg-black/60 z-50" onClick={onClose} />
       <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-white rounded-2xl z-50 max-h-[85vh] overflow-y-auto">
-        <div className={`bg-gradient-to-r ${warning.gradient} p-4 rounded-t-2xl`}>
-          <div className="flex items-center justify-between text-white">
-            <div className="flex items-center gap-3">
-              <Warning size={24} weight="fill" />
-              <span className="font-bold text-lg">{warning.type}</span>
-            </div>
-            <button onClick={onClose}><X size={20} /></button>
+        <div className={`bg-gradient-to-r ${warning.gradient} p-6 rounded-t-2xl text-center`}>
+          <div className="flex items-center justify-center gap-3 text-white">
+            <Warning size={28} weight="fill" />
+            <span className="font-bold text-xl">{warning.type}</span>
           </div>
+          <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30">
+            <X size={18} />
+          </button>
         </div>
-        <div className="p-5 space-y-4">
-          <p className="text-gray-600">{warning.description}</p>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <MapPin size={14} />
+        <div className="p-6 space-y-4">
+          <p className="text-gray-700 text-center leading-relaxed">{warning.description}</p>
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+            <MapPin size={16} />
             <span>{warning.location}</span>
             <span>•</span>
+            <Clock size={14} />
             <span>{warning.time}</span>
           </div>
-          <div className="bg-red-50 rounded-xl p-3">
-            <p className="text-xs text-red-600 font-semibold mb-1">📞 Hotline Darurat</p>
-            <p className="text-2xl font-bold text-red-600">{warning.hotline}</p>
+          <div className="bg-red-50 rounded-xl p-4 text-center">
+            <p className="text-xs text-red-600 font-semibold mb-1">Hotline Darurat</p>
+            <p className="text-3xl font-bold text-red-600">{warning.hotline}</p>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             {warning.related.map((area) => (
-              <span key={area} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+              <span key={area} className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-full">
                 {area}
               </span>
             ))}
@@ -387,15 +388,25 @@ function InfoTerkiniSection() {
   );
 }
 
+// Services data with proper icons
+import {
+  Cardholder,
+  GraduationCap,
+  Camera,
+  CurrencyCircleDollar,
+  Train,
+  Bus,
+} from '@phosphor-icons/react';
+
 // Layanan Populer Section
 function LayananPopulerSection() {
   const layananPopuler = [
-    { id: 1, title: 'Cek Bansos', desc: 'Cek penerima', icon: '💰', gradient: 'bg-emerald-500' },
-    { id: 2, title: 'KJP Plus', desc: 'Cek saldo', icon: '🎓', gradient: 'bg-violet-500' },
-    { id: 3, title: 'Cek ETLE', desc: 'Tilang', icon: '📸', gradient: 'bg-blue-500' },
-    { id: 4, title: 'Pajak', desc: 'Cek & Bayar', icon: '🚗', gradient: 'bg-amber-500' },
-    { id: 5, title: 'KRL', desc: 'Jadwal', icon: '🚆', gradient: 'bg-blue-600' },
-    { id: 6, title: 'TransJakarta', desc: 'Rute', icon: '🚌', gradient: 'bg-red-500' },
+    { id: 1, title: 'Bansos Jakarta', desc: 'Cek penerima bansos', icon: <Cardholder size={24} />, url: 'https://bansos.jakarta.go.id' },
+    { id: 2, title: 'KJP Plus', desc: 'Saldo Kartu Jakarta Pintar', icon: <GraduationCap size={24} />, url: 'https://kjp.jakarta.go.id' },
+    { id: 3, title: 'Cek ETLE', desc: 'Tilang elektronik', icon: <Camera size={24} />, url: 'https://ettributtrafik.id' },
+    { id: 4, title: 'Pajak Kendaraan', desc: 'Cek & bayar pajak', icon: <CurrencyCircleDollar size={24} />, url: 'https://bapenda.jakarta.go.id' },
+    { id: 5, title: 'KRL', desc: 'Jadwal & rute KRL', icon: <Train size={24} />, url: 'https://www.krl.co.id' },
+    { id: 6, title: 'TransJakarta', desc: 'Rute & halte', icon: <Bus size={24} />, url: 'https://transjakarta.co.id' },
   ];
 
   return (
@@ -410,15 +421,13 @@ function LayananPopulerSection() {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {layananPopuler.map((item) => (
-          <Link key={item.id} href="/layanan" className="bg-gray-50 rounded-xl p-3 flex items-center gap-3 hover:bg-gray-100 transition-colors">
-            <div className={`w-10 h-10 ${item.gradient} rounded-lg flex items-center justify-center text-xl`}>
+          <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="bg-gray-50 rounded-xl p-4 flex flex-col items-center text-center gap-2 hover:bg-gray-100 transition-colors">
+            <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
               {item.icon}
             </div>
-            <div>
-              <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
-              <p className="text-xs text-gray-500">{item.desc}</p>
-            </div>
-          </Link>
+            <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
+            <p className="text-xs text-gray-500">{item.desc}</p>
+          </a>
         ))}
       </div>
     </section>

@@ -129,8 +129,8 @@ function ServiceCard({ service }: { service: Service }) {
       <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-700 group-hover:bg-red-50 group-hover:text-red-500 transition-colors mb-3">
         {service.icon}
       </div>
-      <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1">{service.name}</h3>
-      <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{service.desc}</p>
+      <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1 text-center">{service.name}</h3>
+      <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 text-center">{service.desc}</p>
     </a>
   );
 }
