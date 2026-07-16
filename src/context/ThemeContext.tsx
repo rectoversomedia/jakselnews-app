@@ -21,9 +21,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('jakselnews-theme') as Theme | null;
     if (saved) {
       setThemeState(saved);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setThemeState('dark');
     }
+    // Default is light, don't follow system preference
   }, []);
 
   useEffect(() => {
