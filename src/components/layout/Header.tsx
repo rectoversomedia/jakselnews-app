@@ -49,9 +49,9 @@ export default function Header({
   }, []);
 
   const menuItems = [
-    { href: '/tentang', icon: Info, label: t('menu.tentang') === 'Tentang' ? 'Tentang Jakselnews' : 'About Jakselnews' },
-    { href: '/pedoman-media-siber', icon: FileText, label: t('menu.tentang') === 'Tentang' ? 'Pedoman Media Siber' : 'Media Guidelines' },
-    { href: '/kebijakan-privasi', icon: Shield, label: t('menu.tentang') === 'Tentang' ? 'Kebijakan Privasi' : 'Privacy Policy' },
+    { href: '/tentang', icon: Info, label: 'Tentang Jakselnews' },
+    { href: '/pedoman-media-siber', icon: FileText, label: 'Pedoman Media Siber' },
+    { href: '/kebijakan-privasi', icon: Shield, label: 'Kebijakan Privasi' },
   ];
 
   return (
