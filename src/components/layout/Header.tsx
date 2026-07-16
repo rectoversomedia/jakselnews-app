@@ -13,6 +13,14 @@ import {
   Newspaper,
   Warning,
   SquaresFour,
+  Info,
+  FileText,
+  Shield,
+  BellRinging,
+  GlobeHemisphereWest,
+  Moon,
+  Sun,
+  CaretRight,
 } from '@phosphor-icons/react';
 
 interface HeaderProps {
@@ -30,6 +38,7 @@ export default function Header({
 }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,6 +47,12 @@ export default function Header({
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const menuItems = [
+    { href: '/tentang', icon: Info, label: 'Tentang Jakselnews' },
+    { href: '/pedoman-media-siber', icon: FileText, label: 'Pedoman Media Siber' },
+    { href: '/kebijakan-privasi', icon: Shield, label: 'Kebijakan Privasi' },
+  ];
 
   return (
     <>
@@ -162,21 +177,12 @@ export default function Header({
           onClick={() => setShowMenu(false)}
         >
           <div
-            className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-2xl"
+            className="absolute left-0 top-0 bottom-0 w-[85%] max-w-[320px] bg-white shadow-2xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-pink-400 to-pink-500">
-              <div className="flex items-center gap-3">
-                <Image
-                  src="/logo-utama.png"
-                  alt="Jakselnews"
-                  width={200}
-                  height={52}
-                  className="object-contain bg-white/20 rounded p-1"
-                  priority
-                />
-              </div>
+            {/* Header with gradient */}
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-red-500 to-rose-500">
+              <span className="text-lg font-bold text-white">Menu</span>
               <button
                 onClick={() => setShowMenu(false)}
                 className="p-2 rounded-xl hover:bg-white/20 transition-colors"
@@ -185,41 +191,96 @@ export default function Header({
               </button>
             </div>
 
-            {/* Navigation */}
-            <nav className="p-4 space-y-2">
-              {[
-                { href: '/', icon: House, label: 'Beranda', color: 'from-red-500 to-rose-500' },
-                { href: '/artikel', icon: Newspaper, label: 'Artikel', color: 'from-blue-500 to-cyan-500' },
-                { href: '/lapor', icon: Warning, label: 'Lapor Kejadian', color: 'from-pink-400 to-pink-500' },
-                { href: '/info-terkini', icon: Bell, label: 'Info Terkini', color: 'from-violet-500 to-purple-500' },
-                { href: '/layanan', icon: SquaresFour, label: 'Layanan', color: 'from-emerald-500 to-teal-500' },
-              ].map(({ href, icon: Icon, label, color }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setShowMenu(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 font-medium transition-colors"
-                >
-                  <div className={`w-10 h-10 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg`}>
-                    <Icon size={20} weight="fill" className="text-white" />
-                  </div>
-                  <span>{label}</span>
-                </Link>
-              ))}
-            </nav>
+            {/* Main Navigation */}
+            <div className="p-4 border-b border-gray-100">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">Navigasi</p>
+              <nav className="space-y-1">
+                {[
+                  { href: '/', icon: House, label: 'Beranda', color: 'from-red-500 to-rose-500' },
+                  { href: '/artikel', icon: Newspaper, label: 'Artikel', color: 'from-blue-500 to-cyan-500' },
+                  { href: '/lapor', icon: Warning, label: 'Lapor Kejadian', color: 'from-pink-400 to-pink-500' },
+                  { href: '/info-terkini', icon: Bell, label: 'Info Terkini', color: 'from-violet-500 to-purple-500' },
+                  { href: '/layanan', icon: SquaresFour, label: 'Layanan', color: 'from-emerald-500 to-teal-500' },
+                ].map(({ href, icon: Icon, label, color }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setShowMenu(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 font-medium transition-colors"
+                  >
+                    <div className={`w-10 h-10 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-lg shrink-0`}>
+                      <Icon size={20} weight="fill" className="text-white" />
+                    </div>
+                    <span>{label}</span>
+                  </Link>
+                ))}
+              </nav>
+            </div>
 
-            {/* Admin Link */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-gray-50">
-              <Link
-                href="/admin"
-                onClick={() => setShowMenu(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                <div className="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center">
-                  <User size={20} className="text-gray-600" />
-                </div>
-                <span>Admin Dashboard</span>
-              </Link>
+            {/* About & Info Links */}
+            <div className="p-4 border-b border-gray-100">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">Tentang</p>
+              <nav className="space-y-1">
+                {menuItems.map(({ href, icon: Icon, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setShowMenu(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
+                      <Icon size={20} className="text-gray-500" />
+                    </div>
+                    <span className="flex-1">{label}</span>
+                    <CaretRight size={16} className="text-gray-400" />
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* Settings */}
+            <div className="p-4 border-b border-gray-100">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">Pengaturan</p>
+              <nav className="space-y-1">
+                {/* Dark Mode Toggle */}
+                <button
+                  onClick={() => setDarkMode(!darkMode)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
+                    {darkMode ? <Moon size={20} className="text-indigo-500" /> : <Sun size={20} className="text-amber-500" />}
+                  </div>
+                  <span className="flex-1 text-left">Tampilan</span>
+                  <span className="text-sm text-gray-400">{darkMode ? 'Gelap' : 'Terang'}</span>
+                </button>
+
+                {/* Notification Settings */}
+                <Link
+                  href="/pengaturan-notifikasi"
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
+                    <BellRinging size={20} className="text-gray-500" />
+                  </div>
+                  <span className="flex-1">Pengaturan Notifikasi</span>
+                  <CaretRight size={16} className="text-gray-400" />
+                </Link>
+
+                {/* Language */}
+                <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors">
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
+                    <GlobeHemisphereWest size={20} className="text-gray-500" />
+                  </div>
+                  <span className="flex-1 text-left">Bahasa</span>
+                  <span className="text-sm text-gray-400">Indonesia</span>
+                </button>
+              </nav>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-auto p-4 bg-gray-50">
+              <p className="text-xs text-gray-400 text-center">Jakselnews v2.0</p>
             </div>
           </div>
         </div>
