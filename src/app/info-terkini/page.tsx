@@ -196,81 +196,95 @@ function CommentsModal({
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {comments.map((comment) => (
-            <div key={comment.id} className="space-y-2">
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                  <span className="text-xs font-bold text-gray-600">{comment.author.charAt(0)}</span>
-                </div>
-                <div className="flex-1">
-                  <div className="bg-gray-100 rounded-2xl rounded-tl-none p-3">
-                    <p className="font-semibold text-sm text-gray-900">{comment.author}</p>
-                    <p className="text-sm text-gray-700">{comment.text}</p>
+          {comments.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-400">Belum ada komentar. Jadilah yang pertama!</p>
+            </div>
+          ) : (
+            comments.map((comment) => (
+              <div key={comment.id} className="space-y-2">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shrink-0">
+                    <span className="text-sm font-bold text-white">{comment.author.charAt(0)}</span>
                   </div>
-                  <div className="flex items-center gap-3 mt-1 ml-1">
-                    <span className="text-xs text-gray-400">{comment.time}</span>
+                  <div className="flex-1">
+                    <div className="bg-gray-100 rounded-2xl rounded-tl-none p-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-semibold text-sm text-gray-900">{comment.author}</p>
+                        <span className="text-xs text-gray-400">•</span>
+                        <span className="text-xs text-gray-400">{comment.time}</span>
+                      </div>
+                      <p className="text-sm text-gray-700">{comment.text}</p>
+                    </div>
                     <button
                       onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-                      className="text-xs text-gray-500 hover:text-red-500 font-medium"
+                      className="text-xs text-gray-500 hover:text-red-500 font-medium ml-1 mt-1"
                     >
                       Balas
                     </button>
                   </div>
                 </div>
-              </div>
 
-              {comment.replies?.map((reply) => (
-                <div key={reply.id} className="flex gap-3 ml-8">
-                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-bold text-gray-500">{reply.author.charAt(0)}</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3">
-                      <p className="font-semibold text-sm text-gray-900">{reply.author}</p>
-                      <p className="text-sm text-gray-700">{reply.text}</p>
+                {comment.replies?.map((reply) => (
+                  <div key={reply.id} className="flex gap-3 ml-10">
+                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                      <span className="text-xs font-bold text-gray-600">{reply.author.charAt(0)}</span>
                     </div>
-                    <span className="text-xs text-gray-400 ml-1">{reply.time}</span>
+                    <div className="flex-1">
+                      <div className="bg-gray-50 rounded-2xl rounded-tl-none p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-semibold text-sm text-gray-900">{reply.author}</p>
+                          <span className="text-xs text-gray-400">•</span>
+                          <span className="text-xs text-gray-400">{reply.time}</span>
+                        </div>
+                        <p className="text-sm text-gray-700">{reply.text}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
 
-              {replyTo === comment.id && (
-                <div className="flex gap-2 ml-8">
-                  <input
-                    type="text"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Tulis balasan..."
-                    className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                  <button
-                    onClick={() => handleReply(comment.id)}
-                    className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600"
-                  >
-                    <PaperPlaneRight size={16} />
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+                {replyTo === comment.id && (
+                  <div className="flex gap-2 ml-10">
+                    <input
+                      type="text"
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleReply(comment.id)}
+                      placeholder="Tulis balasan..."
+                      className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                    <button
+                      onClick={() => handleReply(comment.id)}
+                      disabled={!replyText.trim()}
+                      className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:opacity-50"
+                    >
+                      <PaperPlaneRight size={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
 
-        <div className="p-4 border-t border-gray-100 flex gap-2">
-          <input
-            type="text"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSubmitComment()}
-            placeholder="Tulis komentar..."
-            className="flex-1 px-4 py-3 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <button
-            onClick={handleSubmitComment}
-            disabled={!newComment.trim() || isSubmitting}
-            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <PaperPlaneRight size={16} />
-          </button>
+        <div className="p-4 border-t border-gray-100">
+          <div className="flex gap-2 items-center bg-gray-100 rounded-full px-4 py-2">
+            <input
+              type="text"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSubmitComment()}
+              placeholder="Tulis komentar..."
+              className="flex-1 bg-transparent text-sm focus:outline-none"
+            />
+            <button
+              onClick={handleSubmitComment}
+              disabled={!newComment.trim() || isSubmitting}
+              className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <PaperPlaneRight size={16} />
+            </button>
+          </div>
         </div>
       </div>
     </>
