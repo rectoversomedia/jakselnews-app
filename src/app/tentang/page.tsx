@@ -9,7 +9,7 @@ import {
   Heart,
   Target,
   Eye,
-  Smartphone,
+  DeviceMobile,
   Users,
   Newspaper,
   Warning,
@@ -28,7 +28,7 @@ export default function TentangPage() {
 
   const features = [
     {
-      icon: Smartphone,
+      icon: DeviceMobile,
       title: language === 'id' ? 'Real-time Updates' : 'Real-time Updates',
       desc: language === 'id' ? 'Dapatkan berita terkini secara langsung' : 'Get latest news in real-time',
     },
