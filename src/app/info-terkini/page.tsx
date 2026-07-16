@@ -158,13 +158,16 @@ function CommentsModal({
   const [newComment, setNewComment] = useState('');
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmitComment = () => {
     if (!newComment.trim()) return;
-    const comment: Comment = { id: Date.now(), author: 'Warga Jaksel', text: newComment, time: 'Baru saja' };
-    setComments([...comments, comment]);
-    onAddComment(post.id, newComment);
+    setIsSubmitting(true);
+    const comment: Comment = { id: Date.now(), author: 'Warga Jaksel', text: newComment.trim(), time: 'Baru saja' };
+    setComments(prev => [...prev, comment]);
+    onAddComment(post.id, newComment.trim());
     setNewComment('');
+    setIsSubmitting(false);
   };
 
   const handleReply = (parentId: number) => {
@@ -257,12 +260,14 @@ function CommentsModal({
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSubmitComment()}
             placeholder="Tulis komentar..."
             className="flex-1 px-4 py-3 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button
             onClick={handleSubmitComment}
-            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600"
+            disabled={!newComment.trim() || isSubmitting}
+            className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <PaperPlaneRight size={16} />
           </button>
@@ -343,7 +348,7 @@ function ShareModal({
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
-      <div className="fixed inset-x-4 bottom-0 max-w-md mx-auto bg-white rounded-t-3xl z-50 pb-8">
+      <div className="fixed inset-x-4 bottom-4 max-w-md mx-auto bg-white rounded-t-3xl z-50 pb-6">
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-gray-900">Bagikan</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
