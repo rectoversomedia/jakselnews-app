@@ -904,7 +904,7 @@ function SidebarNews() {
   const [articles, setArticles] = useState<BreakingPost[]>([]);
 
   useEffect(() => {
-    async function fetch() {
+    async function loadArticles() {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
         const response = await fetch(`${apiUrl}/posts?per_page=5&_embed&status=publish`);
@@ -918,7 +918,7 @@ function SidebarNews() {
         // fail silently
       }
     }
-    fetch();
+    loadArticles();
   }, []);
 
   return (
