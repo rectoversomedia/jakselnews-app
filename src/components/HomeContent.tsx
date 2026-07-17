@@ -825,8 +825,6 @@ function MobileSections() {
 
   return (
     <>
-		      </Link>
-
       {/* Mobile Only: Breaking News Carousel */}
       <section className="lg:hidden px-4 py-4">
         <div className="relative w-full">
