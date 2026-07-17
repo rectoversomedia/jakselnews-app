@@ -129,10 +129,10 @@ const staticWarnings: WarningReport[] = [
 
 function getFeaturedImageUrl(post: BreakingPost): string {
   const media = post._embedded?.['wp:featuredmedia']?.[0];
-  if (!media) return '/placeholder.jpg';
+  if (!media) return '';
   return media.media_details?.sizes?.large?.source_url ||
          media.media_details?.sizes?.medium_large?.source_url ||
-         media.source_url;
+         media.source_url || '';
 }
 
 function stripHtml(html: string): string {
@@ -168,10 +168,12 @@ function FeaturedArticleCard({ post, isMain = false }: { post: BreakingPost; isM
   const date = formatDate(post.date);
   const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || 'Artikel';
 
+  const showPlaceholder = imageError || !imageUrl;
+
   return (
     <Link href={`/artikel/${post.slug}`} className="group block">
       <div className={`relative overflow-hidden rounded-2xl bg-gray-900 ${isMain ? 'aspect-[16/10]' : 'aspect-[16/9]'}`}>
-        {!imageError ? (
+        {!showPlaceholder ? (
           <img
             src={imageUrl}
             alt={title}
@@ -180,7 +182,10 @@ function FeaturedArticleCard({ post, isMain = false }: { post: BreakingPost; isM
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-            <span className="text-6xl">📰</span>
+            <div className="text-center">
+              <span className="text-6xl block mb-2">📰</span>
+              <span className="text-white/50 text-sm">Gambar tidak tersedia</span>
+            </div>
           </div>
         )}
         {/* Elegant gradient overlay */}
@@ -229,10 +234,12 @@ function SideArticleCard({ post, index }: { post: BreakingPost; index: number })
   const title = stripHtml(post.title.rendered);
   const date = formatDate(post.date);
 
+  const showPlaceholder = imageError || !imageUrl;
+
   return (
     <Link href={`/artikel/${post.slug}`} className="group flex gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-red-200 hover:shadow-lg hover:shadow-red-100/50 transition-all duration-300">
       <div className="relative w-28 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-        {!imageError ? (
+        {!showPlaceholder ? (
           <img
             src={imageUrl}
             alt={title}
@@ -240,7 +247,9 @@ function SideArticleCard({ post, index }: { post: BreakingPost; index: number })
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-2xl bg-gray-100">📰</div>
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+            <span className="text-2xl opacity-50">📰</span>
+          </div>
         )}
       </div>
       <div className="flex-1 min-w-0 flex flex-col justify-center">
@@ -607,6 +616,104 @@ function ArtikelTerbaruSection() {
               <SideArticleCard key={article.id} post={article} index={0} />
             ))}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// =====================================================
+// DESKTOP: Artikel Populer Section
+// =====================================================
+function ArtikelPopulerSection() {
+  const [articles, setArticles] = useState<BreakingPost[]>([]);
+
+  useEffect(() => {
+    async function loadPopularArticles() {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
+        const response = await fetch(`${apiUrl}/posts?per_page=10&_embed&status=publish&orderby=meta_value&meta_key=_thumbnail_id`);
+        if (response.ok) {
+          const posts = await response.json();
+          if (posts && posts.length > 0) {
+            setArticles(posts);
+          }
+        }
+      } catch (error) {
+        // fail silently
+      }
+    }
+    loadPopularArticles();
+  }, []);
+
+  if (articles.length === 0) return null;
+
+  return (
+    <section className="hidden lg:block bg-gradient-to-b from-white to-gray-50/50 border-b border-gray-100">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
+              <TrendUp size={26} className="text-white" weight="bold" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Artikel Populer</h2>
+              <p className="text-sm text-gray-500">Bacaan terpopuler minggu ini</p>
+            </div>
+          </div>
+          <Link href="/artikel" className="group text-sm text-orange-600 font-semibold flex items-center gap-2 hover:gap-3 transition-all">
+            Lihat Semua
+            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
+        {/* List with Thumbnails */}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+          {articles.map((article, index) => {
+            const imageUrl = getFeaturedImageUrl(article);
+            const title = stripHtml(article.title.rendered);
+            const category = article._embedded?.['wp:term']?.[0]?.[0]?.name || 'Artikel';
+            const showImage = imageUrl && !imageUrl.includes('undefined');
+
+            return (
+              <Link
+                key={article.id}
+                href={`/artikel/${article.slug}`}
+                className="group flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-100/50 transition-all duration-300"
+              >
+                {/* Number */}
+                <span className="text-3xl font-black text-orange-200 group-hover:text-orange-400 transition-colors leading-none mt-1 w-10">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <span className="inline-block px-2.5 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-full mb-2">
+                    {category}
+                  </span>
+                  <h4 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-orange-600 transition-colors duration-200">
+                    {title}
+                  </h4>
+                  <p className="text-xs text-gray-400 flex items-center gap-1.5">
+                    <Clock size={11} /> {formatDate(article.date)}
+                  </p>
+                </div>
+
+                {/* Thumbnail */}
+                {showImage && (
+                  <div className="relative w-20 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                    <img
+                      src={imageUrl}
+                      alt={title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -1014,6 +1121,7 @@ export default function HomeContent() {
         <PeringatanSection />
         <InfoTerkiniSection />
         <LayananPopulerSection />
+        <ArtikelPopulerSection />
         <ArtikelTerbaruSection />
       </div>
 
