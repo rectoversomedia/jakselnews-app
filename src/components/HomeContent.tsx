@@ -908,10 +908,6 @@ function MobileSections() {
                 <Clock size={14} />
                 <span>{selectedWarning.time}</span>
               </div>
-              <div className={`text-center p-4 rounded-xl bg-gradient-to-r ${selectedWarning.gradient} text-white`}>
-                <p className="text-xs opacity-80 mb-1">Hotline Darurat</p>
-                <p className="text-2xl font-bold">{selectedWarning.hotline}</p>
-              </div>
               <div className="flex flex-wrap justify-center gap-2">
                 {selectedWarning.related.map((area) => (
                   <span key={area} className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-full">
@@ -966,6 +962,35 @@ function MobileSections() {
             <Link key={item.id} href="/layanan" className={`${item.color} rounded-xl p-4 text-center`}>
               <span className="text-2xl mb-1 block">{item.icon}</span>
               <p className="font-medium text-gray-900 text-xs">{item.title}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Mobile Artikel Populer */}
+      <section className="lg:hidden px-4 py-4 bg-white border-t">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-bold text-gray-900">ARTIKEL POPULER</h2>
+          <Link href="/artikel" className="text-xs text-gray-500 flex items-center gap-1">
+            Lihat Semua <ArrowRight size={12} />
+          </Link>
+        </div>
+        <div className="space-y-3">
+          {fallbackPosts.map((post, index) => (
+            <Link
+              key={post.id}
+              href={`/artikel/${post.slug}`}
+              className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+            >
+              <span className="text-2xl font-black text-orange-200 leading-none mt-0.5 w-6">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-gray-900 text-sm line-clamp-2">
+                  {stripHtml(post.title.rendered)}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">{formatDate(post.date)}</p>
+              </div>
             </Link>
           ))}
         </div>
