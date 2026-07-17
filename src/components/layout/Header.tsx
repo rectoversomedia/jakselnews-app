@@ -114,7 +114,7 @@ export default function Header({
 
       {/* Mobile Header */}
       <header
-        className={`lg:hidden fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`lg:hidden fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
           isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-md' : 'bg-white/80 backdrop-blur-sm'
         }`}
       >
@@ -173,7 +173,7 @@ export default function Header({
       {/* Mobile Sidebar */}
       {showMenu && (
         <div
-          className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+          className="lg:hidden fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm"
           onClick={() => setShowMenu(false)}
         >
           <div

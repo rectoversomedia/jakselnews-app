@@ -108,10 +108,10 @@ function CommentsSection({ isOpen, onClose, report }: { isOpen: boolean; onClose
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/60 z-[60] animate-fadeIn" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/60 z-[70] animate-fadeIn" onClick={onClose} />
 
       {/* Centered Modal */}
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none">
         <div
           className="bg-white rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl animate-scaleIn pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
