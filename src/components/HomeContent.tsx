@@ -72,8 +72,8 @@ const fallbackPosts: BreakingPost[] = [
     date: '2026-07-14T10:00:00',
     _embedded: {
       'wp:featuredmedia': [{
-        source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/festival-jaksel.jpg',
-        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/festival-jaksel.jpg' } } }
+        source_url: 'https://jakselnews.com/wp-content/uploads/2025/12/pexels-designecologist-2526105-scaled.jpg',
+        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2025/12/pexels-designecologist-2526105-scaled.jpg' } } }
       }]
     }
   },
@@ -84,8 +84,8 @@ const fallbackPosts: BreakingPost[] = [
     date: '2026-07-13T08:00:00',
     _embedded: {
       'wp:featuredmedia': [{
-        source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/mrt-jakarta.jpg',
-        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/mrt-jakarta.jpg' } } }
+        source_url: 'https://jakselnews.com/wp-content/uploads/2025/12/pexels-kelvinocta16-1973270-scaled.jpg',
+        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2025/12/pexels-kelvinocta16-1973270-scaled.jpg' } } }
       }]
     }
   }
