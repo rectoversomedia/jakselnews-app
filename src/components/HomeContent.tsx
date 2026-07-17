@@ -979,37 +979,45 @@ function MobileSections() {
             Lihat Semua <ArrowRight size={12} />
           </Link>
         </div>
-        <div className="space-y-3">
-          {fallbackPosts.map((post, index) => {
-            const imageUrl = getFeaturedImageUrl(post);
-            const title = stripHtml(post.title.rendered);
-            const showImage = imageUrl && !imageUrl.includes('undefined');
+	        <div className="space-y-3">
+	          {fallbackPosts.slice(0, 3).map((post, index) => {
+	            const imageUrl = getFeaturedImageUrl(post);
+	            const title = stripHtml(post.title.rendered);
+	            const hasValidImage = imageUrl && imageUrl.length > 0 && imageUrl.startsWith('http');
 
-            return (
-              <Link
-                key={post.id}
-                href={`/artikel/${post.slug}`}
-                className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
-              >
-                {showImage ? (
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
-                    <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
-                  </div>
-                ) : (
-                  <span className="text-2xl font-black text-orange-200 leading-none mt-3 w-6 shrink-0">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-sm line-clamp-2">
-                    {title}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">{formatDate(post.date)}</p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+
+	            return (
+	              <Link
+	                key={post.id}
+	                href={`/artikel/${post.slug}`}
+	                className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+	              >
+	                {hasValidImage ? (
+	                  <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+	                    <img
+	                      src={imageUrl}
+	                      alt={title}
+	                      className="w-full h-full object-cover"
+	                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+	                    />
+	                  </div>
+	                ) : (
+	                  <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center shrink-0">
+	                    <span className="text-lg font-black text-orange-400">
+	                      {String(index + 1).padStart(2, '0')}
+	                    </span>
+	                  </div>
+	                )}
+	                <div className="flex-1 min-w-0">
+	                  <p className="font-medium text-gray-900 text-sm line-clamp-2">
+	                    {title}
+	                  </p>
+	                  <p className="text-xs text-gray-400 mt-1">{formatDate(post.date)}</p>
+	                </div>
+	              </Link>
+	            );
+	          })}
+	        </div>
       </section>
     </>
   );
