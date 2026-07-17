@@ -1,0 +1,15 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login/
+Disallow: /profil/
+
+# Sitemap
+Sitemap: https://dev.jakselnews.com/sitemap.xml
+
+# Crawl-delay for polite bots
+Crawl-delay: 1

@@ -57,7 +57,7 @@ const layananData: Record<number, {
     color: 'bg-purple-500',
     description: 'Bantuan biaya pendidikan untuk mahasiswa Jakarta.',
     requirements: ['KTP DKI Jakarta', 'Kartu mahasiswa', 'KRS semester terbaru', 'Rekening bank'],
-    links: [{ name: 'Info KJM', url: 'https://dki jakarta.go.id' }],
+    links: [{ name: 'Info KJM', url: 'https://dki.jakarta.go.id' }],
   },
   11: {
     title: 'Puskesmas Jaksel',
@@ -91,7 +91,7 @@ const layananData: Record<number, {
     color: 'bg-amber-600',
     description: 'Layanan cek dan pembayaran pajak kendaraan bermotor.',
     links: [
-      { name: 'Samsat Online', url: 'https://samsat-pkb纳税' },
+      { name: 'Samsat Online', url: 'https://bapenda.jakarta.go.id' },
     ],
   },
   21: {
