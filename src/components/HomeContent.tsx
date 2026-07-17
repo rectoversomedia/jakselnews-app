@@ -825,6 +825,17 @@ function MobileSections() {
 
   return (
     <>
+	      {/* Mobile Banner */}
+	      <Link href="/lapor" className="lg:hidden block px-4 pt-4">
+	        <img
+	          src="/Jakselnews Banner.png"
+	          alt="Jakselnews Banner"
+	          className="w-full h-auto rounded-xl"
+	          style={{ aspectRatio: '320/100', objectFit: 'cover' }}
+	          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+	        />
+	      </Link>
+
       {/* Mobile Only: Breaking News Carousel */}
       <section className="lg:hidden px-4 py-4">
         <div className="relative w-full">
