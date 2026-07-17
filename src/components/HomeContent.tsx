@@ -632,15 +632,19 @@ function ArtikelPopulerSection() {
     async function loadPopularArticles() {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
-        const response = await fetch(`${apiUrl}/posts?per_page=10&_embed&status=publish&orderby=meta_value&meta_key=_thumbnail_id`);
+        const response = await fetch(`${apiUrl}/posts?per_page=10&_embed&status=publish`);
         if (response.ok) {
           const posts = await response.json();
           if (posts && posts.length > 0) {
             setArticles(posts);
+          } else {
+            setArticles(fallbackPosts);
           }
+        } else {
+          setArticles(fallbackPosts);
         }
       } catch (error) {
-        // fail silently
+        setArticles(fallbackPosts);
       }
     }
     loadPopularArticles();
@@ -976,23 +980,35 @@ function MobileSections() {
           </Link>
         </div>
         <div className="space-y-3">
-          {fallbackPosts.map((post, index) => (
-            <Link
-              key={post.id}
-              href={`/artikel/${post.slug}`}
-              className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
-            >
-              <span className="text-2xl font-black text-orange-200 leading-none mt-0.5 w-6">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 text-sm line-clamp-2">
-                  {stripHtml(post.title.rendered)}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">{formatDate(post.date)}</p>
-              </div>
-            </Link>
-          ))}
+          {fallbackPosts.map((post, index) => {
+            const imageUrl = getFeaturedImageUrl(post);
+            const title = stripHtml(post.title.rendered);
+            const showImage = imageUrl && !imageUrl.includes('undefined');
+
+            return (
+              <Link
+                key={post.id}
+                href={`/artikel/${post.slug}`}
+                className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                {showImage ? (
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                    <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <span className="text-2xl font-black text-orange-200 leading-none mt-3 w-6 shrink-0">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 text-sm line-clamp-2">
+                    {title}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">{formatDate(post.date)}</p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
     </>
