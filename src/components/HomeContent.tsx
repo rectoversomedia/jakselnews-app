@@ -772,6 +772,7 @@ function MobileSections() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [breakingPosts, setBreakingPosts] = useState<BreakingPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedWarning, setSelectedWarning] = useState<WarningReport | null>(null);
 
   useEffect(() => {
     async function fetchBreakingNews() {
@@ -868,8 +869,9 @@ function MobileSections() {
         </h2>
         <div className="space-y-2">
           {staticWarnings.map((warning) => (
-            <div
+            <button
               key={warning.id}
+              onClick={() => setSelectedWarning(warning)}
               className={`w-full rounded-xl p-3 bg-gradient-to-r ${warning.gradient} text-white flex items-center gap-3`}
             >
               <Warning size={20} weight="fill" />
@@ -878,10 +880,52 @@ function MobileSections() {
                 <span className="text-white/80 text-xs ml-2">{warning.location}</span>
               </div>
               <span className="text-xs bg-white/20 px-2 py-0.5 rounded">{warning.reports}x</span>
-            </div>
+            </button>
           ))}
         </div>
       </section>
+
+      {/* Mobile Warning Modal */}
+      {selectedWarning && (
+        <>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70]" onClick={() => setSelectedWarning(null)} />
+          <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto z-[70]">
+            <div className={`bg-gradient-to-r ${selectedWarning.gradient} p-6 rounded-t-2xl`}>
+              <div className="flex items-center justify-center gap-3 text-white">
+                <Warning size={28} weight="fill" />
+                <span className="font-bold text-xl">{selectedWarning.type}</span>
+              </div>
+              <button onClick={() => setSelectedWarning(null)} className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="bg-white rounded-b-2xl p-5 space-y-4">
+              <p className="text-gray-700 text-center leading-relaxed">{selectedWarning.description}</p>
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                <MapPin size={16} />
+                <span>{selectedWarning.location}</span>
+                <span>•</span>
+                <Clock size={14} />
+                <span>{selectedWarning.time}</span>
+              </div>
+              <div className={`text-center p-4 rounded-xl bg-gradient-to-r ${selectedWarning.gradient} text-white`}>
+                <p className="text-xs opacity-80 mb-1">Hotline Darurat</p>
+                <p className="text-2xl font-bold">{selectedWarning.hotline}</p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {selectedWarning.related.map((area) => (
+                  <span key={area} className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+                    {area}
+                  </span>
+                ))}
+              </div>
+              <a href={`tel:${selectedWarning.hotline}`} className={`block w-full py-3 bg-gradient-to-r ${selectedWarning.gradient} text-white font-bold rounded-xl text-center`}>
+                Hubungi {selectedWarning.hotline}
+              </a>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Mobile Info Terkini */}
       <section className="lg:hidden px-4 py-4">
