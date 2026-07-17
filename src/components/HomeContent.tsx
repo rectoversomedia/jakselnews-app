@@ -1015,7 +1015,6 @@ export default function HomeContent() {
         <InfoTerkiniSection />
         <LayananPopulerSection />
         <ArtikelTerbaruSection />
-        <NotificationBanner />
       </div>
 
       {/* Mobile Layout */}
