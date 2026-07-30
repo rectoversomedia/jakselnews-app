@@ -8,7 +8,6 @@ import {
   X,
   Bell,
   MagnifyingGlass,
-  User,
   House,
   Newspaper,
   Warning,
@@ -16,7 +15,6 @@ import {
   Info,
   FileText,
   Shield,
-  BellRinging,
   Moon,
   Sun,
   CaretRight,
@@ -94,18 +92,12 @@ export default function Header({
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
-              <button className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
+              <Link href="/cari" className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
                 <MagnifyingGlass size={20} />
-              </button>
-              <button className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors relative">
+              </Link>
+              <Link href="/info-terkini" className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors relative">
                 <Bell size={20} />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-              </button>
-              <Link
-                href="/admin"
-                className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
-              >
-                <User size={20} />
               </Link>
             </div>
           </div>
@@ -253,19 +245,6 @@ export default function Header({
                   <span className="flex-1 text-left">Tampilan</span>
                   <span className="text-sm text-gray-400">{theme === 'dark' ? 'Gelap' : 'Terang'}</span>
                 </button>
-
-                {/* Notification Settings */}
-                <Link
-                  href="/pengaturan-notifikasi"
-                  onClick={() => setShowMenu(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
-                    <BellRinging size={20} className="text-gray-500" />
-                  </div>
-                  <span className="flex-1">Pengaturan Notifikasi</span>
-                  <CaretRight size={16} className="text-gray-400" />
-                </Link>
               </nav>
             </div>
 

@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
-import { NotificationProvider } from "@/context/NotificationContext";
 import "./globals.css";
 
 // Dynamic import to avoid SSR issues with Phosphor Icons
@@ -81,20 +80,18 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col antialiased bg-gray-50 font-sans dark:bg-gray-900">
         <ThemeProvider>
           <LanguageProvider>
-            <NotificationProvider>
-              {/* Skip to main content link for accessibility */}
-              <a
-                href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white focus:text-red-600 focus:font-semibold focus:rounded-lg focus:shadow-lg"
-              >
-                Langsung ke konten utama
-              </a>
-              <Header />
-              <main id="main-content" className="flex-1">
-                {children}
-              </main>
-              <BottomNav />
-            </NotificationProvider>
+            {/* Skip to main content link for accessibility */}
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white focus:text-red-600 focus:font-semibold focus:rounded-lg focus:shadow-lg"
+            >
+              Langsung ke konten utama
+            </a>
+            <Header />
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
+            <BottomNav />
           </LanguageProvider>
         </ThemeProvider>
       </body>

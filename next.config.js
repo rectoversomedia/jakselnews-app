@@ -38,17 +38,4 @@ const nextConfig = {
   },
 };
 
-// Sentry configuration - disable in development
-const shouldEnableSentry = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_SENTRY_DSN;
-
-// Only wrap with Sentry if DSN is configured
-let finalConfig = nextConfig;
-
-if (shouldEnableSentry) {
-  const withSentryConfig = require('@sentry/nextjs').withSentryConfig;
-  finalConfig = withSentryConfig(nextConfig, {
-    silent: false,
-  });
-}
-
-module.exports = finalConfig;
+module.exports = nextConfig;

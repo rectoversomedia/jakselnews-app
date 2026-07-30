@@ -1,11 +1,15 @@
 # Jakselnews Deployment Guide
 
-## Prerequisites
+## Architecture
 
-- VPS with Ubuntu 22.04 LTS (Recommended: Hostinger VPS)
-- SSH access to VPS
-- Domain name with DNS access (optional but recommended)
-- Supabase account with project created
+Jakselnews uses a simple, serverless architecture:
+
+- **Frontend**: Next.js 14 (App Router) → deployed on **Vercel**
+- **Database**: **Supabase** (PostgreSQL) — stores categories, services, alerts, and incident reports
+- **CMS**: **WordPress** (`jakselnews.com/wp-json/wp/v2`) — manages news articles
+- **Reports**: Anonymous incident reports via Supabase — no authentication required
+
+No Express server, no VPS, no Docker.
 
 ---
 
@@ -24,103 +28,35 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## Production Deployment
-
-### Option 1: VPS Deployment (Recommended)
-
-#### Step 1: Initial VPS Setup (One-time only)
-
-```bash
-ssh root@31.97.106.177
-bash <(curl -s https://raw.githubusercontent.com/rectoversomedia/jakselnews-app/main/scripts/setup-vps.sh)
-```
-
-#### Step 2: Copy Project Files
-
-```bash
-# Using rsync (recommended)
-rsync -avz --exclude='node_modules' --exclude='.next' --exclude='.git' \
-  ~/path/to/jakselnews-app/ \
-  root@31.97.106.177:/var/www/jakselnews/
-```
-
-#### Step 3: Run Full Deployment Script
-
-```bash
-ssh root@31.97.106.177
-cd /var/www/jakselnews
-bash scripts/deploy-full.sh
-```
-
-The script will:
-- Install Docker & dependencies
-- Generate a secure JWT_SECRET
-- Build and start the API container
-- Configure Nginx reverse proxy
-- Enable firewall
-
-#### Step 4: Add Supabase Keys
-
-Edit `/var/www/jakselnews/.env.production`:
-
-```env
-SUPABASE_ANON_KEY=your-anon-key-from-supabase
-SUPABASE_SERVICE_KEY=your-service-key-from-supabase
-```
-
-Get keys from: https://supabase.com/dashboard → Settings → API
-
-```bash
-docker restart jakselnews-api
-```
-
----
-
 ## Database Setup (Supabase)
 
 ### Step 1: Run Migration
 
-1. Go to https://supabase.com/dashboard
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
 2. Select project `eqoyvbeusopskzacoowz`
 3. Go to SQL Editor
-4. Copy & paste the entire contents of:
-   **`supabase/migrations/00_combined_migration.sql`**
+4. Copy & paste the entire contents of **`supabase/migrations/00_combined_migration.sql`**
 5. Click **Run**
 
 This creates all tables, indexes, RLS policies, triggers, seed data, and the storage bucket in one go.
 
-### Step 2: Create Admin User
+### Step 2: Create Admin User (Optional)
 
-After migration, run:
-**`supabase/migrations/04_admin_setup.sql`**
-
-Replace `YOUR_ADMIN_EMAIL@example.com` with your real email.
+After migration, run **`supabase/migrations/04_admin_setup.sql`** if you need admin access to Supabase Studio.
 
 ---
 
-## DNS Setup
+## WordPress Setup
 
-Add DNS records:
+WordPress is already configured at `jakselnews.com/wp-json/wp/v2`.
 
-| Type | Name | Value | TTL |
-|------|------|-------|-----|
-| A | api | `31.97.106.177` | 300 |
-| A | @ | YOUR_VERCEL_IP | 300 |
-| CNAME | www | @ | 300 |
-
-Wait for DNS propagation, then setup SSL:
-
-```bash
-ssh root@31.97.106.177
-certbot --nginx -d api.jakselnews.com
-docker restart jakselnews-api
-```
+Ensure the REST API is enabled in WordPress (Settings → Permalinks → anything except Plain).
 
 ---
 
 ## Frontend Deployment (Vercel)
 
-### Step 1: Connect to Vercel
+### Option 1: Via Vercel CLI
 
 ```bash
 npm install -g vercel
@@ -128,138 +64,71 @@ vercel login
 vercel
 ```
 
-### Step 2: Add Environment Variables
+### Option 2: Via GitHub
+
+1. Push to GitHub
+2. Go to [vercel.com](https://vercel.com) → Import Project
+3. Connect your GitHub repo
+4. Vercel auto-detects Next.js
+
+### Add Environment Variables
 
 In **Vercel Dashboard** → Project Settings → Environment Variables:
 
 | Name | Value |
 |------|-------|
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://eqoyvbeusopskzacoowz.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | _(your Supabase anon key)_ |
 | `NEXT_PUBLIC_WP_API_URL` | `https://jakselnews.com/wp-json/wp/v2` |
-| `NEXT_PUBLIC_API_URL` | `https://api.jakselnews.com/api` |
 | `NEXT_PUBLIC_SITE_URL` | `https://jakselnews.com` |
 
-### Step 3: Custom Domain
+Get keys from: https://supabase.com/dashboard → Settings → API
+
+### Custom Domain
 
 In Vercel Dashboard → Domains: Add `jakselnews.com` and `www.jakselnews.com`
 
 ---
 
-## SSL & HTTPS
+## DNS Setup
 
-```bash
-# On VPS
-ssh root@31.97.106.177
+Add DNS records in your domain registrar:
 
-# Setup SSL certificate
-certbot --nginx -d api.jakselnews.com
+| Type | Name | Value | TTL |
+|------|------|-------|-----|
+| A | @ | _(Vercel IP — shown in Vercel Domains)_ | 300 |
+| CNAME | www | `cname.vercel-dns.com` | 300 |
 
-# Auto-renewal (certbot adds this automatically)
-certbot renew --dry-run
-```
+Vercel handles SSL automatically.
 
 ---
 
 ## Troubleshooting
 
-### API Not Starting
+### Reports not loading
 
-```bash
-# Check logs
-docker logs -f jakselnews-api
+1. Verify Supabase tables exist and have data
+2. Check RLS policies allow public reads in `supabase/migrations/00_combined_migration.sql`
+3. Check browser console for CORS errors
 
-# Check environment variables
-docker exec -it jakselnews-api env
+### WordPress articles not loading
 
-# Test database connection
-docker exec -it jakselnews-api node -e "require('./config/supabase')"
+1. Verify `NEXT_PUBLIC_WP_API_URL` is set correctly
+2. Test directly: `curl https://jakselnews.com/wp-json/wp/v2/posts?per_page=1`
 
-# Health check
-curl http://127.0.0.1:5000/api/health
-```
+### Database connection errors
 
-### CORS Errors
-
-1. Verify `CORS_ORIGIN` includes your frontend domain in `.env.production`
-2. Check Nginx is forwarding headers correctly
-
-### Database Connection Issues
-
-1. Verify Supabase URL and keys are correct
-2. Check if IP is whitelisted in Supabase
-3. Test from VPS:
-```bash
-curl -I https://eqoyvbeusopskzacoowz.supabase.co
-```
+1. Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are correct
+2. Check Supabase project is not paused
+3. Check for IP restrictions in Supabase → Settings → Database
 
 ---
 
-## Useful Commands
+## Supabase Backup
 
-### Docker Commands
-```bash
-docker logs -f jakselnews-api      # View logs
-docker restart jakselnews-api      # Restart
-docker stop jakselnews-api         # Stop
-docker exec -it jakselnews-api sh  # Shell into container
-```
-
-### PM2 Commands (if not using Docker)
-```bash
-pm2 start dist/server/src/index.js --name jakselnews-api
-pm2 logs jakselnews-api
-pm2 restart jakselnews-api
-```
-
-### System Commands
-```bash
-systemctl status nginx
-tail -f /var/log/nginx/access.log
-tail -f /var/log/nginx/error.log
-ufw status
-```
-
----
-
-## Security Checklist
-
-- [ ] **Generate JWT_SECRET** (auto-generated by deploy script)
-- [ ] **Rotate Supabase API keys** (use new keys in production)
-- [ ] Remove exposed keys from `.env.example` ✅ DONE
-- [ ] Enable SSL/HTTPS
-- [ ] Configure firewall (only allow 22, 80, 443)
-- [ ] Set up Fail2Ban (auto-installed by setup script)
-- [ ] Use SSH keys instead of password
-- [ ] Set up backup for Supabase database
-
----
-
-## Monitoring
-
-### Health Check Endpoints
-```
-GET http://127.0.0.1:5000/api/health              # Basic
-GET http://127.0.0.1:5000/api/health/detailed    # Detailed (with memory)
-GET https://api.jakselnews.com/api/health        # With SSL
-```
-
----
-
-## Backup Strategy
-
-### Supabase Backups
 Supabase provides automatic daily backups. For additional safety:
 
 ```bash
 # Export data using Supabase CLI
 npx supabase db dump -f backup.sql --project-id eqoyvbeusopskzacoowz
 ```
-
----
-
-## Support
-
-For issues, check:
-1. Docker logs: `docker logs -f jakselnews-api`
-2. Nginx logs: `tail -f /var/log/nginx/error.log`
-3. Supabase Dashboard for database issues
-4. Vercel Dashboard for frontend issues
