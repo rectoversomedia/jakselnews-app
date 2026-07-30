@@ -34,7 +34,7 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-echo -e "\n${BLUE}[1/8] Checking system...${NC}"
+echo -e "\n${BLUE}[1/9] Checking system...${NC}"
 echo "   OS: $(uname -s)"
 echo "   User: $(whoami)"
 echo "   Date: $(date)"
@@ -42,29 +42,24 @@ echo "   Date: $(date)"
 # ===========================================
 # UPDATE SYSTEM
 # ===========================================
-echo -e "\n${BLUE}[2/8] Updating system packages...${NC}"
+echo -e "\n${BLUE}[2/9] Updating system packages...${NC}"
 apt update -qq
 apt upgrade -y -qq
 
 # ===========================================
 # INSTALL DOCKER
 # ===========================================
-echo -e "\n${BLUE}[3/8] Installing Docker...${NC}"
+echo -e "\n${BLUE}[3/9] Installing Docker...${NC}"
 
 if ! command -v docker &> /dev/null; then
   echo "   Installing Docker..."
   curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
   sh /tmp/get-docker.sh
   rm /tmp/get-docker.sh
-
-  # Enable Docker
   systemctl start docker
   systemctl enable docker
-
-  # Add docker group
   groupadd -f docker
   usermod -aG docker root
-
   echo -e "   ${GREEN}✓ Docker installed${NC}"
 else
   echo -e "   ${GREEN}✓ Docker already installed${NC}"
@@ -73,13 +68,13 @@ fi
 # ===========================================
 # INSTALL DEPENDENCIES
 # ===========================================
-echo -e "\n${BLUE}[4/8] Installing additional dependencies...${NC}"
+echo -e "\n${BLUE}[4/9] Installing additional dependencies...${NC}"
 apt install -y -qq curl wget git ufw nginx certbot python3-certbot-nginx rsync
 
 # ===========================================
 # SETUP PROJECT DIRECTORY
 # ===========================================
-echo -e "\n${BLUE}[5/8] Setting up project directory...${NC}"
+echo -e "\n${BLUE}[5/9] Setting up project directory...${NC}"
 
 mkdir -p $PROJECT_DIR
 mkdir -p $PROJECT_DIR/nginx/ssl
@@ -91,7 +86,7 @@ if [ ! -f "$PROJECT_DIR/package.json" ]; then
   echo ""
   echo -e "   To copy files from your local machine:${NC}"
   echo -e "   ${CYAN}   rsync -avz --exclude='node_modules' \\${NC}"
-  echo -e "   ${CYAN}     ~/Documents/Jakselnews.com/jakselnews-app/ \\${NC}"
+  echo -e "   ${CYAN}     ~/path/to/jakselnews-app/ \\${NC}"
   echo -e "   ${CYAN}     root@$VPS_IP:$PROJECT_DIR/${NC}"
   echo ""
   read -p "Continue anyway? (y/n) " -n 1 -r
@@ -102,26 +97,34 @@ if [ ! -f "$PROJECT_DIR/package.json" ]; then
 fi
 
 # ===========================================
+# GENERATE SECURE JWT_SECRET
+# ===========================================
+echo -e "\n${BLUE}[6/9] Generating secure JWT_SECRET...${NC}"
+JWT_SECRET=$(openssl rand -base64 64 | tr -d '\n')
+echo -e "   ${GREEN}✓ JWT_SECRET generated (64 characters)${NC}"
+
+# ===========================================
 # CREATE ENVIRONMENT FILE
 # ===========================================
-echo -e "\n${BLUE}[6/8] Creating environment configuration...${NC}"
+echo -e "\n${BLUE}[7/9] Creating environment configuration...${NC}"
 
-cat > $PROJECT_DIR/.env.production << 'EOF'
+cat > $PROJECT_DIR/.env.production << EOF
 # ===========================================
 # JAKSELNEWS PRODUCTION ENVIRONMENT
+# Generated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 # ===========================================
 
-# Server Configuration
 NODE_ENV=production
 PORT=5000
 
 # Supabase Configuration
 SUPABASE_URL=https://eqoyvbeusopskzacoowz.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxb3l2YmV1c29wc2t6YWNvb3d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0OTI4NjksImV4cCI6MjA5NzA2ODg2OX0.Dx3Oy6WzMD_vEevmER2qdFonzqWNUlEXbMwT6D4HGlM
-SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxb3l2YmV1c29wc2t6YWNvb3d6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTQ5Mjg2OSwiZXhwIjoyMDk3MDY4ODY5fQ.1jVvAUIrmrnmVRq8KGhZ2M6j81uFeOARo9sIGBR6c7Q
+SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_KEY=YOUR_SUPABASE_SERVICE_KEY
 
-# JWT Configuration - CRITICAL: CHANGE THIS!
-JWT_SECRET=jakselnews_production_secret_key_$(openssl rand -hex 32)
+# JWT Configuration - Auto-generated secure key
+JWT_SECRET=$JWT_SECRET
+JWT_EXPIRES_IN=7d
 
 # WordPress Configuration
 WORDPRESS_URL=https://jakselnews.com
@@ -142,13 +145,14 @@ RATE_LIMIT_REPORTS_MAX=10
 LOG_LEVEL=info
 EOF
 
-echo -e "   ${GREEN}✓ Environment file created${NC}"
-echo -e "   ${YELLOW}   JWT_SECRET has been auto-generated${NC}"
+echo -e "   ${GREEN}✓ Environment file created with secure JWT_SECRET${NC}"
+echo -e "   ${YELLOW}⚠️  IMPORTANT: Add your Supabase keys to .env.production${NC}"
+echo -e "   ${YELLOW}   Get them from: https://supabase.com/dashboard → Settings → API${NC}"
 
 # ===========================================
 # BUILD AND START DOCKER
 # ===========================================
-echo -e "\n${BLUE}[7/8] Building and starting Docker containers...${NC}"
+echo -e "\n${BLUE}[8/9] Building and starting Docker containers...${NC}"
 
 cd $PROJECT_DIR
 
@@ -160,14 +164,13 @@ docker build -t jakselnews-api:latest . 2>&1 | tail -5
 docker stop jakselnews-api 2>/dev/null || true
 docker rm jakselnews-api 2>/dev/null || true
 
-# Run container
+# Run container (without volume mount - code is baked into image)
 echo "   Starting container..."
 docker run -d \
   --name jakselnews-api \
   --restart unless-stopped \
   --env-file $PROJECT_DIR/.env.production \
-  -p 5000:5000 \
-  -v ${PROJECT_DIR}:/app \
+  -p 127.0.0.1:5000:5000 \
   jakselnews-api:latest
 
 # Wait for startup
@@ -177,6 +180,8 @@ sleep 5
 # Check status
 if docker ps | grep -q jakselnews-api; then
   echo -e "   ${GREEN}✓ Container is running!${NC}"
+  echo "   Health check:"
+  curl -s http://127.0.0.1:5000/api/health | head -c 200 || echo "   (still starting...)"
 else
   echo -e "   ${RED}❌ Container failed to start${NC}"
   echo "   Check logs with: docker logs jakselnews-api"
@@ -185,7 +190,7 @@ fi
 # ===========================================
 # SETUP NGINX
 # ===========================================
-echo -e "\n${BLUE}[8/8] Setting up Nginx reverse proxy...${NC}"
+echo -e "\n${BLUE}[9/9] Setting up Nginx reverse proxy...${NC}"
 
 # Create Nginx config
 cat > /etc/nginx/sites-available/jakselnews-api << 'EOF'
@@ -204,7 +209,6 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
 
-        # Timeouts
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
         proxy_read_timeout 60s;
@@ -240,12 +244,11 @@ echo -e "${GREEN}║                                                        ║$
 echo -e "${GREEN}╚════════════════════════════════════════════════════════╝${NC}"
 
 echo -e "\n${CYAN}📊 API Status:${NC}"
-docker ps | grep jakselnews-api
+docker ps | grep jakselnews-api || echo "   Container not running"
 
 echo -e "\n${CYAN}🔗 API Endpoints:${NC}"
-echo -e "   Health:     http://$VPS_IP:5000/api/health"
-echo -e "   API:        http://$VPS_IP:5000/api"
-echo -e "   (after DNS) http://$API_DOMAIN/api"
+echo -e "   Health:     http://127.0.0.1:5000/api/health"
+echo -e "   (after DNS) https://$API_DOMAIN/api/health"
 
 echo -e "\n${CYAN}📝 Useful Commands:${NC}"
 echo -e "   View logs:     docker logs -f jakselnews-api"
@@ -253,9 +256,12 @@ echo -e "   Restart API:   docker restart jakselnews-api"
 echo -e "   Stop API:      docker stop jakselnews-api"
 echo -e "   Shell into:    docker exec -it jakselnews-api sh"
 
-echo -e "\n${YELLOW}⚠️  NEXT STEPS:${NC}"
-echo -e "1. Point DNS A record 'api.$DOMAIN' to $VPS_IP"
-echo -e "2. Setup SSL: certbot --nginx -d $API_DOMAIN"
-echo -e "3. Test the API: curl http://$VPS_IP:5000/api/health"
+echo -e "\n${YELLOW}⚠️  REQUIRED NEXT STEPS:${NC}"
+echo -e "1. Add Supabase keys to $PROJECT_DIR/.env.production"
+echo -e "2. Point DNS A record 'api.$DOMAIN' → $VPS_IP"
+echo -e "3. Run: certbot --nginx -d $API_DOMAIN"
+echo -e "4. Restart container: docker restart jakselnews-api"
+echo -e "5. Run database migration: see supabase/migrations/00_combined_migration.sql"
+echo -e "6. Create admin user: see supabase/migrations/04_admin_setup.sql"
 
 echo -e "\n${GREEN}🎉 Happy coding!${NC}\n"
