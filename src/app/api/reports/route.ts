@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { v4 as uuidv4 } from 'uuid'
 
 // Auto-categorize based on keywords in description
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
 
-    let query = supabase
+    let query = getSupabase()
       .from('reports')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     // Auto-categorize
     const auto_category = autoCategorize(description)
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('reports')
       .insert({
         id: uuidv4(),
