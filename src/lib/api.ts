@@ -67,6 +67,14 @@ interface Alert {
   expires_at?: string
 }
 
+interface Comment {
+  id: string
+  report_id: string
+  author_name?: string
+  body: string
+  created_at: string
+}
+
 class ApiClient {
   private async request<T>(
     endpoint: string,
@@ -150,7 +158,24 @@ class ApiClient {
       body: JSON.stringify(data),
     })
   }
+
+  // Comments
+  async getComments(reportId: string): Promise<ApiResponse<Comment[]>> {
+    return this.request<Comment[]>(`/api/comments?report_id=${reportId}`)
+  }
+
+  async createComment(data: {
+    report_id: string
+    author_name?: string
+    author_phone?: string
+    comment: string
+  }): Promise<ApiResponse<Comment>> {
+    return this.request<Comment>('/api/comments', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
 }
 
 export const api = new ApiClient()
-export type { Report, Category, Service, Alert, ApiResponse }
+export type { Report, Category, Service, Alert, Comment, ApiResponse }

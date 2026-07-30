@@ -1,0 +1,2 @@
+-- Migration: 001 - Initial schema (already applied)
+-- This file is a stub - actual schema was created via combined migration

@@ -1,0 +1,2 @@
+-- Migration: 003 - RLS fix (already applied)
+-- This file is a stub - actual fix was applied via combined migration

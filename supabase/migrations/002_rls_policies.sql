@@ -1,0 +1,2 @@
+-- Migration: 002 - RLS policies (already applied)
+-- This file is a stub - actual policies were created via combined migration
