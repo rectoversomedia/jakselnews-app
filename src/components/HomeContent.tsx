@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -15,6 +16,7 @@ import {
   Share,
   Eye,
   TrendUp,
+  MagnifyingGlass,
 } from '@phosphor-icons/react';
 import { UGCPostCard } from './UGCPost';
 
@@ -405,77 +407,113 @@ function PeringatanSection() {
 }
 
 // =====================================================
-// DESKTOP: Info Terkini Section - Enhanced Cards
+// =====================================================
+// DESKTOP: Info Terkini Section - Real Supabase Data
 // =====================================================
 function InfoTerkiniSection() {
-  const mockReports = [
-    { id: 1, authorName: 'Warga Kemang', location: 'Kemang', time: '10 menit lalu', content: 'Air mulai pasang di Jl Kemang Raya arah Blok M. Tinggi air sudah 15cm. Masyarakat diminta waspada! 🌊', likes: 24, comments: 8, shares: 5 },
-    { id: 2, authorName: 'Warga Blok M', location: 'Blok M', time: '25 menit lalu', content: 'Kemacetan parah di Jl. Melawai arah flyover. Estimated delay 30 menit. 🚗💨', likes: 18, comments: 12, shares: 3 },
-    { id: 3, authorName: 'Warga Cilandak', location: 'Cilandak', time: '45 menit lalu', content: 'Listrik padam di kawasan TB Simatupang. PLN sedang melakukan perbaikan. ⚡', likes: 15, comments: 6, shares: 2 },
-    { id: 4, authorName: 'Warga Kebayoran', location: 'Kebayoran', time: '1 jam lalu', content: 'Pohon tumbang di Jl. Trunojoyo. Arvodi dan tim kebersihan sudah di lokasi. 🌳', likes: 32, comments: 15, shares: 8 },
-    { id: 5, authorName: 'Warga Tebet', location: 'Tebet', time: '2 jam lalu', content: 'Laporan kerusakan jalan di Jl. Tebet Raya. Mohon perbaikan segera. 🛠️', likes: 12, comments: 4, shares: 2 },
-    { id: 6, authorName: 'Warga Pasar Minggu', location: 'Pasar Minggu', time: '3 jam lalu', content: 'Positif! Masjid di Jl. RM Soedirdja sudah dibersihkan. Terima kasih warga! 🤝', likes: 45, comments: 18, shares: 12 },
-  ];
+  const [reports, setReports] = useState<Array<{id: string; type: string; description: string; location_name: string|null; created_at: string}>>([]);
+  const [loading, setLoading] = useState(true);
+
+  const catColors: Record<string, string> = {
+    keamanan: 'bg-red-100 text-red-700', 'lalu-lintas': 'bg-amber-100 text-amber-700',
+    banjir: 'bg-blue-100 text-blue-700', kebakaran: 'bg-orange-100 text-orange-700',
+    kemacetan: 'bg-yellow-100 text-yellow-700', penerangan: 'bg-yellow-100 text-yellow-600',
+    lingkungan: 'bg-green-100 text-green-700', 'jalan-rusak': 'bg-yellow-100 text-yellow-800',
+    kriminal: 'bg-red-100 text-red-800', sampah: 'bg-emerald-100 text-emerald-700',
+    fenomena: 'bg-purple-100 text-purple-700', lainnya: 'bg-gray-100 text-gray-600',
+  };
+  const catGradients: Record<string, string> = {
+    keamanan: 'from-red-500 to-rose-600', 'lalu-lintas': 'from-amber-500 to-orange-600',
+    banjir: 'from-blue-500 to-cyan-600', kebakaran: 'from-orange-500 to-red-600',
+    kemacetan: 'from-yellow-500 to-amber-600', penerangan: 'from-yellow-400 to-amber-500',
+    lingkungan: 'from-green-500 to-emerald-600', 'jalan-rusak': 'from-yellow-400 to-yellow-600',
+    kriminal: 'from-red-500 to-red-700', sampah: 'from-emerald-500 to-teal-600',
+    fenomena: 'from-purple-500 to-indigo-600', lainnya: 'from-gray-500 to-gray-600',
+  };
+  const catLabels: Record<string, string> = {
+    keamanan: 'Keamanan', 'lalu-lintas': 'Lalu Lintas', banjir: 'Banjir',
+    kebakaran: 'Kebakaran', kemacetan: 'Kemacetan', penerangan: 'Penerangan',
+    lingkungan: 'Lingkungan', 'jalan-rusak': 'Jalan Rusak', kriminal: 'Kriminal',
+    sampah: 'Sampah', fenomena: 'Fenomena', lainnya: 'Lainnya',
+  };
+  const timeAgo = (d: string) => {
+    const ms = new Date().getTime() - new Date(d).getTime();
+    const m = Math.floor(ms / 60000);
+    if (m < 1) return 'Baru saja';
+    if (m < 60) return `${m} menit lalu`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h} jam lalu`;
+    return `${Math.floor(h / 24)} hari lalu`;
+  };
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+        const res = await fetch(`${baseUrl}/api/reports?limit=6`);
+        const data = await res.json();
+        if (data.success && data.data) setReports(data.data);
+      } catch (_) {}
+      setLoading(false);
+    }
+    load();
+  }, []);
 
   return (
     <section className="hidden lg:block bg-white border-b border-gray-100">
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Section Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-200">
-              <ChatCircle size={26} className="text-white" weight="fill" />
+            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-200">
+              <Warning size={26} className="text-white" weight="fill" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">Info Terkini</h2>
               <p className="text-sm text-gray-500">Laporan warga Jakarta Selatan</p>
             </div>
           </div>
-          <Link href="/info-terkini" className="group text-sm text-violet-600 font-semibold flex items-center gap-2 hover:gap-3 transition-all">
-            Lihat Semua
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          <Link href="/info-terkini" className="group text-sm text-red-600 font-semibold flex items-center gap-2 hover:gap-3 transition-all">
+            Lihat Semua <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
-
-        {/* Cards Grid - Enhanced */}
-        <div className="grid grid-cols-3 gap-6">
-          {mockReports.map((report) => (
-            <div key={report.id} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-5 border border-gray-100 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-100/50 transition-all duration-300 hover:-translate-y-1">
-              {/* Author */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-11 h-11 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                  {report.authorName.charAt(0)}
+        {loading ? (
+          <div className="grid grid-cols-3 gap-5">
+            {[...Array(6)].map((_, i) => <div key={i} className="h-40 bg-gray-100 rounded-2xl animate-pulse border border-gray-100" />)}
+          </div>
+        ) : reports.length === 0 ? (
+          <div className="text-center py-12 text-gray-400 text-sm">Belum ada laporan masuk</div>
+        ) : (
+          <div className="grid grid-cols-3 gap-5">
+            {reports.map(report => (
+              <Link key={report.id} href="/info-terkini"
+                className="bg-white rounded-2xl p-5 border border-gray-100 hover:border-red-200 hover:shadow-xl hover:shadow-red-100/50 transition-all duration-300 hover:-translate-y-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-11 h-11 bg-gradient-to-br ${catGradients[report.type] || catGradients['lainnya']} rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg`}>
+                    <Warning size={18} weight="fill" />
+                  </div>
+                  <div>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${catColors[report.type] || catColors['lainnya']}`}>
+                      {catLabels[report.type] || report.type}
+                    </span>
+                    <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                      <MapPin size={10} />{report.location_name || 'Jakarta Selatan'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">{report.authorName}</p>
-                  <p className="text-xs text-gray-400 flex items-center gap-1">
-                    <MapPin size={10} /> {report.location} • {report.time}
-                  </p>
-                </div>
-              </div>
-              {/* Content */}
-              <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-3">{report.content}</p>
-              {/* Actions */}
-              <div className="flex items-center gap-5 text-gray-400 text-xs pt-3 border-t border-gray-100">
-                <button className="flex items-center gap-1.5 hover:text-red-500 transition-colors">
-                  <Heart size={14} /> {report.likes}
-                </button>
-                <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors">
-                  <ChatCircle size={14} /> {report.comments}
-                </button>
-                <button className="flex items-center gap-1.5 hover:text-green-500 transition-colors ml-auto">
-                  <Share size={14} /> {report.shares}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+                <p className="text-gray-700 text-sm leading-relaxed mb-3 line-clamp-3">{report.description}</p>
+                <p className="text-xs text-gray-400 flex items-center gap-1">
+                  <Clock size={11} />{timeAgo(report.created_at)}
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-// =====================================================
+
 // DESKTOP: Layanan Section - Enhanced
 // =====================================================
 function LayananPopulerSection() {
@@ -771,9 +809,46 @@ function NotificationBanner() {
 
 // =====================================================
 // MOBILE SECTIONS (Keep as-is)
+
+// =====================================================
+// HERO SEARCH COMPONENT
+// =====================================================
+function HeroSearch() {
+  const router = useRouter();
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const input = form.querySelector('input') as HTMLInputElement;
+    if (input?.value.trim()) {
+      router.push(`/cari?q=${encodeURIComponent(input.value.trim())}`);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+      <div className="relative">
+        <MagnifyingGlass size={22} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+        <input
+          type="text"
+          placeholder="Cari berita, artikel, atau informasi..."
+          className="w-full pl-14 pr-36 py-4 bg-white border-2 border-transparent rounded-2xl text-base focus:outline-none focus:border-white focus:ring-4 focus:ring-red-400/40 transition-all"
+        />
+        <button
+          type="submit"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-colors"
+        >
+          Cari
+        </button>
+      </div>
+    </form>
+  );
+}
+
 // =====================================================
 function MobileSections() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const router = useRouter();
   const [breakingPosts, setBreakingPosts] = useState<BreakingPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedWarning, setSelectedWarning] = useState<WarningReport | null>(null);
@@ -1193,21 +1268,14 @@ export default function HomeContent() {
     <>
       {/* Desktop Layout */}
       <div className="hidden lg:block">
-        {/* Hero: Featured Article + Sidebar */}
-        <section className="bg-white border-b border-gray-100">
-          <div className="max-w-6xl mx-auto px-6 py-8">
-            <div className="grid grid-cols-12 gap-8">
-              <div className="col-span-8">
-                {loading ? (
-                  <div className="aspect-[16/10] bg-gray-200 rounded-2xl animate-pulse" />
-                ) : (
-                  <FeaturedArticleWithSides posts={breakingPosts} />
-                )}
-              </div>
-              <div className="col-span-4">
-                <SidebarNews />
-              </div>
+        {/* Hero: Search Bar */}
+        <section className="bg-gradient-to-br from-red-600 to-red-700 border-b border-gray-100">
+          <div className="max-w-6xl mx-auto px-6 py-16">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-white mb-2">Cari Berita &amp; Informasi</h1>
+              <p className="text-red-100 text-base">Temukan berita terkini dari Jakarta Selatan</p>
             </div>
+            <HeroSearch />
           </div>
         </section>
 
