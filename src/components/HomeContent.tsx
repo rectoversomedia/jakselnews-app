@@ -1055,11 +1055,54 @@ function MobileSections() {
           </Link>
         </div>
 	        <div className="space-y-3">
-	          {fallbackPosts.slice(0, 3).map((post, index) => {
+	        {loading ? (
+	          <>
+	          <div key="0" className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl animate-pulse">
+	            <div className="w-16 h-16 rounded-lg bg-gray-200 shrink-0" />
+	            <div className="flex-1 space-y-2 pt-1">
+	              <div className="h-3 bg-gray-200 rounded w-full" />
+	              <div className="h-3 bg-gray-200 rounded w-2/3" />
+	              <div className="h-2 bg-gray-200 rounded w-1/3" />
+	            </div>
+	          </div>
+	          <div key="1" className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl animate-pulse">
+	            <div className="w-16 h-16 rounded-lg bg-gray-200 shrink-0" />
+	            <div className="flex-1 space-y-2 pt-1">
+	              <div className="h-3 bg-gray-200 rounded w-full" />
+	              <div className="h-3 bg-gray-200 rounded w-2/3" />
+	              <div className="h-2 bg-gray-200 rounded w-1/3" />
+	            </div>
+	          </div>
+	          <div key="2" className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl animate-pulse">
+	            <div className="w-16 h-16 rounded-lg bg-gray-200 shrink-0" />
+	            <div className="flex-1 space-y-2 pt-1">
+	              <div className="h-3 bg-gray-200 rounded w-full" />
+	              <div className="h-3 bg-gray-200 rounded w-2/3" />
+	              <div className="h-2 bg-gray-200 rounded w-1/3" />
+	            </div>
+	          </div>
+	          <div key="3" className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl animate-pulse">
+	            <div className="w-16 h-16 rounded-lg bg-gray-200 shrink-0" />
+	            <div className="flex-1 space-y-2 pt-1">
+	              <div className="h-3 bg-gray-200 rounded w-full" />
+	              <div className="h-3 bg-gray-200 rounded w-2/3" />
+	              <div className="h-2 bg-gray-200 rounded w-1/3" />
+	            </div>
+	          </div>
+	          <div key="4" className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl animate-pulse">
+	            <div className="w-16 h-16 rounded-lg bg-gray-200 shrink-0" />
+	            <div className="flex-1 space-y-2 pt-1">
+	              <div className="h-3 bg-gray-200 rounded w-full" />
+	              <div className="h-3 bg-gray-200 rounded w-2/3" />
+	              <div className="h-2 bg-gray-200 rounded w-1/3" />
+	            </div>
+	          </div>
+	          </>
+	        ) : (
+	          breakingPosts.slice(0, 5).map((post, index) => {
 	            const imageUrl = getFeaturedImageUrl(post);
 	            const title = stripHtml(post.title.rendered);
 	            const hasValidImage = imageUrl && imageUrl.length > 0 && imageUrl.startsWith('http');
-
 
 	            return (
 	              <Link
@@ -1073,13 +1116,13 @@ function MobileSections() {
 	                      src={imageUrl}
 	                      alt={title}
 	                      className="w-full h-full object-cover"
-	                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+	                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
 	                    />
 	                  </div>
 	                ) : (
 	                  <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center shrink-0">
 	                    <span className="text-lg font-black text-orange-400">
-	                      {String(index + 1).padStart(2, '0')}
+	                      {String(index + 1).padStart(2, "0")}
 	                    </span>
 	                  </div>
 	                )}
@@ -1091,8 +1134,9 @@ function MobileSections() {
 	                </div>
 	              </Link>
 	            );
-	          })}
-	        </div>
+	          })
+	        )}
+        </div>
       </section>
     </>
   );
