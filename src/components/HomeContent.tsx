@@ -468,7 +468,7 @@ function InfoTerkiniSection() {
               <Warning size={26} className="text-white" weight="fill" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Info Terkini</h2>
+              <Link href="/info-terkini" className="text-xl font-bold text-gray-900 hover:text-red-600 transition-colors">Info Terkini</Link>
               <p className="text-sm text-gray-500">Laporan warga Jakarta Selatan</p>
             </div>
           </div>
@@ -710,9 +710,9 @@ function ArtikelPopulerSection() {
           </Link>
         </div>
 
-        {/* List with Thumbnails */}
+        {/* List with Thumbnails - 5 items */}
         <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-          {articles.map((article, index) => {
+          {articles.slice(0, 5).map((article, index) => {
             const imageUrl = getFeaturedImageUrl(article);
             const title = stripHtml(article.title.rendered);
             const category = article._embedded?.['wp:term']?.[0]?.[0]?.name || 'Artikel';
@@ -1268,14 +1268,21 @@ export default function HomeContent() {
     <>
       {/* Desktop Layout */}
       <div className="hidden lg:block">
-        {/* Hero: Search Bar */}
-        <section className="bg-gradient-to-br from-red-600 to-red-700 border-b border-gray-100">
-          <div className="max-w-6xl mx-auto px-6 py-16">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">Cari Berita &amp; Informasi</h1>
-              <p className="text-red-100 text-base">Temukan berita terkini dari Jakarta Selatan</p>
+        {/* Hero: Featured Article + Sidebar */}
+        <section className="bg-white border-b border-gray-100">
+          <div className="max-w-6xl mx-auto px-6 py-8">
+            <div className="grid grid-cols-12 gap-8">
+              <div className="col-span-8">
+                {loading ? (
+                  <div className="aspect-[16/10] bg-gray-200 rounded-2xl animate-pulse" />
+                ) : (
+                  <FeaturedArticleWithSides posts={breakingPosts} />
+                )}
+              </div>
+              <div className="col-span-4">
+                <SidebarNews />
+              </div>
             </div>
-            <HeroSearch />
           </div>
         </section>
 

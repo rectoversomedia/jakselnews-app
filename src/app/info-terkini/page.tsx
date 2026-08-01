@@ -15,6 +15,7 @@ import {
   User,
   Link,
 } from '@phosphor-icons/react';
+import Header from '@/components/layout/Header';
 import { api, Report, Comment } from '@/lib/api';
 
 function timeAgo(dateStr: string): string {
@@ -534,13 +535,7 @@ export default function InfoTerkiniPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-red-500 to-rose-600 px-4 pt-20 pb-5 lg:pt-4 text-white">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-2xl font-bold mb-1">Info Terkini</h1>
-          <p className="text-white/80 text-sm">Laporan dan informasi dari warga Jakarta Selatan</p>
-        </div>
-      </div>
+      <Header title="Info Terkini" />
 
       {/* Category filter */}
       <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-14 lg:top-16 z-20 shadow-sm">
