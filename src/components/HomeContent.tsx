@@ -42,7 +42,7 @@ interface BreakingPost {
 }
 
 interface WarningReport {
-  id: number;
+  id: string | number;
   type: string;
   location: string;
   reports: number;
@@ -359,10 +359,49 @@ function WarningModal({ warning, onClose }: { warning: WarningReport; onClose: (
 }
 
 // =====================================================
-// DESKTOP: Peringatan Section
+// DESKTOP: Peringatan Section — real data from /api/alerts
 // =====================================================
 function PeringatanSection() {
   const [selectedWarning, setSelectedWarning] = useState<WarningReport | null>(null);
+  const [alerts, setAlerts] = useState<WarningReport[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadAlerts() {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+        const res = await fetch(`${baseUrl}/api/alerts`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          const gradientMap = [
+            'from-red-500 to-rose-600',
+            'from-blue-500 to-cyan-600',
+            'from-amber-500 to-orange-600',
+            'from-purple-500 to-indigo-600',
+            'from-green-500 to-emerald-600',
+          ];
+          const top = (data.data as any[])
+            .filter((a: any) => a.is_active)
+            .sort((a: any, b: any) => b.report_count - a.report_count)
+            .slice(0, 3)
+            .map((a: any, i: number): WarningReport => ({
+              id: a.id,
+              type: a.title,
+              location: a.category,
+              reports: a.report_count,
+              time: formatDate(a.created_at),
+              gradient: gradientMap[i % gradientMap.length],
+              hotline: '110',
+              description: a.description || '',
+              related: [],
+            }));
+          setAlerts(top);
+        }
+      } catch (_) {}
+      setLoading(false);
+    }
+    loadAlerts();
+  }, []);
 
   return (
     <>
@@ -386,17 +425,27 @@ function PeringatanSection() {
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-3 gap-5">
-            {staticWarnings.map((warning) => (
-              <button
-                key={warning.id}
-                onClick={() => setSelectedWarning(warning)}
-                className="text-left w-full"
-              >
-                <WarningCard warning={warning} />
-              </button>
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-3 gap-5">
+              {[0,1,2].map(i => (
+                <div key={i} className="h-28 bg-gray-100 rounded-2xl animate-pulse" />
+              ))}
+            </div>
+          ) : alerts.length > 0 ? (
+            <div className="grid grid-cols-3 gap-5">
+              {alerts.map((warning) => (
+                <button
+                  key={warning.id}
+                  onClick={() => setSelectedWarning(warning)}
+                  className="text-left w-full"
+                >
+                  <WarningCard warning={warning} />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-400 text-sm py-6">Belum ada peringatan aktif</p>
+          )}
         </div>
       </section>
       {selectedWarning && (
@@ -852,6 +901,41 @@ function MobileSections() {
   const [breakingPosts, setBreakingPosts] = useState<BreakingPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedWarning, setSelectedWarning] = useState<WarningReport | null>(null);
+  const [mobileAlerts, setMobileAlerts] = useState<WarningReport[]>([]);
+
+  useEffect(() => {
+    async function fetchAlerts() {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+        const res = await fetch(`${baseUrl}/api/alerts`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          const gradientMap = [
+            'from-red-500 to-rose-600',
+            'from-blue-500 to-cyan-600',
+            'from-amber-500 to-orange-600',
+          ];
+          const top = (data.data as any[])
+            .filter((a: any) => a.is_active)
+            .sort((a: any, b: any) => b.report_count - a.report_count)
+            .slice(0, 3)
+            .map((a: any, i: number): WarningReport => ({
+              id: a.id,
+              type: a.title,
+              location: a.category,
+              reports: a.report_count,
+              time: formatDate(a.created_at),
+              gradient: gradientMap[i % gradientMap.length],
+              hotline: '110',
+              description: a.description || '',
+              related: [],
+            }));
+          setMobileAlerts(top);
+        }
+      } catch (_) {}
+    }
+    fetchAlerts();
+  }, []);
 
   useEffect(() => {
     async function fetchBreakingNews() {
@@ -947,7 +1031,7 @@ function MobileSections() {
           PERINGATAN WARGA
         </h2>
         <div className="space-y-2">
-          {staticWarnings.map((warning) => (
+          {mobileAlerts.map((warning) => (
             <button
               key={warning.id}
               onClick={() => setSelectedWarning(warning)}

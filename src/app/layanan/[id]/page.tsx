@@ -45,7 +45,7 @@ const layananData: Record<number, {
     requirements: ['KTP orang tua/wali', 'Akta kelahiran siswa', 'Kartu Nisn', 'Foto siswa'],
     procedure: [
       'Daftar melalui sekolah',
-      'Verifikasi data di合肥市',
+      'Verifikasi data di Kelurahan/Kecamatan',
       'Terima kartu KJP Plus',
     ],
     links: [{ name: 'Info KJP Plus', url: 'https://disdik.jakarta.go.id' }],
