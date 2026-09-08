@@ -1,7 +1,11 @@
 // WordPress API Client for Jakselnews
 // Fetches via Next.js proxy to bypass DNS (WP still lives at old IP 153.92.8.164)
 const WP_API_BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.jakselnews.com';
-const WP_PROXY = `${WP_API_BASE}/api/wordpress`;
+// Client-side: use relative URL to avoid www/non-www redirect issues
+const isServer = typeof window === 'undefined';
+const WP_PROXY = isServer
+  ? `${WP_API_BASE}/api/wordpress`
+  : '/api/wordpress';
 
 // Types
 export interface WPPost {

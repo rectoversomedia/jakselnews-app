@@ -162,7 +162,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
           {/* Article Body */}
           <div
-            className="mt-6 text-gray-700 leading-relaxed space-y-4"
+            className="mt-6 text-gray-700 leading-relaxed space-y-4 prose prose-sm md:prose-base max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-img:rounded-xl prose-img:shadow-md"
             dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
         </div>
