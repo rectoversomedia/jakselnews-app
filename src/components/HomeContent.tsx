@@ -205,11 +205,13 @@ function SideArticleCard({ post, index }: { post: BreakingPost; index: number })
   const imageUrl = getFeaturedImageUrl(post);
   const title = stripHtml(post.title.rendered);
   const date = formatDate(post.date);
-
   const showPlaceholder = imageError || !imageUrl;
+  const slug = post?.slug;
+
+  if (!slug) return null;
 
   return (
-    <Link href={`/artikel/${post.slug}`} className="group flex gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-red-200 hover:shadow-lg hover:shadow-red-100/50 transition-all duration-300">
+    <Link href={`/artikel/${slug}`} className="group flex gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-red-200 hover:shadow-lg hover:shadow-red-100/50 transition-all duration-300">
       <div className="relative w-28 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0">
         {!showPlaceholder ? (
           <img
@@ -1011,11 +1013,11 @@ function MobileSections() {
           {breakingPosts.map((post, index) => {
             const imageUrl = getFeaturedImageUrl(post);
             const title = stripHtml(post.title.rendered);
-            return (
-              <Link
-                key={post.id}
-                href={`/artikel/${post.slug}`}
-                className={`block transition-opacity duration-500 ${index === currentSlide ? 'opacity-100' : 'opacity-0 absolute inset-0'}`}
+            const isActive = index === currentSlide;
+
+            const card = (
+              <div
+                className={`transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}
               >
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-800">
                   <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
@@ -1028,7 +1030,15 @@ function MobileSections() {
                     </p>
                   </div>
                 </div>
+              </div>
+            );
+
+            return isActive ? (
+              <Link key={post.id} href={`/artikel/${post.slug}`}>
+                {card}
               </Link>
+            ) : (
+              <div key={post.id}>{card}</div>
             );
           })}
         </div>
