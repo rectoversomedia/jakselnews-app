@@ -443,3 +443,13 @@
 .dark textarea::placeholder {
   color: #9CA3AF !important;
 }
+
+/* Article content images - force proper sizing for WordPress inline images */
+.article-content img {
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}

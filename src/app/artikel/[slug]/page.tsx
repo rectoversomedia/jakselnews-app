@@ -101,8 +101,8 @@ export default async function ArticlePage({ params }: PageProps) {
       </div>
 
       {/* Featured Image */}
-      <div className="relative w-full bg-gray-100">
-        <div className="aspect-video max-h-[400px]">
+      <div className="relative w-full bg-gray-100 overflow-hidden">
+        <div className="aspect-video max-h-[400px] overflow-hidden">
           {featuredImage ? (
             <Image
               src={featuredImage}
@@ -162,7 +162,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
           {/* Article Body */}
           <div
-            className="mt-6 text-gray-700 leading-relaxed space-y-4 prose prose-sm md:prose-base max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-img:rounded-xl prose-img:shadow-md"
+            className="mt-6 text-gray-700 leading-relaxed space-y-4 prose prose-sm md:prose-base max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-img:rounded-xl prose-img:shadow-md article-content"
             dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
         </div>
