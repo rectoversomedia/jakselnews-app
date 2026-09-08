@@ -57,14 +57,14 @@ export default function Header({
       {/* Desktop Header */}
       <header className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-[72px]">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
               <Image
                 src="/logo-utama.png"
                 alt="Jakselnews"
-                width={168}
-                height={43}
+                width={210}
+                height={54}
                 className="object-contain"
                 priority
               />
@@ -110,7 +110,7 @@ export default function Header({
           isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-md' : 'bg-white/80 backdrop-blur-sm'
         }`}
       >
-        <div className="flex items-center justify-between px-4 h-14">
+        <div className="flex items-center justify-between px-4 h-[60px]">
           {/* Left */}
           <div className="flex items-center gap-2">
             {showBack ? (
@@ -139,8 +139,8 @@ export default function Header({
                 <Image
                   src="/logo-utama.png"
                   alt="Jakselnews"
-                  width={132}
-                  height={34}
+                  width={165}
+                  height={43}
                   className="object-contain"
                   priority
                 />

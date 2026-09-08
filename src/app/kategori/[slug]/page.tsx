@@ -46,8 +46,15 @@ const categoryMeta: Record<string, { title: string; description: string; emoji: 
   'lalu-lintas': { title: 'Lalu Lintas', description: 'Info lalu lintas dan transportasi', emoji: '🚗' },
 };
 
+function rewriteWpUrl(url: string | null): string | null {
+  if (!url) return null;
+  return url
+    .replace(/https:\/\/jakselnews\.com\//g, '/api/wp-image/')
+    .replace(/https:\/\/www\.jakselnews\.com\//g, '/api/wp-image/');
+}
+
 function CategoryCard({ post }: { post: any }) {
-  const featuredImage = getFeaturedImage(post);
+  const featuredImage = rewriteWpUrl(getFeaturedImage(post));
   const category = getPostCategory(post);
   const date = formatPostDate(post.date);
   const title = stripHtml(post.title.rendered);
@@ -65,7 +72,7 @@ function CategoryCard({ post }: { post: any }) {
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-            <span className="text-gray-400 font-bold text-3xl">J</span>
+            <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-500 rounded-full animate-spin" />
           </div>
         )}
         {category && (

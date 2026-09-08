@@ -19,6 +19,7 @@ import {
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
+import { api } from '@/lib/api';
 
 const kecamatanList = [
   'Cilandak', 'Jagakarsa', 'Kebayoran Baru', 'Kebayoran Lama',
@@ -144,10 +145,21 @@ export default function LaporPage() {
 
     setSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const result = await api.createReport({
+      type: formData.type === 'custom' ? formData.customCategory : formData.type,
+      description: formData.description,
+      kecamatan: formData.kecamatan || undefined,
+      reporter_name: formData.is_anonymous ? undefined : formData.reporter_name || undefined,
+      reporter_phone: formData.is_anonymous ? undefined : formData.reporter_phone || undefined,
+      reporter_email: formData.is_anonymous ? undefined : formData.reporter_email || undefined,
+      is_anonymous: formData.is_anonymous,
+    });
 
-    setSubmitted(true);
+    if (result.success) {
+      setSubmitted(true);
+    } else {
+      alert(result.error || 'Gagal mengirim laporan. Silakan coba lagi.');
+    }
     setSubmitting(false);
   };
 

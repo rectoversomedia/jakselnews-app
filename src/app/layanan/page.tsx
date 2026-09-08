@@ -69,13 +69,13 @@ const allServices: Service[] = [
   { id: 6, name: 'Gojek', desc: 'Transportasi & layanan', url: 'https://gojek.com/id', category: 'transportasi', categoryName: 'Transportasi', icon: <Bus size={24} />, iconColor: categoryColors.transportasi },
 
   // Keuangan & Pajak
-  { id: 7, name: 'Cek ETLE', desc: 'Tilang elektronik', url: 'https://www.etle.id', category: 'keuangan', categoryName: 'Keuangan', icon: <Camera size={24} />, iconColor: categoryColors.keuangan },
-  { id: 8, name: 'Pajak Kendaraan', desc: 'Cek & bayar pajak', url: 'https://bapenda.jakarta.go.id', category: 'keuangan', categoryName: 'Keuangan', icon: <CurrencyCircleDollar size={24} />, iconColor: categoryColors.keuangan },
+  { id: 7, name: 'Cek ETLE', desc: 'Tilang elektronik', url: 'https://etle-pmj.id/', category: 'keuangan', categoryName: 'Keuangan', icon: <Camera size={24} />, iconColor: categoryColors.keuangan },
+  { id: 8, name: 'Pajak Kendaraan', desc: 'Cek & bayar pajak', url: 'https://samsat-pkb2.jakarta.go.id/', category: 'keuangan', categoryName: 'Keuangan', icon: <CurrencyCircleDollar size={24} />, iconColor: categoryColors.keuangan },
   { id: 9, name: 'Samsat Online', desc: 'Pendaftaran pajak kendaraan', url: 'https://bapenda.jakarta.go.id/samsat', category: 'keuangan', categoryName: 'Keuangan', icon: <Wallet size={24} />, iconColor: categoryColors.keuangan },
 
   // Bantuan Sosial
-  { id: 10, name: 'Bansos Jakarta', desc: 'Cek penerima bansos', url: 'https://jdih.jakarta.go.id/bansos', category: 'bansos', categoryName: 'Bansos', icon: <Cardholder size={24} />, iconColor: categoryColors.bansos },
-  { id: 11, name: 'KJP Plus', desc: 'Kartu Jakarta Pintar', url: 'https://pjkr1.kemendikbud.go.id', category: 'bansos', categoryName: 'Bansos', icon: <GraduationCap size={24} />, iconColor: categoryColors.bansos },
+  { id: 10, name: 'Bansos Jakarta', desc: 'Cek penerima bansos', url: 'https://siladu.jakarta.go.id/', category: 'bansos', categoryName: 'Bansos', icon: <Cardholder size={24} />, iconColor: categoryColors.bansos },
+  { id: 11, name: 'KJP Plus', desc: 'Kartu Jakarta Pintar', url: 'https://edu.jakarta.go.id/kjp-portal/cek-bansos', category: 'bansos', categoryName: 'Bansos', icon: <GraduationCap size={24} />, iconColor: categoryColors.bansos },
   { id: 12, name: 'Kartu Jakarta Sehat', desc: 'BPJS & kesehatan', url: 'https://bpjs-kesehatan.go.id', category: 'bansos', categoryName: 'Bansos', icon: <FirstAid size={24} />, iconColor: categoryColors.bansos },
   { id: 13, name: 'KIP Kuliah', desc: 'Beasiswa kuliah', url: 'https://kip-kuliah.kemendikbud.go.id', category: 'bansos', categoryName: 'Bansos', icon: <GraduationCap size={24} />, iconColor: categoryColors.bansos },
 

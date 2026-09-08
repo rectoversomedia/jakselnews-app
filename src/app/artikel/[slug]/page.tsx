@@ -1,3 +1,6 @@
+// ISR: revalidate every 60s — fast for subsequent visitors
+export const revalidate = 60;
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,6 +9,13 @@ import { wp, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from
 
 interface PageProps {
   params: { slug: string };
+}
+
+function rewriteWpUrl(url: string | null): string | null {
+  if (!url) return null;
+  return url
+    .replace(/https:\/\/jakselnews\.com\//g, '/api/wp-image/')
+    .replace(/https:\/\/www\.jakselnews\.com\//g, '/api/wp-image/');
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -20,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = result.data;
   const title = stripHtml(post.title.rendered);
   const description = stripHtml(post.excerpt.rendered).slice(0, 160);
-  const featuredImage = getFeaturedImage(post, "large");
+  const featuredImage = rewriteWpUrl(getFeaturedImage(post, "large"));
 
   return {
     title,
@@ -43,25 +53,40 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ArticlePage({ params }: PageProps) {
-  const result = await wp.getPost(params.slug);
+  // Parallel fetch: post + popular articles simultaneously
+  const [result, popularResult] = await Promise.all([
+    wp.getPost(params.slug),
+    wp.getPosts({ perPage: 6 }),
+  ]);
 
   if (!result.success || !result.data) {
     notFound();
   }
 
+  // Rewrite WP image URLs: old WP host domain -> our image proxy
+  function rewriteImageUrls(html: string): string {
+    return html
+      .replace(/https:\/\/jakselnews\.com\/wp-content\//g, '/api/wp-image/wp-content/')
+      .replace(/https:\/\/www\.jakselnews\.com\/wp-content\//g, '/api/wp-image/wp-content/')
+      .replace(/src="\/wp-content\//g, 'src="/api/wp-image/wp-content/')
+      .replace(/src="https:\/\/[^"]+wp-content\//g, (match) => {
+        return match.replace(/https:\/\/[^/]+/, '/api/wp-image');
+      });
+  }
+
   const post = result.data;
 
-  // Get popular articles
-  const popularResult = await wp.getPosts({ perPage: 6 });
+  // Popular articles already fetched in parallel above
   const popularArticles = popularResult.success ? popularResult.data.filter(p => p.id !== post.id).slice(0, 5) : [];
 
-  const featuredImage = getFeaturedImage(post, "large");
+  const featuredImage = rewriteWpUrl(getFeaturedImage(post, "large"));
   const category = getPostCategory(post);
   const title = stripHtml(post.title.rendered);
   const date = formatPostDate(post.date);
+  const contentHtml = rewriteImageUrls(post.content.rendered);
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-14 lg:pt-16">
+    <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-[60px] lg:pt-[72px]">
       {/* Back Button */}
       <div className="px-4 py-3 bg-white border-b">
         <Link
@@ -88,7 +113,7 @@ export default async function ArticlePage({ params }: PageProps) {
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-              <span className="text-red-300 font-bold text-6xl">J</span>
+              <div className="w-16 h-16 border-4 border-red-200 border-t-red-500 rounded-full animate-spin" />
             </div>
           )}
         </div>
@@ -138,7 +163,7 @@ export default async function ArticlePage({ params }: PageProps) {
           {/* Article Body */}
           <div
             className="mt-6 text-gray-700 leading-relaxed space-y-4"
-            dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
         </div>
       </div>
@@ -153,9 +178,9 @@ export default async function ArticlePage({ params }: PageProps) {
             Artikel Terpopuler
           </h2>
           <div className="space-y-3">
-            {popularArticles.map((article, index) => {
+            {popularArticles.map((article) => {
               const articleTitle = stripHtml(article.title.rendered);
-              const articleImage = getFeaturedImage(article, "medium");
+              const articleImage = rewriteWpUrl(getFeaturedImage(article, "medium"));
               const articleDate = formatPostDate(article.date);
               return (
                 <Link
@@ -163,18 +188,19 @@ export default async function ArticlePage({ params }: PageProps) {
                   href={`/artikel/${article.slug}`}
                   className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors"
                 >
-                  <span className="text-2xl font-bold text-gray-300 w-8">{index + 1}</span>
-                  <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                  <div className="w-20 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                     {articleImage ? (
                       <Image
                         src={articleImage}
                         alt={articleTitle}
-                        width={64}
+                        width={80}
                         height={64}
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold">J</div>
+                      <div className="w-full h-full flex items-center justify-center">
+                        <div className="w-8 h-8 border-2 border-gray-200 border-t-red-500 rounded-full animate-spin" />
+                      </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">

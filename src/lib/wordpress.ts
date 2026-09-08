@@ -1,6 +1,7 @@
 // WordPress API Client for Jakselnews
-
-const WP_API_BASE = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
+// Fetches via Next.js proxy to bypass DNS (WP still lives at old IP 153.92.8.164)
+const WP_API_BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.jakselnews.com';
+const WP_PROXY = `${WP_API_BASE}/api/wordpress`;
 
 // Types
 export interface WPPost {
@@ -78,11 +79,13 @@ export interface WordPressResponse<T> {
 
 class WordPressClient {
   private baseUrl: string;
+  private proxyUrl: string;
   private cache: Map<string, { data: any; timestamp: number }>;
   private cacheDuration: number;
 
-  constructor(baseUrl: string = WP_API_BASE) {
-    this.baseUrl = baseUrl;
+  constructor(baseUrl: string = WP_PROXY) {
+    this.proxyUrl = baseUrl;
+    this.baseUrl = WP_API_BASE;
     this.cache = new Map();
     this.cacheDuration = 5 * 60 * 1000; // 5 minutes
   }
@@ -105,53 +108,33 @@ class WordPressClient {
   private async fetch<T>(endpoint: string, params?: Record<string, string>): Promise<WordPressResponse<T>> {
     const cacheKey = `${endpoint}?${new URLSearchParams(params)}`;
 
-    // Try cache first (client-side only)
     const cached = this.getFromCache<WordPressResponse<T>>(cacheKey);
     if (cached) {
       return cached;
     }
 
     try {
-      const url = new URL(`${this.baseUrl}${endpoint}`);
-      if (params) {
-        Object.entries(params).forEach(([key, value]) => {
-          url.searchParams.append(key, value);
-        });
-      }
+      // Always use proxy — handles both browser and server-side rendering
+      const queryParams = new URLSearchParams({ endpoint, ...(params || {}) });
+      const proxyUrl = `${this.proxyUrl}?${queryParams.toString()}`;
 
-      const response = await fetch(url.toString(), {
-        headers: {
-          'Accept': 'application/json',
-        },
-        next: { revalidate: 60 }, // ISR for Next.js
+      const res = await fetch(proxyUrl, {
+        headers: { 'Accept': 'application/json' },
+        next: { revalidate: 60 },
       });
 
-      if (!response.ok) {
+      if (!res.ok) {
         return {
           success: false,
           data: [] as T,
-          error: `HTTP ${response.status}: ${response.statusText}`,
+          error: `HTTP ${res.status}: ${res.statusText}`,
         };
       }
 
-      const data = await response.json();
-      const pagination = {
-        page: parseInt(response.headers.get('X-WP-TotalPages') || '1'),
-        perPage: parseInt(new URL(url.toString()).searchParams.get('per_page') || '10'),
-        totalPages: parseInt(response.headers.get('X-WP-TotalPages') || '1'),
-        totalPosts: parseInt(response.headers.get('X-WP-Total') || '0'),
-      };
-
-      const result: WordPressResponse<T> = {
-        success: true,
-        data,
-        pagination,
-      };
-
-      // Cache the result
-      this.setCache(cacheKey, result);
-
-      return result;
+      const wrapped = await res.json() as WordPressResponse<T>;
+      // Cache client-side
+      this.setCache(cacheKey, wrapped);
+      return wrapped;
     } catch (error: any) {
       console.error('WordPress API Error:', error);
       return {

@@ -17,8 +17,13 @@ import {
   Eye,
   TrendUp,
   MagnifyingGlass,
+  Cardholder,
+  GraduationCap,
+  CurrencyCircleDollar,
+  Train,
+  Bus,
+  Camera,
 } from '@phosphor-icons/react';
-import { UGCPostCard } from './UGCPost';
 
 interface BreakingPost {
   id: number;
@@ -51,90 +56,23 @@ interface WarningReport {
   hotline: string;
   description: string;
   related: string[];
+  verification_type: 'early' | 'verified';
+  upvotes: number;
 }
 
-// Fallback data
-const fallbackPosts: BreakingPost[] = [
-  {
-    id: 522,
-    slug: 'rectoverso-narriv-ai-narasi-krisis',
-    title: { rendered: 'Rectoverso Media Perkenalkan Narriv, Platform AI untuk Membantu Organisasi Mengelola Narasi Publik' },
-    date: '2026-07-15T08:00:00',
-    _embedded: {
-      'wp:featuredmedia': [{
-        source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/Fajar-Rectoverso-Media.png',
-        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2026/05/Fajar-Rectoverso-Media.png' } } }
-      }]
-    }
-  },
-  {
-    id: 523,
-    slug: 'festival-jaksel-2026',
-    title: { rendered: 'Festival Jaksel 2026: Menyatu dalam Keberagaman Budaya Jakarta Selatan' },
-    date: '2026-07-14T10:00:00',
-    _embedded: {
-      'wp:featuredmedia': [{
-        source_url: 'https://jakselnews.com/wp-content/uploads/2025/12/pexels-designecologist-2526105-scaled.jpg',
-        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2025/12/pexels-designecologist-2526105-scaled.jpg' } } }
-      }]
-    }
-  },
-  {
-    id: 524,
-    slug: 'mrt-jakarta-rute-baru',
-    title: { rendered: 'MRT Jakarta Resmi Buka Rute Baru Menuju Kawasan Timur' },
-    date: '2026-07-13T08:00:00',
-    _embedded: {
-      'wp:featuredmedia': [{
-        source_url: 'https://jakselnews.com/wp-content/uploads/2025/12/pexels-kelvinocta16-1973270-scaled.jpg',
-        media_details: { sizes: { large: { source_url: 'https://jakselnews.com/wp-content/uploads/2025/12/pexels-kelvinocta16-1973270-scaled.jpg' } } }
-      }]
-    }
-  }
-];
-
-const staticWarnings: WarningReport[] = [
-  {
-    id: 1,
-    type: 'Waspada Begal',
-    location: 'Kawasan Kemang',
-    reports: 47,
-    time: '15 menit lalu',
-    gradient: 'from-red-500 to-rose-600',
-    hotline: '110',
-    description: 'Laporan meningkat tentang aksi begal di kawasan Kemang. Korban kehilangan ponsel dan tas.',
-    related: ['Jl. Kemang Raya', 'Jl. Ampera', 'Jl. TB Simatupang']
-  },
-  {
-    id: 2,
-    type: 'Genangan Air',
-    location: 'Jl. TB Simatupang',
-    reports: 32,
-    time: '30 menit lalu',
-    gradient: 'from-blue-500 to-cyan-600',
-    hotline: '112',
-    description: 'Genangan air setinggi 20cm akibat hujan deras. Arus kendaraan dihimbau berhati-hati.',
-    related: ['Jl. TB Simatupang', 'Jl. Cilandak', 'Jl. Pasar Minggu']
-  },
-  {
-    id: 3,
-    type: 'Kemacetan Parah',
-    location: 'Jl. MT. Haryono',
-    reports: 25,
-    time: '1 jam lalu',
-    gradient: 'from-amber-500 to-orange-600',
-    hotline: '110',
-    description: 'Volume kendaraan sangat tinggi, estimasi delay 30 menit akibat lampu merah mati.',
-    related: ['Jl. MT. Haryono', 'Jl. Gatot Subroto', 'Jl. Rasuna Said']
-  }
-];
+function rewriteWpUrl(url: string): string {
+  return url
+    .replace(/https:\/\/jakselnews\.com\//g, '/api/wp-image/')
+    .replace(/https:\/\/www\.jakselnews\.com\//g, '/api/wp-image/')
+}
 
 function getFeaturedImageUrl(post: BreakingPost): string {
   const media = post._embedded?.['wp:featuredmedia']?.[0];
   if (!media) return '';
-  return media.media_details?.sizes?.large?.source_url ||
+  const url = media.media_details?.sizes?.large?.source_url ||
          media.media_details?.sizes?.medium_large?.source_url ||
          media.source_url || '';
+  return url ? rewriteWpUrl(url) : '';
 }
 
 function stripHtml(html: string): string {
@@ -160,6 +98,30 @@ function formatDate(dateStr: string): string {
   }
 }
 
+// Category color/gradient/label maps (shared across desktop & mobile sections)
+const catColors: Record<string, string> = {
+  keamanan: 'bg-red-100 text-red-700', 'lalu-lintas': 'bg-amber-100 text-amber-700',
+  banjir: 'bg-blue-100 text-blue-700', kebakaran: 'bg-orange-100 text-orange-700',
+  kemacetan: 'bg-yellow-100 text-yellow-700', penerangan: 'bg-yellow-100 text-yellow-600',
+  lingkungan: 'bg-green-100 text-green-700', 'jalan-rusak': 'bg-yellow-100 text-yellow-800',
+  kriminal: 'bg-red-100 text-red-800', sampah: 'bg-emerald-100 text-emerald-700',
+  fenomena: 'bg-purple-100 text-purple-700', lainnya: 'bg-gray-100 text-gray-600',
+};
+const catGradients: Record<string, string> = {
+  keamanan: 'from-red-500 to-rose-600', 'lalu-lintas': 'from-amber-500 to-orange-600',
+  banjir: 'from-blue-500 to-cyan-600', kebakaran: 'from-orange-500 to-red-600',
+  kemacetan: 'from-yellow-500 to-amber-600', penerangan: 'from-yellow-400 to-amber-500',
+  lingkungan: 'from-green-500 to-emerald-600', 'jalan-rusak': 'from-yellow-400 to-yellow-600',
+  kriminal: 'from-red-500 to-red-700', sampah: 'from-emerald-500 to-teal-600',
+  fenomena: 'from-purple-500 to-indigo-600', lainnya: 'from-gray-500 to-gray-600',
+};
+const catLabels: Record<string, string> = {
+  keamanan: 'Keamanan', 'lalu-lintas': 'Lalu Lintas', banjir: 'Banjir',
+  kebakaran: 'Kebakaran', kemacetan: 'Kemacetan', penerangan: 'Penerangan',
+  lingkungan: 'Lingkungan', 'jalan-rusak': 'Jalan Rusak', kriminal: 'Kriminal',
+  sampah: 'Sampah', fenomena: 'Fenomena', lainnya: 'Lainnya',
+};
+
 // =====================================================
 // DESKTOP: Enhanced Featured Article Card (Hero Style)
 // =====================================================
@@ -169,11 +131,12 @@ function FeaturedArticleCard({ post, isMain = false }: { post: BreakingPost; isM
   const title = stripHtml(post.title.rendered);
   const date = formatDate(post.date);
   const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || 'Artikel';
-
+  const slug = post?.slug;
   const showPlaceholder = imageError || !imageUrl;
 
   return (
-    <Link href={`/artikel/${post.slug}`} className="group block">
+    slug ? (
+    <Link href={`/artikel/${slug}`} className="group block">
       <div className={`relative overflow-hidden rounded-2xl bg-gray-900 ${isMain ? 'aspect-[16/10]' : 'aspect-[16/9]'}`}>
         {!showPlaceholder ? (
           <img
@@ -224,6 +187,13 @@ function FeaturedArticleCard({ post, isMain = false }: { post: BreakingPost; isM
         </div>
       </div>
     </Link>
+    ) : (
+      <div className={`relative overflow-hidden rounded-2xl bg-gray-900 ${isMain ? 'aspect-[16/10]' : 'aspect-[16/9]'}`}>
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+        </div>
+      </div>
+    )
   );
 }
 
@@ -270,13 +240,19 @@ function SideArticleCard({ post, index }: { post: BreakingPost; index: number })
 // =====================================================
 // DESKTOP: Enhanced Warning Card
 // =====================================================
-function WarningCard({ warning }: { warning: WarningReport }) {
+function WarningCard({ warning, onUpvote }: { warning: WarningReport; onUpvote: (id: string | number) => void }) {
   const colors: Record<string, { bg: string; text: string; border: string }> = {
     'from-red-500 to-rose-600': { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-100' },
     'from-blue-500 to-cyan-600': { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-100' },
     'from-amber-500 to-orange-600': { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-100' },
   };
   const color = colors[warning.gradient] || { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-100' };
+
+  const isVerified = warning.verification_type === 'verified';
+  const badgeStyle = isVerified
+    ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+    : 'bg-amber-100 text-amber-700 border border-amber-200';
+  const badgeLabel = isVerified ? 'Terverifikasi' : 'Laporan Pertama';
 
   return (
     <div className={`p-5 rounded-2xl ${color.bg} border ${color.border} transition-all duration-300 hover:shadow-md hover:scale-[1.02]`}>
@@ -285,10 +261,10 @@ function WarningCard({ warning }: { warning: WarningReport }) {
           <Warning size={22} className="text-white" weight="fill" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between mb-2 gap-2">
+          <div className="flex items-start justify-between mb-1 gap-2">
             <h4 className="font-bold text-gray-900 text-sm">{warning.type}</h4>
-            <span className="shrink-0 text-xs font-bold text-white bg-red-500 px-2.5 py-0.5 rounded-full shadow-sm">
-              {warning.reports}x
+            <span className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full ${badgeStyle}`}>
+              {badgeLabel}
             </span>
           </div>
           <p className="text-xs text-gray-500 mb-3 flex items-center gap-1.5">
@@ -297,10 +273,19 @@ function WarningCard({ warning }: { warning: WarningReport }) {
           </p>
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-400">{warning.time}</span>
-            <a href={`tel:${warning.hotline}`} className={`text-xs font-medium ${color.text} hover:underline flex items-center gap-1`}>
-              <span>Hubungi</span>
-              <span className="font-bold">{warning.hotline}</span>
-            </a>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => onUpvote(warning.id)}
+                className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition-colors"
+              >
+                <Heart size={14} />
+                <span>{warning.upvotes}</span>
+              </button>
+              <a href={`tel:${warning.hotline}`} className={`text-xs font-medium ${color.text} hover:underline flex items-center gap-1`}>
+                <span>Hubungi</span>
+                <span className="font-bold">{warning.hotline}</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -366,6 +351,23 @@ function PeringatanSection() {
   const [alerts, setAlerts] = useState<WarningReport[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const handleUpvote = async (id: string | number) => {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+    try {
+      const res = await fetch(`${baseUrl}/api/alerts/upvote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ alert_id: id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAlerts(prev => prev.map(a =>
+          a.id === id ? { ...a, upvotes: data.data.upvotes } : a
+        ));
+      }
+    } catch (_) {}
+  };
+
   useEffect(() => {
     async function loadAlerts() {
       try {
@@ -382,7 +384,7 @@ function PeringatanSection() {
           ];
           const top = (data.data as any[])
             .filter((a: any) => a.is_active)
-            .sort((a: any, b: any) => b.report_count - a.report_count)
+            .sort((a: any, b: any) => b.upvotes - a.upvotes)
             .slice(0, 3)
             .map((a: any, i: number): WarningReport => ({
               id: a.id,
@@ -394,6 +396,8 @@ function PeringatanSection() {
               hotline: '110',
               description: a.description || '',
               related: [],
+              verification_type: a.verification_type || 'early',
+              upvotes: a.upvotes || 0,
             }));
           setAlerts(top);
         }
@@ -439,7 +443,7 @@ function PeringatanSection() {
                   onClick={() => setSelectedWarning(warning)}
                   className="text-left w-full"
                 >
-                  <WarningCard warning={warning} />
+                  <WarningCard warning={warning} onUpvote={handleUpvote} />
                 </button>
               ))}
             </div>
@@ -463,28 +467,6 @@ function InfoTerkiniSection() {
   const [reports, setReports] = useState<Array<{id: string; type: string; description: string; location_name: string|null; created_at: string}>>([]);
   const [loading, setLoading] = useState(true);
 
-  const catColors: Record<string, string> = {
-    keamanan: 'bg-red-100 text-red-700', 'lalu-lintas': 'bg-amber-100 text-amber-700',
-    banjir: 'bg-blue-100 text-blue-700', kebakaran: 'bg-orange-100 text-orange-700',
-    kemacetan: 'bg-yellow-100 text-yellow-700', penerangan: 'bg-yellow-100 text-yellow-600',
-    lingkungan: 'bg-green-100 text-green-700', 'jalan-rusak': 'bg-yellow-100 text-yellow-800',
-    kriminal: 'bg-red-100 text-red-800', sampah: 'bg-emerald-100 text-emerald-700',
-    fenomena: 'bg-purple-100 text-purple-700', lainnya: 'bg-gray-100 text-gray-600',
-  };
-  const catGradients: Record<string, string> = {
-    keamanan: 'from-red-500 to-rose-600', 'lalu-lintas': 'from-amber-500 to-orange-600',
-    banjir: 'from-blue-500 to-cyan-600', kebakaran: 'from-orange-500 to-red-600',
-    kemacetan: 'from-yellow-500 to-amber-600', penerangan: 'from-yellow-400 to-amber-500',
-    lingkungan: 'from-green-500 to-emerald-600', 'jalan-rusak': 'from-yellow-400 to-yellow-600',
-    kriminal: 'from-red-500 to-red-700', sampah: 'from-emerald-500 to-teal-600',
-    fenomena: 'from-purple-500 to-indigo-600', lainnya: 'from-gray-500 to-gray-600',
-  };
-  const catLabels: Record<string, string> = {
-    keamanan: 'Keamanan', 'lalu-lintas': 'Lalu Lintas', banjir: 'Banjir',
-    kebakaran: 'Kebakaran', kemacetan: 'Kemacetan', penerangan: 'Penerangan',
-    lingkungan: 'Lingkungan', 'jalan-rusak': 'Jalan Rusak', kriminal: 'Kriminal',
-    sampah: 'Sampah', fenomena: 'Fenomena', lainnya: 'Lainnya',
-  };
   const timeAgo = (d: string) => {
     const ms = new Date().getTime() - new Date(d).getTime();
     const m = Math.floor(ms / 60000);
@@ -498,8 +480,7 @@ function InfoTerkiniSection() {
   useEffect(() => {
     async function load() {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
-        const res = await fetch(`${baseUrl}/api/reports?limit=6`);
+        const res = await fetch(`/api/reports?limit=3`);
         const data = await res.json();
         if (data.success && data.data) setReports(data.data);
       } catch (_) {}
@@ -550,9 +531,14 @@ function InfoTerkiniSection() {
                   </div>
                 </div>
                 <p className="text-gray-700 text-sm leading-relaxed mb-3 line-clamp-3">{report.description}</p>
-                <p className="text-xs text-gray-400 flex items-center gap-1">
-                  <Clock size={11} />{timeAgo(report.created_at)}
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-gray-400 flex items-center gap-1">
+                    <Clock size={11} />{timeAgo(report.created_at)}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {new Date(report.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} {new Date(report.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
               </Link>
             ))}
           </div>
@@ -567,12 +553,12 @@ function InfoTerkiniSection() {
 // =====================================================
 function LayananPopulerSection() {
   const layananPopuler = [
-    { id: 1, title: 'Bansos Jakarta', desc: 'Cek penerima bansos', icon: '💰', bg: 'bg-emerald-50', border: 'border-emerald-100', hover: 'hover:bg-emerald-100' },
-    { id: 2, title: 'KJP Plus', desc: 'Saldo Kartu Jakarta Pintar', icon: '🎓', bg: 'bg-violet-50', border: 'border-violet-100', hover: 'hover:bg-violet-100' },
-    { id: 3, title: 'Cek ETLE', desc: 'Tilang elektronik', icon: '📸', bg: 'bg-blue-50', border: 'border-blue-100', hover: 'hover:bg-blue-100' },
-    { id: 4, title: 'Pajak Kendaraan', desc: 'Cek & bayar pajak', icon: '🚗', bg: 'bg-amber-50', border: 'border-amber-100', hover: 'hover:bg-amber-100' },
-    { id: 5, title: 'KRL', desc: 'Jadwal & rute KRL', icon: '🚆', bg: 'bg-cyan-50', border: 'border-cyan-100', hover: 'hover:bg-cyan-100' },
-    { id: 6, title: 'TransJakarta', desc: 'Rute & halte', icon: '🚌', bg: 'bg-red-50', border: 'border-red-100', hover: 'hover:bg-red-100' },
+    { id: 1, title: 'Bansos Jakarta', desc: 'Cek penerima bansos', icon: <Cardholder size={32} className="text-emerald-600" />, bg: 'bg-emerald-50', border: 'border-emerald-100', hover: 'hover:bg-emerald-100', url: 'https://siladu.jakarta.go.id/' },
+    { id: 2, title: 'KJP Plus', desc: 'Saldo Kartu Jakarta Pintar', icon: <GraduationCap size={32} className="text-violet-600" />, bg: 'bg-violet-50', border: 'border-violet-100', hover: 'hover:bg-violet-100', url: 'https://edu.jakarta.go.id/kjp-portal/cek-bansos' },
+    { id: 3, title: 'Cek ETLE', desc: 'Tilang elektronik', icon: <Camera size={32} className="text-blue-600" />, bg: 'bg-blue-50', border: 'border-blue-100', hover: 'hover:bg-blue-100', url: 'https://etle-pmj.id/' },
+    { id: 4, title: 'Pajak Kendaraan', desc: 'Cek & bayar pajak', icon: <CurrencyCircleDollar size={32} className="text-amber-600" />, bg: 'bg-amber-50', border: 'border-amber-100', hover: 'hover:bg-amber-100', url: 'https://samsat-pkb2.jakarta.go.id/' },
+    { id: 5, title: 'KRL', desc: 'Jadwal & rute KRL', icon: <Train size={32} className="text-cyan-600" />, bg: 'bg-cyan-50', border: 'border-cyan-100', hover: 'hover:bg-cyan-100', url: '/layanan' },
+    { id: 6, title: 'TransJakarta', desc: 'Rute & halte', icon: <Bus size={32} className="text-red-600" />, bg: 'bg-red-50', border: 'border-red-100', hover: 'hover:bg-red-100', url: '/layanan' },
   ];
 
   return (
@@ -600,10 +586,12 @@ function LayananPopulerSection() {
           {layananPopuler.map((item) => (
             <Link
               key={item.id}
-              href="/layanan"
+              href={item.url}
+              target={item.url.startsWith('http') ? '_blank' : undefined}
+              rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
               className={`${item.bg} ${item.border} border rounded-2xl p-5 text-center ${item.hover} transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
             >
-              <span className="text-4xl mb-3 block">{item.icon}</span>
+              <div className="mb-3 flex justify-center">{item.icon}</div>
               <p className="font-semibold text-gray-900 text-sm mb-1">{item.title}</p>
               <p className="text-xs text-gray-500">{item.desc}</p>
             </Link>
@@ -623,10 +611,10 @@ function ArtikelTerbaruSection() {
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
-        const response = await fetch(`${apiUrl}/posts?per_page=6&_embed&status=publish`);
+        const response = await fetch(`/api/wordpress?endpoint=/wp-json/wp/v2/posts&per_page=6&_embed&status=publish`);
         if (response.ok) {
-          const posts = await response.json();
+          const wrapped = await response.json();
+          const posts = wrapped.success ? wrapped.data : wrapped;
           if (posts && posts.length > 0) {
             setArticles(posts);
           }
@@ -718,20 +706,20 @@ function ArtikelPopulerSection() {
   useEffect(() => {
     async function loadPopularArticles() {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
-        const response = await fetch(`${apiUrl}/posts?per_page=10&_embed&status=publish`);
+        const response = await fetch(`/api/wordpress?endpoint=/wp-json/wp/v2/posts&per_page=10&_embed&status=publish`);
         if (response.ok) {
-          const posts = await response.json();
+          const wrapped = await response.json();
+          const posts = wrapped.success ? wrapped.data : wrapped;
           if (posts && posts.length > 0) {
             setArticles(posts);
           } else {
-            setArticles(fallbackPosts);
+            setArticles([]);
           }
         } else {
-          setArticles(fallbackPosts);
+          setArticles([]);
         }
       } catch (error) {
-        setArticles(fallbackPosts);
+        setArticles([]);
       }
     }
     loadPopularArticles();
@@ -759,9 +747,9 @@ function ArtikelPopulerSection() {
           </Link>
         </div>
 
-        {/* List with Thumbnails - 5 items */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-          {articles.slice(0, 5).map((article, index) => {
+        {/* Grid with Image Thumbnails - 5 items */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {articles.slice(0, 5).map((article) => {
             const imageUrl = getFeaturedImageUrl(article);
             const title = stripHtml(article.title.rendered);
             const category = article._embedded?.['wp:term']?.[0]?.[0]?.name || 'Artikel';
@@ -771,37 +759,39 @@ function ArtikelPopulerSection() {
               <Link
                 key={article.id}
                 href={`/artikel/${article.slug}`}
-                className="group flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-100/50 transition-all duration-300"
+                className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:border-orange-200 hover:shadow-lg hover:shadow-orange-100/50 hover:-translate-y-0.5 transition-all duration-300"
               >
-                {/* Number */}
-                <span className="text-3xl font-black text-orange-200 group-hover:text-orange-400 transition-colors leading-none mt-1 w-10">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <span className="inline-block px-2.5 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-full mb-2">
-                    {category}
-                  </span>
-                  <h4 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-orange-600 transition-colors duration-200">
-                    {title}
-                  </h4>
-                  <p className="text-xs text-gray-400 flex items-center gap-1.5">
-                    <Clock size={11} /> {formatDate(article.date)}
-                  </p>
-                </div>
-
                 {/* Thumbnail */}
-                {showImage && (
-                  <div className="relative w-20 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                  {showImage ? (
                     <img
                       src={imageUrl}
                       alt={title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).parentElement!.innerHTML =
+                          '<div class="w-full h-full flex items-center justify-center bg-orange-50"><div class="w-8 h-8 border-2 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div></div>';
+                      }}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-orange-50">
+                      <div className="w-8 h-8 border-2 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="p-3">
+                  <span className="inline-block px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-full mb-1.5">
+                    {category}
+                  </span>
+                  <h4 className="font-semibold text-gray-900 text-xs leading-snug line-clamp-2 mb-1.5 group-hover:text-orange-600 transition-colors duration-200">
+                    {title}
+                  </h4>
+                  <p className="text-[10px] text-gray-400 flex items-center gap-1">
+                    <Clock size={10} /> {formatDate(article.date)}
+                  </p>
+                </div>
               </Link>
             );
           })}
@@ -902,6 +892,7 @@ function MobileSections() {
   const [loading, setLoading] = useState(true);
   const [selectedWarning, setSelectedWarning] = useState<WarningReport | null>(null);
   const [mobileAlerts, setMobileAlerts] = useState<WarningReport[]>([]);
+  const [mobileReports, setMobileReports] = useState<Array<{id: string; type: string; description: string; location_name: string|null; created_at: string}>>([]);
 
   useEffect(() => {
     async function fetchAlerts() {
@@ -917,7 +908,7 @@ function MobileSections() {
           ];
           const top = (data.data as any[])
             .filter((a: any) => a.is_active)
-            .sort((a: any, b: any) => b.report_count - a.report_count)
+            .sort((a: any, b: any) => b.upvotes - a.upvotes)
             .slice(0, 3)
             .map((a: any, i: number): WarningReport => ({
               id: a.id,
@@ -929,6 +920,8 @@ function MobileSections() {
               hotline: '110',
               description: a.description || '',
               related: [],
+              verification_type: a.verification_type || 'early',
+              upvotes: a.upvotes || 0,
             }));
           setMobileAlerts(top);
         }
@@ -937,23 +930,51 @@ function MobileSections() {
     fetchAlerts();
   }, []);
 
+  const handleMobileUpvote = async (id: string | number) => {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+    try {
+      const res = await fetch(`${baseUrl}/api/alerts/upvote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ alert_id: id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMobileAlerts(prev => prev.map(a =>
+          a.id === id ? { ...a, upvotes: data.data.upvotes } : a
+        ));
+      }
+    } catch (_) {}
+  };
+
+  useEffect(() => {
+    async function fetchMobileReports() {
+      try {
+        const res = await fetch(`/api/reports?limit=3`);
+        const data = await res.json();
+        if (data.success && data.data) setMobileReports(data.data);
+      } catch (_) {}
+    }
+    fetchMobileReports();
+  }, []);
+
   useEffect(() => {
     async function fetchBreakingNews() {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
-        const response = await fetch(`${apiUrl}/posts?per_page=5&_embed&status=publish`);
+        const response = await fetch(`/api/wordpress?endpoint=/wp-json/wp/v2/posts&per_page=5&_embed&status=publish`);
         if (response.ok) {
-          const posts = await response.json();
+          const wrapped = await response.json();
+          const posts = wrapped.success ? wrapped.data : wrapped;
           if (posts && posts.length > 0) {
             setBreakingPosts(posts);
           } else {
-            setBreakingPosts(fallbackPosts);
+            setBreakingPosts([]);
           }
         } else {
-          setBreakingPosts(fallbackPosts);
+          setBreakingPosts([]);
         }
       } catch (error) {
-        setBreakingPosts(fallbackPosts);
+        setBreakingPosts([]);
       } finally {
         setLoading(false);
       }
@@ -987,7 +1008,7 @@ function MobileSections() {
       {/* Mobile Only: Breaking News Carousel */}
       <section className="lg:hidden px-4 py-4">
         <div className="relative w-full">
-          {breakingPosts.slice(0, 3).map((post, index) => {
+          {breakingPosts.map((post, index) => {
             const imageUrl = getFeaturedImageUrl(post);
             const title = stripHtml(post.title.rendered);
             return (
@@ -1013,7 +1034,7 @@ function MobileSections() {
         </div>
         {breakingPosts.length > 1 && (
           <div className="flex justify-center gap-1.5 py-3">
-            {breakingPosts.slice(0, 3).map((_, index) => (
+            {breakingPosts.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
@@ -1031,20 +1052,42 @@ function MobileSections() {
           PERINGATAN WARGA
         </h2>
         <div className="space-y-2">
-          {mobileAlerts.map((warning) => (
-            <button
-              key={warning.id}
-              onClick={() => setSelectedWarning(warning)}
-              className={`w-full rounded-xl p-3 bg-gradient-to-r ${warning.gradient} text-white flex items-center gap-3`}
-            >
-              <Warning size={20} weight="fill" />
-              <div className="flex-1 text-left">
-                <span className="font-semibold text-sm">{warning.type}</span>
-                <span className="text-white/80 text-xs ml-2">{warning.location}</span>
-              </div>
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded">{warning.reports}x</span>
-            </button>
-          ))}
+          {mobileAlerts.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-4">Belum ada peringatan aktif</p>
+          ) : (
+            mobileAlerts.map((warning) => {
+              const isVerified = warning.verification_type === 'verified';
+              return (
+                <div
+                  key={warning.id}
+                  className={`rounded-xl p-3 bg-gradient-to-r ${warning.gradient} text-white`}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <Warning size={20} weight="fill" />
+                    <div className="flex-1 text-left">
+                      <span className="font-semibold text-sm">{warning.type}</span>
+                      <span className="text-white/80 text-xs ml-2">{warning.location}</span>
+                    </div>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                      isVerified ? 'bg-emerald-200 text-emerald-800' : 'bg-amber-200 text-amber-800'
+                    }`}>
+                      {warning.reports}x
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/70 text-[10px]">{warning.time}</span>
+                    <button
+                      onClick={() => handleMobileUpvote(warning.id)}
+                      className="flex items-center gap-1 text-white/80 hover:text-white text-xs transition-colors"
+                    >
+                      <Heart size={12} />
+                      {warning.upvotes}
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </section>
 
@@ -1095,15 +1138,33 @@ function MobileSections() {
           </Link>
         </div>
         <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2">
-          {[
-            { id: 1, authorName: 'Warga Kemang', location: 'Kemang', time: '10 menit lalu', content: 'Air mulai pasang di Jl Kemang Raya. Tinggi 15cm! 🌊', likes: 24, comments: 8, shares: 5 },
-            { id: 2, authorName: 'Warga Blok M', location: 'Blok M', time: '25 menit lalu', content: 'Kemacetan parah arah flyover. Delay 30 menit. 🚗💨', likes: 18, comments: 12, shares: 3 },
-            { id: 3, authorName: 'Warga Cilandak', location: 'Cilandak', time: '45 menit lalu', content: 'Listrik padam di TB Simatupang. PLN perbaikan. ⚡', likes: 15, comments: 6, shares: 2 },
-          ].map((report) => (
-            <div key={report.id} className="shrink-0 w-64">
-              <UGCPostCard report={report} />
-            </div>
-          ))}
+          {mobileReports.length === 0 ? (
+            <p className="text-sm text-gray-400 py-4 text-center w-full">Belum ada laporan masuk</p>
+          ) : (
+            mobileReports.slice(0, 3).map(report => (
+              <div key={report.id} className="shrink-0 w-64">
+                <Link href="/info-terkini" className="group block">
+                  <div className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold bg-gradient-to-r ${catGradients[report.type] || 'from-gray-400 to-gray-500'}`}>
+                        <Warning size={14} weight="fill" />
+                      </div>
+                      <span className="text-xs font-semibold text-gray-700">{catLabels[report.type] || report.type}</span>
+                    </div>
+                    <p className="text-xs text-gray-500 line-clamp-3 leading-relaxed mb-2">{report.description}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] text-gray-400 flex items-center gap-1">
+                        <MapPin size={9} />{report.location_name || 'Jakarta Selatan'}
+                      </p>
+                      <p className="text-[10px] text-gray-400">
+                        {new Date(report.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} {new Date(report.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))
+          )}
         </div>
       </section>
 
@@ -1117,13 +1178,13 @@ function MobileSections() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { id: 1, title: 'Bansos Jakarta', icon: '💰', color: 'bg-emerald-50' },
-            { id: 2, title: 'KJP Plus', icon: '🎓', color: 'bg-violet-50' },
-            { id: 3, title: 'Cek ETLE', icon: '📸', color: 'bg-blue-50' },
-            { id: 4, title: 'Pajak Kendaraan', icon: '🚗', color: 'bg-amber-50' },
+            { id: 1, title: 'Bansos Jakarta', icon: <Cardholder size={28} className="text-emerald-600" />, color: 'bg-emerald-50', url: 'https://siladu.jakarta.go.id/' },
+            { id: 2, title: 'KJP Plus', icon: <GraduationCap size={28} className="text-violet-600" />, color: 'bg-violet-50', url: 'https://edu.jakarta.go.id/kjp-portal/cek-bansos' },
+            { id: 3, title: 'Cek ETLE', icon: <Camera size={28} className="text-blue-600" />, color: 'bg-blue-50', url: 'https://etle-pmj.id/' },
+            { id: 4, title: 'Pajak Kendaraan', icon: <CurrencyCircleDollar size={28} className="text-amber-600" />, color: 'bg-amber-50', url: 'https://samsat-pkb2.jakarta.go.id/' },
           ].map((item) => (
-            <Link key={item.id} href="/layanan" className={`${item.color} rounded-xl p-4 text-center`}>
-              <span className="text-2xl mb-1 block">{item.icon}</span>
+            <Link key={item.id} href={item.url} target={item.url.startsWith('http') ? '_blank' : undefined} rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined} className={`${item.color} rounded-xl p-4 text-center`}>
+              <div className="flex justify-center mb-2">{item.icon}</div>
               <p className="font-medium text-gray-900 text-xs">{item.title}</p>
             </Link>
           ))}
@@ -1183,33 +1244,35 @@ function MobileSections() {
 	          </div>
 	          </>
 	        ) : (
-	          breakingPosts.slice(0, 5).map((post, index) => {
+	          breakingPosts.slice(0, 5).map((post) => {
 	            const imageUrl = getFeaturedImageUrl(post);
 	            const title = stripHtml(post.title.rendered);
-	            const hasValidImage = imageUrl && imageUrl.length > 0 && imageUrl.startsWith('http');
+	            const hasValidImage = imageUrl && imageUrl.length > 0 && !imageUrl.includes('undefined');
 
 	            return (
 	              <Link
 	                key={post.id}
 	                href={`/artikel/${post.slug}`}
-	                className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+	                className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl overflow-hidden hover:bg-gray-100 transition-colors"
 	              >
-	                {hasValidImage ? (
-	                  <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+	                {/* Thumbnail */}
+	                <div className="relative w-20 h-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+	                  {hasValidImage ? (
 	                    <img
 	                      src={imageUrl}
 	                      alt={title}
 	                      className="w-full h-full object-cover"
-	                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+	                      onError={(e) => {
+	                        (e.target as HTMLImageElement).parentElement!.innerHTML =
+	                          '<div class="w-full h-full flex items-center justify-center bg-orange-50"><div class="w-6 h-6 border-2 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div></div>';
+	                      }}
 	                    />
-	                  </div>
-	                ) : (
-	                  <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center shrink-0">
-	                    <span className="text-lg font-black text-orange-400">
-	                      {String(index + 1).padStart(2, "0")}
-	                    </span>
-	                  </div>
-	                )}
+	                  ) : (
+	                    <div className="w-full h-full flex items-center justify-center bg-orange-50">
+	                      <div className="w-6 h-6 border-2 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
+	                    </div>
+	                  )}
+	                </div>
 	                <div className="flex-1 min-w-0">
 	                  <p className="font-medium text-gray-900 text-sm line-clamp-2">
 	                    {title}
@@ -1240,7 +1303,7 @@ function FeaturedArticleWithSides({ posts }: { posts: BreakingPost[] }) {
   useEffect(() => {
     if (breakingPosts.length <= 1) return;
     const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % Math.min(breakingPosts.length, 3));
+      setCurrentSlide(prev => (prev + 1) % breakingPosts.length);
     }, 6000);
     return () => clearInterval(interval);
   }, [breakingPosts.length]);
@@ -1252,6 +1315,14 @@ function FeaturedArticleWithSides({ posts }: { posts: BreakingPost[] }) {
   const featured = breakingPosts[currentSlide];
   const sides = breakingPosts.filter((_, i) => i !== currentSlide).slice(0, 2);
 
+  if (!featured?.slug) {
+    return (
+      <div className="aspect-[16/10] bg-gray-200 rounded-2xl animate-pulse flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Featured Slide with Navigation */}
@@ -1262,7 +1333,7 @@ function FeaturedArticleWithSides({ posts }: { posts: BreakingPost[] }) {
         {breakingPosts.length > 1 && (
           <>
             <div className="absolute bottom-4 left-4 flex gap-2">
-              {breakingPosts.slice(0, 3).map((_, i) => (
+              {breakingPosts.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentSlide(i)}
@@ -1309,10 +1380,10 @@ function SidebarNews() {
   useEffect(() => {
     async function loadArticles() {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
-        const response = await fetch(`${apiUrl}/posts?per_page=5&_embed&status=publish`);
+        const response = await fetch(`/api/wordpress?endpoint=/wp-json/wp/v2/posts&per_page=8&_embed&status=publish`);
         if (response.ok) {
-          const posts = await response.json();
+          const wrapped = await response.json();
+          const posts = wrapped.success ? wrapped.data : wrapped;
           if (posts && posts.length > 0) {
             setArticles(posts.slice(3, 8));
           }
@@ -1334,23 +1405,42 @@ function SidebarNews() {
         <h3 className="font-bold text-gray-900 text-lg">Berita Lainnya</h3>
       </div>
 
-      {/* Numbered List */}
-      <div className="space-y-4">
-        {articles.map((article, index) => (
-          <Link key={article.id} href={`/artikel/${article.slug}`} className="group flex items-start gap-4 py-3 border-b border-gray-50 last:border-0 hover:border-transparent">
-            <span className="text-2xl font-black text-gray-200 group-hover:text-red-200 transition-colors leading-none mt-0.5 w-8">
-              {String(index + 1).padStart(2, '0')}
-            </span>
+      {/* Thumbnail List */}
+      <div className="space-y-3">
+        {articles.map((article) => {
+          const imageUrl = getFeaturedImageUrl(article);
+          const title = stripHtml(article.title.rendered);
+          const hasImage = imageUrl && !imageUrl.includes('undefined');
+          return (
+          <Link key={article.id} href={`/artikel/${article.slug}`} className="group flex items-start gap-3 py-2 border-b border-gray-50 last:border-0 hover:border-transparent">
+            <div className="relative w-20 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+              {hasImage ? (
+                <img
+                  src={imageUrl}
+                  alt={title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).parentElement!.innerHTML =
+	                      '<div class="w-full h-full flex items-center justify-center bg-orange-50"><div class="w-6 h-6 border-2 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div></div>';
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-orange-50">
+                  <div className="w-6 h-6 border-2 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
+                </div>
+              )}
+            </div>
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-red-600 transition-colors duration-200">
-                {stripHtml(article.title.rendered)}
+              <h4 className="font-semibold text-gray-900 text-xs leading-snug line-clamp-2 mb-1.5 group-hover:text-red-600 transition-colors duration-200">
+                {title}
               </h4>
-              <p className="text-xs text-gray-400 flex items-center gap-1.5">
-                <Clock size={11} /> {formatDate(article.date)}
+              <p className="text-[10px] text-gray-400 flex items-center gap-1">
+                <Clock size={10} /> {formatDate(article.date)}
               </p>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
 
       {/* View All Link */}
@@ -1371,20 +1461,20 @@ export default function HomeContent() {
   useEffect(() => {
     async function fetchBreakingNews() {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_WP_API_URL || 'https://jakselnews.com/wp-json/wp/v2';
-        const response = await fetch(`${apiUrl}/posts?per_page=5&_embed&status=publish`);
+        const response = await fetch(`/api/wordpress?endpoint=/wp-json/wp/v2/posts&per_page=5&_embed&status=publish`);
         if (response.ok) {
-          const posts = await response.json();
+          const wrapped = await response.json();
+          const posts = wrapped.success ? wrapped.data : wrapped;
           if (posts && posts.length > 0) {
             setBreakingPosts(posts);
           } else {
-            setBreakingPosts(fallbackPosts);
+            setBreakingPosts([]);
           }
         } else {
-          setBreakingPosts(fallbackPosts);
+          setBreakingPosts([]);
         }
       } catch (error) {
-        setBreakingPosts(fallbackPosts);
+        setBreakingPosts([]);
       } finally {
         setLoading(false);
       }

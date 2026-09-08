@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  33% { transform: translateY(-30px) translateX(15px); }
+  66% { transform: translateY(15px) translateX(-10px); }
+}
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-20px) translateX(-20px); }
+  75% { transform: translateY(25px) translateX(10px); }
+}
+@keyframes float-fast {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-40px) rotate(10deg); }
+}
+@keyframes pulse-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-float-slow { animation: float-slow 12s ease-in-out infinite; }
+.animate-float-medium { animation: float-medium 9s ease-in-out infinite; }
+.animate-float-fast { animation: float-fast 7s ease-in-out infinite; }
+.animate-spin-slow { animation: pulse-spin 2s linear infinite; }
+
 :root {
   /* Jakselnews Brand Colors */
   --primary: #DC2626;

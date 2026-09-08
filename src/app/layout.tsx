@@ -77,7 +77,15 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen flex flex-col antialiased bg-gray-50 font-sans dark:bg-gray-900">
+      <body className="min-h-screen flex flex-col antialiased bg-gray-50 font-sans dark:bg-gray-900 relative overflow-x-hidden">
+        {/* Floating background orbs */}
+        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
+          <div className="absolute top-20 left-8 w-72 h-72 bg-red-400/10 rounded-full blur-3xl animate-float-slow" />
+          <div className="absolute top-40 right-12 w-96 h-96 bg-red-500/8 rounded-full blur-3xl animate-float-medium" />
+          <div className="absolute bottom-32 left-1/3 w-80 h-80 bg-rose-400/10 rounded-full blur-3xl animate-float-fast" />
+          <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-red-300/8 rounded-full blur-2xl animate-float-slow" />
+          <div className="absolute bottom-12 right-8 w-48 h-48 bg-orange-400/8 rounded-full blur-2xl animate-float-medium" />
+        </div>
         <ThemeProvider>
           <LanguageProvider>
             {/* Skip to main content link for accessibility */}

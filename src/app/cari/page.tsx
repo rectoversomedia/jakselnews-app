@@ -16,6 +16,12 @@ import {
 import { wp, WPPost, getFeaturedImage, formatPostDate, stripHtml } from '@/lib/wordpress';
 import Header from '@/components/layout/Header';
 
+function rewriteWpUrl(url: string): string {
+  return url
+    .replace(/https:\/\/jakselnews\.com\//g, '/api/wp-image/')
+    .replace(/https:\/\/www\.jakselnews\.com\//g, '/api/wp-image/');
+}
+
 export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -176,7 +182,7 @@ export default function SearchPage() {
             {results.length > 0 ? (
               <div className="space-y-4">
                 {results.map((post) => {
-                  const featuredImage = getFeaturedImage(post, 'medium');
+                  const featuredImage = rewriteWpUrl(getFeaturedImage(post, 'medium') || '');
                   const category = post._embedded?.['wp:term']?.[0]?.[0];
 
                   return (

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabase } from '@/lib/supabase'
+import { getSupabaseAdmin } from '@/lib/supabase'
 
 // GET - List comments for a report
 export async function GET(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { data, error } = await getSupabase()
+    const { data, error } = await getSupabaseAdmin()
       .from('comments')
       .select('id, report_id, author_name, body, created_at')
       .eq('report_id', reportId)
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data, error } = await getSupabase()
+    const { data, error } = await getSupabaseAdmin()
       .from('comments')
       .insert({
         report_id,

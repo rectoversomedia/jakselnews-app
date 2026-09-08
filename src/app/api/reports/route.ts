@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabase } from '@/lib/supabase'
+import { getSupabaseAdmin } from '@/lib/supabase'
 import { v4 as uuidv4 } from 'uuid'
+import { aggregateReports } from '@/lib/aggregate-alerts'
 
 // Auto-categorize based on keywords in description
 function autoCategorize(description: string): string {
@@ -37,7 +38,9 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
 
-    let query = getSupabase()
+    let supabase = getSupabaseAdmin();
+
+    let query = supabase
       .from('reports')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
@@ -51,7 +54,8 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await query
 
     if (error) {
-      return NextResponse.json({ success: false, error: 'Gagal mengambil laporan' }, { status: 500 })
+      console.error('[reports GET] Supabase error:', JSON.stringify(error));
+      return NextResponse.json({ success: false, error: `Gagal mengambil laporan: ${error.message}` }, { status: 500 })
     }
 
     return NextResponse.json({
@@ -108,7 +112,7 @@ export async function POST(request: NextRequest) {
     // Auto-categorize
     const auto_category = autoCategorize(description)
 
-    const { data, error } = await getSupabase()
+    const { data, error } = await getSupabaseAdmin()
       .from('reports')
       .insert({
         id: uuidv4(),
@@ -136,6 +140,9 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    // Trigger aggregation: analyze reports and create/update alerts
+    aggregateReports().catch(err => console.error('[aggregate] Trigger error:', err))
 
     return NextResponse.json({
       success: true,
