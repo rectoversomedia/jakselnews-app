@@ -15,10 +15,10 @@ const BottomNav = dynamic(() => import("@/components/layout/BottomNav").then(mod
 
 export const metadata = {
   title: {
-    default: "Jakselnews - Hyperlocal Media Jakarta Selatan",
+    default: "Jakselnews — Portal Berita Warga Jakarta Selatan",
     template: "%s | Jakselnews",
   },
-  description: "Portal berita dan informasi hyperlocal untuk warga Jakarta Selatan. Berita terkini, layanan publik, dan informasi penting seputar Jaksel.",
+  description: "Portal berita warga Jakarta Selatan. Kabar terkini, layanan publik, dan informasi penting seputar Jaksel langsung dari warga.",
   keywords: ["jakselnews", "jakarta selatan", "berita jaksel", "hyperlocal", "portal jaksel", "berita jakarta selatan"],
   authors: [{ name: "Jakselnews" }],
   creator: "Jakselnews",

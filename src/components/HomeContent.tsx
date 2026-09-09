@@ -23,6 +23,7 @@ import {
   Train,
   Bus,
   Camera,
+  Newspaper,
 } from '@phosphor-icons/react';
 
 interface BreakingPost {
@@ -1504,6 +1505,149 @@ function DesktopPopularArticles() {
 }
 
 // =====================================================
+// DESKTOP: Artikel Pilihan — merged Artikel Populer + Terbaru
+// =====================================================
+function DesktopArtikelPilihan() {
+  const [articles, setArticles] = useState<BreakingPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchArticles() {
+      try {
+        const response = await fetch(`/api/wordpress?endpoint=/wp-json/wp/v2/posts&per_page=6&_embed&status=publish`);
+        if (response.ok) {
+          const wrapped = await response.json();
+          const posts = wrapped.success ? wrapped.data : wrapped;
+          if (posts && posts.length > 0) setArticles(posts);
+        }
+      } catch (_) {}
+      finally { setLoading(false); }
+    }
+    fetchArticles();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        <div className="h-8 w-48 bg-gray-200 rounded-lg animate-pulse" />
+        <div className="grid grid-cols-3 gap-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="aspect-video bg-gray-100 rounded-xl animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (articles.length === 0) return null;
+
+  const featured = articles[0];
+  const rest = articles.slice(1, 6);
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center shadow">
+            <Newspaper size={18} className="text-white" weight="bold" />
+          </div>
+          <h2 className="text-lg font-bold text-gray-900">Artikel Pilihan</h2>
+        </div>
+        <Link
+          href="/artikel"
+          className="text-sm font-semibold text-red-600 hover:text-red-700 flex items-center gap-1.5 transition-colors group"
+        >
+          Lihat Semua
+          <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+        </Link>
+      </div>
+
+      {/* Magazine Grid: 1 large left + 4 stacked right */}
+      <div className="grid grid-cols-12 gap-4">
+        {/* Featured — large card */}
+        <div className="col-span-5">
+          <Link href={`/artikel/${featured.slug}`} className="group block h-full">
+            <div className="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3] shadow-sm group-hover:shadow-md transition-shadow">
+              <img
+                src={getFeaturedImageUrl(featured)}
+                alt={stripHtml(featured.title.rendered)}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              {/* Category */}
+              <span className="absolute top-3 left-3 px-2.5 py-1 bg-white/95 text-gray-900 text-[10px] font-bold rounded-full shadow">
+                {featured._embedded?.['wp:term']?.[0]?.[0]?.name || 'Artikel'}
+              </span>
+              {/* Content */}
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <h3 className="text-base font-bold text-white line-clamp-2 drop-shadow">
+                  {stripHtml(featured.title.rendered)}
+                </h3>
+                <p className="text-white/60 text-xs mt-1.5 flex items-center gap-1">
+                  <Clock size={11} />
+                  {formatDate(featured.date)}
+                </p>
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/* Right: 4 smaller cards stacked */}
+        <div className="col-span-7 space-y-2.5">
+          {rest.map((article, idx) => {
+            const imageUrl = getFeaturedImageUrl(article);
+            const title = stripHtml(article.title.rendered);
+            const date = formatDate(article.date);
+            const category = article._embedded?.['wp:term']?.[0]?.[0]?.name;
+            const hasImage = imageUrl && !imageUrl.includes('undefined') && imageUrl.length > 0;
+
+            return (
+              <Link
+                key={article.id}
+                href={`/artikel/${article.slug}`}
+                className="group flex gap-3 p-2.5 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all"
+              >
+                {/* Image */}
+                <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                  {hasImage ? (
+                    <img
+                      src={imageUrl}
+                      alt={title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                      <span className="text-base opacity-40">📰</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Text */}
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  {category && (
+                    <span className="text-[10px] font-bold text-red-500 uppercase tracking-wide mb-0.5">
+                      {category}
+                    </span>
+                  )}
+                  <h4 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 group-hover:text-red-600 transition-colors">
+                    {title}
+                  </h4>
+                  <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                    <Clock size={11} />
+                    {date}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =====================================================
 // DESKTOP: Sidebar News - Elegant Numbered List
 // =====================================================
 function SidebarNews() {
@@ -1620,8 +1764,8 @@ export default function HomeContent() {
       <div className="hidden lg:block">
         {/* Hero: Breaking News Slider (kiri) + Artikel Terpopuler (kanan) */}
         <section className="bg-white border-b border-gray-100">
-          <div className="max-w-6xl mx-auto px-6 py-8">
-            <div className="grid grid-cols-12 gap-8">
+          <div className="max-w-6xl mx-auto px-6 py-5">
+            <div className="grid grid-cols-12 gap-6">
               {/* Kiri: Breaking News Slider */}
               <div className="col-span-8">
                 {loading ? (
@@ -1639,11 +1783,15 @@ export default function HomeContent() {
           </div>
         </section>
 
-        <PeringatanSection />
-        <InfoTerkiniSection />
+        {/* Layanan Publik */}
         <LayananPopulerSection />
-        <ArtikelPopulerSection />
-        <ArtikelTerbaruSection />
+
+        {/* Artikel Pilihan — merged Artikel Populer + Terbaru */}
+        <section className="bg-gradient-to-b from-white to-gray-50/50 border-b border-gray-100">
+          <div className="max-w-6xl mx-auto px-6 py-5">
+            <DesktopArtikelPilihan />
+          </div>
+        </section>
       </div>
 
       {/* Mobile Layout */}
