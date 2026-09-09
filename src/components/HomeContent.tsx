@@ -1370,14 +1370,6 @@ function FeaturedArticleWithSides({ posts }: { posts: BreakingPost[] }) {
         )}
       </div>
 
-      {/* Side Cards - 2 Columns */}
-      {sides.length > 0 && (
-        <div className="grid grid-cols-2 gap-4">
-          {sides.map((post) => (
-            <SideArticleCard key={`${post.id}-${currentSlide}`} post={post} index={0} />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
@@ -1750,6 +1742,12 @@ export default function HomeContent() {
             </div>
           </div>
         </section>
+
+        {/* Peringatan Warga */}
+        <PeringatanSection />
+
+        {/* Info Terkini */}
+        <InfoTerkiniSection />
 
         {/* Layanan Publik */}
         <LayananPopulerSection />
