@@ -445,11 +445,14 @@
 }
 
 /* Article content images - force proper sizing for WordPress inline images */
-.article-content img {
+.article-content img,
+.article-body img,
+.prose img {
   max-width: 100% !important;
-  width: auto !important;
+  width: 100% !important;
   height: auto !important;
   display: block !important;
   margin-left: auto !important;
   margin-right: auto !important;
+  object-fit: contain !important;
 }

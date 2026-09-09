@@ -100,22 +100,24 @@ export default async function ArticlePage({ params }: PageProps) {
         </Link>
       </div>
 
-      {/* Featured Image */}
-      <div className="relative w-full bg-gray-100 overflow-hidden">
-        <div className="aspect-video max-h-[400px] overflow-hidden">
-          {featuredImage ? (
-            <Image
-              src={featuredImage}
-              alt={title}
-              fill
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-              <div className="w-16 h-16 border-4 border-red-200 border-t-red-500 rounded-full animate-spin" />
-            </div>
-          )}
+      {/* Featured Image — constrained max-width so it doesn't stretch full-screen */}
+      <div className="w-full bg-gray-100 overflow-hidden">
+        <div className="max-w-5xl mx-auto">
+          <div className="aspect-video max-h-[400px] overflow-hidden">
+            {featuredImage ? (
+              <Image
+                src={featuredImage}
+                alt={title}
+                fill
+                className="object-cover"
+                priority
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+                <div className="w-16 h-16 border-4 border-red-200 border-t-red-500 rounded-full animate-spin" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
