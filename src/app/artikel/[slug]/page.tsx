@@ -102,18 +102,19 @@ export default async function ArticlePage({ params }: PageProps) {
 
       {/* Featured Image — constrained max-width so it doesn't stretch full-screen */}
       <div className="w-full bg-gray-100 overflow-hidden">
-        <div className="max-w-5xl mx-auto">
-          <div className="aspect-video max-h-[400px] overflow-hidden">
+        <div className="max-w-3xl mx-auto">
+          <div className="overflow-hidden">
             {featuredImage ? (
-              <Image
+              // Use regular img so CSS can properly constrain dimensions
+              // Next.js Image fill+aspect-ratio causes stretching on some images
+              <img
                 src={featuredImage}
                 alt={title}
-                fill
-                className="object-cover"
-                priority
+                className="w-full h-auto object-cover"
+                style={{ maxHeight: '420px' }}
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+              <div className="w-full aspect-video bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
                 <div className="w-16 h-16 border-4 border-red-200 border-t-red-500 rounded-full animate-spin" />
               </div>
             )}
