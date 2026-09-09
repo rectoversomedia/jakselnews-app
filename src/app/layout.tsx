@@ -24,16 +24,16 @@ export const metadata = {
   creator: "Jakselnews",
   publisher: "Jakselnews",
   openGraph: {
-    title: "Jakselnews - Hyperlocal Media Jakarta Selatan",
-    description: "Portal berita dan informasi hyperlocal untuk warga Jakarta Selatan",
+    title: "Jakselnews — Portal Berita Warga Jakarta Selatan",
+    description: "Portal berita warga Jakarta Selatan. Kabar terkini, layanan publik, dan informasi penting seputar Jaksel langsung dari warga.",
     type: "website",
     locale: "id_ID",
     siteName: "Jakselnews",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jakselnews - Hyperlocal Media Jakarta Selatan",
-    description: "Portal berita dan informasi hyperlocal untuk warga Jakarta Selatan",
+    title: "Jakselnews — Portal Berita Warga Jakarta Selatan",
+    description: "Portal berita warga Jakarta Selatan. Kabar terkini, layanan publik, dan informasi penting seputar Jaksel langsung dari warga.",
   },
   robots: {
     index: true,
