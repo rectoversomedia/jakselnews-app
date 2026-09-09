@@ -80,27 +80,27 @@ const allServices: Service[] = [
   { id: 13, name: 'KIP Kuliah', desc: 'Beasiswa kuliah', url: 'https://kip-kuliah.kemendikbud.go.id', category: 'bansos', categoryName: 'Bansos', icon: <GraduationCap size={24} />, iconColor: categoryColors.bansos },
 
   // Kesehatan
-  { id: 14, name: 'RSUD Jakarta', desc: 'Rumah sakit daerah', url: 'https://www.rsudjakarta.com', category: 'kesehatan', categoryName: 'Kesehatan', icon: <FirstAid size={24} />, iconColor: categoryColors.kesehatan },
-  { id: 15, name: 'Puskesmas Jaksel', desc: 'Pusat kesehatan', url: 'https://www.jakarta.go.id', category: 'kesehatan', categoryName: 'Kesehatan', icon: <FirstAid size={24} />, iconColor: categoryColors.kesehatan },
+  { id: 14, name: 'RSUD Jakarta', desc: 'Rumah sakit daerah', url: 'https://rsudjakarta.id', category: 'kesehatan', categoryName: 'Kesehatan', icon: <FirstAid size={24} />, iconColor: categoryColors.kesehatan },
+  { id: 15, name: 'Puskesmas Jakarta', desc: 'Pusat kesehatan', url: 'https://puskesmas.bpkad.co.id', category: 'kesehatan', categoryName: 'Kesehatan', icon: <FirstAid size={24} />, iconColor: categoryColors.kesehatan },
 
   // Pendidikan
-  { id: 17, name: 'PPDB Jakarta', desc: 'Penerimaan peserta didik', url: 'https://ppdb.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={24} />, iconColor: categoryColors.pendidikan },
-  { id: 18, name: 'Jakarta Edukasi', desc: 'Portal pendidikan', url: 'https://dki.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={24} />, iconColor: categoryColors.pendidikan },
-  { id: 19, name: 'JakOne', desc: 'Kartu siswa & pelajar', url: 'https://www.jakarta.go.id/ukm/jak-one', category: 'pendidikan', categoryName: 'Pendidikan', icon: <Cardholder size={24} />, iconColor: categoryColors.pendidikan },
+  { id: 17, name: 'SPMB Jakarta', desc: 'Penerimaan peserta didik', url: 'https://spmb.jakarta.go.id', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={24} />, iconColor: categoryColors.pendidikan },
+  { id: 18, name: 'Jakarta Edukasi', desc: 'Portal pendidikan', url: 'https://edu.jakarta.go.id/kjp-portal', category: 'pendidikan', categoryName: 'Pendidikan', icon: <GraduationCap size={24} />, iconColor: categoryColors.pendidikan },
+  { id: 19, name: 'JakOne', desc: 'Kartu siswa & pelajar', url: 'https://jakone.mobi', category: 'pendidikan', categoryName: 'Pendidikan', icon: <Cardholder size={24} />, iconColor: categoryColors.pendidikan },
 
   // Administrasi
-  { id: 20, name: 'KTP Online', desc: 'Pembuatan KTP', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Admin', icon: <IdentificationCard size={24} />, iconColor: categoryColors.administrasi },
-  { id: 21, name: 'KK Online', desc: 'Kartu keluarga', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Admin', icon: <IdentificationCard size={24} />, iconColor: categoryColors.administrasi },
-  { id: 22, name: 'Akta Kelahiran', desc: 'Surat kelahiran', url: 'https://layanan.dukcapil.kemendagri.go.id', category: 'administrasi', categoryName: 'Admin', icon: <IdentificationCard size={24} />, iconColor: categoryColors.administrasi },
+  { id: 20, name: 'KTP Online', desc: 'Pembuatan KTP', url: 'https://kependudukancapil.jakarta.go.id/layanan-online', category: 'administrasi', categoryName: 'Admin', icon: <IdentificationCard size={24} />, iconColor: categoryColors.administrasi },
+  { id: 21, name: 'KK Online', desc: 'Kartu keluarga', url: 'https://kependudukancapil.jakarta.go.id/layanan-online', category: 'administrasi', categoryName: 'Admin', icon: <IdentificationCard size={24} />, iconColor: categoryColors.administrasi },
+  { id: 22, name: 'Akta Online', desc: 'Surat kelahiran', url: 'https://kependudukancapil.jakarta.go.id/layanan-online', category: 'administrasi', categoryName: 'Admin', icon: <IdentificationCard size={24} />, iconColor: categoryColors.administrasi },
 
   // Layanan Jakarta
-  { id: 24, name: 'JakWifi', desc: 'Internet gratis', url: 'https://jaki.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <WifiHigh size={24} />, iconColor: categoryColors.jakarta },
-  { id: 25, name: 'JakLingko', desc: 'Integrasi transportasi', url: 'https://www.jaklingko.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Bus size={24} />, iconColor: categoryColors.jakarta },
-  { id: 26, name: 'Jakarta Satu', desc: 'Portal data & layanan', url: 'https://www.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Buildings size={24} />, iconColor: categoryColors.jakarta },
+  { id: 24, name: 'JakWifi', desc: 'Internet gratis', url: 'https://www.jakarta.go.id/jakwifi', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <WifiHigh size={24} />, iconColor: categoryColors.jakarta },
+  { id: 25, name: 'JakLingko', desc: 'Integrasi transportasi', url: 'https://jaklingkoindonesia.co.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Bus size={24} />, iconColor: categoryColors.jakarta },
+  { id: 26, name: 'Jakarta Satu', desc: 'Portal data & layanan', url: 'https://jakartasatu.jakarta.go.id/geoportal', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Buildings size={24} />, iconColor: categoryColors.jakarta },
   { id: 27, name: 'DKI Open Data', desc: 'Data terbuka', url: 'https://data.jakarta.go.id', category: 'jakarta', categoryName: 'Layanan Jakarta', icon: <Newspaper size={24} />, iconColor: categoryColors.jakarta },
 
   // Lingkungan
-  { id: 29, name: 'Bank Sampah', desc: 'Tukar sampah', url: 'https://www.jakarta.go.id/lingkungan', category: 'lingkungan', categoryName: 'Lingkungan', icon: <Tree size={24} />, iconColor: categoryColors.lingkungan },
+  { id: 29, name: 'Bank Sampah', desc: 'Tukar sampah', url: 'https://banksampah.jakarta.go.id', category: 'lingkungan', categoryName: 'Lingkungan', icon: <Tree size={24} />, iconColor: categoryColors.lingkungan },
   { id: 30, name: 'DKI Green', desc: 'Program hijau', url: 'https://www.jakarta.go.id/lingkungan', category: 'lingkungan', categoryName: 'Lingkungan', icon: <Tree size={24} />, iconColor: categoryColors.lingkungan },
 
   // Usaha
