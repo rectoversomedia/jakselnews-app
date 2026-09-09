@@ -28,16 +28,16 @@ const kecamatanList = [
 ];
 
 const kelurahanMap: Record<string, string[]> = {
-  'Cilandak': ['Cilandak Barat', 'Cilandak Timur', 'Lebak Bulus', 'Pondok Labu', 'Radang'],
-  'Jagakarsa': ['Bogor', 'Ciganjur', 'Cipedak', 'Jatisari', 'Lenteng Agung', 'Srengseng Sawah', 'Tanjung Barat'],
-  'Kebayoran Baru': ['Senayan', 'Gedonggi', 'Melawai', 'Pulo', 'Rawa Barat', 'Kramat Pela', 'Pinding'],
-  'Kebayoran Lama': ['Cipete Utara', 'Duri Kelambl', 'Duri Kosambi', 'Grokgalong Utara', 'Grokgalong Selatan', 'Kalibata', 'Pondok Pinang'],
-  'Mampang Prapatan': ['Bangka', 'Kuningan Barat', 'Mampang Prapatan', 'Pancoran', 'Tegal Parang'],
-  'Pancoran': ['Bojong', 'Duren Tiga', 'Gillard', 'Kalibata', 'Pancoran', 'Rawa Jati', 'Susukan'],
-  'Pasar Minggu': ['Cilandak Timur', 'Jatipadang', 'Kebbap', 'Pasar Minggu', 'Pejaten Timur', 'Pejaten Barat', 'Tanjung Barat'],
+  'Cilandak': ['Cilandak Barat', 'Cipete Selatan', 'Gandaria Selatan', 'Lebak Bulus', 'Pondok Labu'],
+  'Jagakarsa': ['Ciganjur', 'Cipedak', 'Jagakarsa', 'Lenteng Agung', 'Srengseng Sawah', 'Tanjung Barat'],
+  'Kebayoran Baru': ['Cipete Utara', 'Gandaria Utara', 'Gunung', 'Kramat Pela', 'Melawai', 'Petogogan', 'Pulo', 'Rawa Barat', 'Selong', 'Senayan'],
+  'Kebayoran Lama': ['Cipulir', 'Grogol Selatan', 'Grogol Utara', 'Kebayoran Lama Selatan', 'Kebayoran Lama Utara', 'Pondok Pinang'],
+  'Mampang Prapatan': ['Bangka', 'Kuningan Barat', 'Mampang Prapatan', 'Pela Mampang', 'Tegal Parang'],
+  'Pancoran': ['Cikoko', 'Duren Tiga', 'Kalibata', 'Pancoran', 'Pengadegan', 'Rawajati'],
+  'Pasar Minggu': ['Cilandak Timur', 'Jati Padang', 'Kebagusan', 'Pasar Minggu', 'Pejaten Barat', 'Pejaten Timur', 'Ragunan'],
   'Pesanggrahan': ['Bintaro', 'Pesanggrahan', 'Petukangan Selatan', 'Petukangan Utara', 'Ulujami'],
-  'Setiabudi': ['Gadobangkong', 'Karet', 'Karet Kuningan', 'Kuningan Timur', 'Menteng', 'Pasar Manggis', 'Setiabudi'],
-  'Tebet': ['Bogor Dalam', 'Bukit Duri', 'Kebon Baru', 'Manggarai Selatan', 'Manggarai', 'Tebet Barat', 'Tebet Timur', 'Utan Kayu'],
+  'Setiabudi': ['Guntur', 'Karet', 'Karet Kuningan', 'Karet Semanggi', 'Kuningan Timur', 'Menteng Atas', 'Pasar Manggis', 'Setiabudi'],
+  'Tebet': ['Bukit Duri', 'Kebon Baru', 'Manggarai', 'Manggarai Selatan', 'Menteng Dalam', 'Tebet Barat', 'Tebet Timur'],
 };
 
 // 8 main categories with "Lainnya" as #8
