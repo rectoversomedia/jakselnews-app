@@ -48,7 +48,7 @@ const layananData: Record<number, {
       'Verifikasi data di Kelurahan/Kecamatan',
       'Terima kartu KJP Plus',
     ],
-    links: [{ name: 'Info KJP Plus', url: 'https://disdik.jakarta.go.id' }],
+    links: [{ name: 'Info KJP Plus', url: 'https://edu.jakarta.go.id/kjp-portal' }],
   },
   3: {
     title: 'KJM',
