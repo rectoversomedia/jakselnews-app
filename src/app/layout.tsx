@@ -62,6 +62,8 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <meta name="theme-color" content="#DC2626" />
+        <link rel="icon" type="image/png" href="/logo-jakselnews.png" />
+        <link rel="apple-touch-icon" href="/logo-jakselnews.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
