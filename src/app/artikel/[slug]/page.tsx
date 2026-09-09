@@ -53,10 +53,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ArticlePage({ params }: PageProps) {
-  // Parallel fetch: post + popular articles simultaneously
-  const [result, popularResult] = await Promise.all([
+  // Parallel fetch: post + related articles (same category) simultaneously
+  const [result, relatedResult] = await Promise.all([
     wp.getPost(params.slug),
-    wp.getPosts({ perPage: 6 }),
+    wp.getPosts({ perPage: 7 }), // fetch more to filter
   ]);
 
   if (!result.success || !result.data) {
@@ -75,9 +75,14 @@ export default async function ArticlePage({ params }: PageProps) {
   }
 
   const post = result.data;
+  const postCategory = getPostCategory(post);
 
-  // Popular articles already fetched in parallel above
-  const popularArticles = popularResult.success ? popularResult.data.filter(p => p.id !== post.id).slice(0, 5) : [];
+  // Related articles: same category, exclude current post
+  const relatedArticles = relatedResult.success
+    ? relatedResult.data
+        .filter(p => p.id !== post.id && p.categories?.includes(postCategory?.id ?? -1))
+        .slice(0, 5)
+    : [];
 
   const featuredImage = rewriteWpUrl(getFeaturedImage(post, "large"));
   const category = getPostCategory(post);
@@ -171,48 +176,49 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Popular Articles */}
-      {popularArticles.length > 0 && (
-        <div className="px-4 py-6 bg-white border-t">
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" className="text-red-500">
-              <path d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34l13.49-58.54L21.5,114.38a16,16,0,0,1,22.49-26.82l50.91,3.85,39.36-45.05a16,16,0,0,1,26.5,0l0,0,39.35,45.05,50.91-3.85a16,16,0,0,1,22.49,26.82Z"/>
-            </svg>
-            Artikel Terpopuler
-          </h2>
-          <div className="space-y-3">
-            {popularArticles.map((article) => {
-              const articleTitle = stripHtml(article.title.rendered);
-              const articleImage = rewriteWpUrl(getFeaturedImage(article, "medium"));
-              const articleDate = formatPostDate(article.date);
-              return (
-                <Link
-                  key={article.id}
-                  href={`/artikel/${article.slug}`}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors"
-                >
-                  <div className="w-20 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
-                    {articleImage ? (
-                      <Image
-                        src={articleImage}
-                        alt={articleTitle}
-                        width={80}
-                        height={64}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-8 h-8 border-2 border-gray-200 border-t-red-500 rounded-full animate-spin" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm text-gray-900 line-clamp-2">{articleTitle}</h3>
-                    <p className="text-xs text-gray-500 mt-1">{articleDate}</p>
-                  </div>
-                </Link>
-              );
-            })}
+      {/* Artikel Terkait */}
+      {relatedArticles.length > 0 && (
+        <div className="bg-white border-t">
+          <div className="max-w-2xl mx-auto px-4 py-6">
+            <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="currentColor" className="text-red-500">
+                <path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72a12,12,0,1,0,12,12A12,12,0,0,0,128,72Zm0,112a12,12,0,1,0,12,12A12,12,0,0,0,128,184Zm104-56H24a8,8,0,0,0,0,16H232a8,8,0,0,0,0-16Z"/>
+              </svg>
+              Artikel Terkait
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {relatedArticles.map((article) => {
+                const articleTitle = stripHtml(article.title.rendered);
+                const articleImage = rewriteWpUrl(getFeaturedImage(article, "medium"));
+                const articleDate = formatPostDate(article.date);
+                return (
+                  <Link
+                    key={article.id}
+                    href={`/artikel/${article.slug}`}
+                    className="group bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow border border-gray-100"
+                  >
+                    <div className="aspect-[4/3] relative bg-gray-100 overflow-hidden">
+                      {articleImage ? (
+                        <Image
+                          src={articleImage}
+                          alt={articleTitle}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <div className="w-8 h-8 border-2 border-gray-200 border-t-red-500 rounded-full animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-2.5">
+                      <h3 className="font-semibold text-xs text-gray-900 line-clamp-2 leading-snug">{articleTitle}</h3>
+                      <p className="text-[10px] text-gray-400 mt-1">{articleDate}</p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
