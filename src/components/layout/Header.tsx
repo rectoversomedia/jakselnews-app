@@ -63,8 +63,8 @@ export default function Header({
               <Image
                 src="/logo-utama.png"
                 alt="Jakselnews"
-                width={210}
-                height={54}
+                width={263}
+                height={68}
                 className="object-contain"
                 priority
               />
@@ -139,8 +139,8 @@ export default function Header({
                 <Image
                   src="/logo-utama.png"
                   alt="Jakselnews"
-                  width={165}
-                  height={43}
+                  width={206}
+                  height={54}
                   className="object-contain"
                   priority
                 />
