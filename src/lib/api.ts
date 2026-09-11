@@ -30,6 +30,7 @@ interface Report {
   reporter_email?: string
   is_anonymous: boolean
   created_at: string
+  comment_count?: number
 }
 
 interface Category {

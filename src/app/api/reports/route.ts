@@ -58,9 +58,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: `Gagal mengambil laporan: ${error.message}` }, { status: 500 })
     }
 
+    // Fetch comment counts for all reports
+    const reportIds = (data || []).map((r: any) => r.id)
+    const { data: commentCounts } = await supabase
+      .from('comments')
+      .select('report_id')
+      .in('report_id', reportIds)
+
+    const countMap: Record<string, number> = {}
+    ;(commentCounts || []).forEach((c: any) => {
+      countMap[c.report_id] = (countMap[c.report_id] || 0) + 1
+    })
+
+    const reportsWithCounts = (data || []).map((r: any) => ({
+      ...r,
+      comment_count: countMap[r.id] || 0,
+    }))
+
     return NextResponse.json({
       success: true,
-      data: data || [],
+      data: reportsWithCounts,
       pagination: {
         page,
         limit,

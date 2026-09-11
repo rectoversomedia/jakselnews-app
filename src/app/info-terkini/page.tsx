@@ -468,7 +468,7 @@ function ReportCard({
           className="flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium text-gray-500 hover:text-red-500 transition-colors border-x border-gray-100"
         >
           <ChatCircle size={18} />
-          <span>Komentar</span>
+          <span>{report.comment_count ? `${report.comment_count} Komentar` : 'Komentar'}</span>
         </button>
         <button
           onClick={() => onShareClick(report)}
