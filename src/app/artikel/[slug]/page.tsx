@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
 import { wp, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
+import { ArticleShareButton } from "@/components/ArticleShareButton";
 
 interface PageProps {
   params: { slug: string };
@@ -160,12 +161,15 @@ export default async function ArticlePage({ params }: PageProps) {
               Jakarta Selatan
             </span>
             <div className="flex-1" />
-            <button className="flex items-center gap-1.5 text-gray-500 hover:text-red-500 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor">
-                <path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32ZM72,48h112V176.73L128,151.51l-56,25.22Z"/>
-              </svg>
-              Simpan
-            </button>
+            <div className="flex items-center gap-4">
+              <button className="flex items-center gap-1.5 text-gray-500 hover:text-red-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor">
+                  <path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32ZM72,48h112V176.73L128,151.51l-56,25.22Z"/>
+                </svg>
+                Simpan
+              </button>
+              <ArticleShareButton title={title} />
+            </div>
           </div>
 
           {/* Article Body */}
