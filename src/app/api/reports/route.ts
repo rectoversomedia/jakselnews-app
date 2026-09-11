@@ -60,15 +60,18 @@ export async function GET(request: NextRequest) {
 
     // Fetch comment counts for all reports
     const reportIds = (data || []).map((r: any) => r.id)
-    const { data: commentCounts } = await supabase
-      .from('comments')
-      .select('report_id')
-      .in('report_id', reportIds)
 
-    const countMap: Record<string, number> = {}
-    ;(commentCounts || []).forEach((c: any) => {
-      countMap[c.report_id] = (countMap[c.report_id] || 0) + 1
-    })
+    let countMap: Record<string, number> = {}
+    if (reportIds.length > 0) {
+      const { data: commentCounts } = await supabase
+        .from('comments')
+        .select('report_id')
+        .in('report_id', reportIds)
+
+      ;(commentCounts || []).forEach((c: any) => {
+        countMap[c.report_id] = (countMap[c.report_id] || 0) + 1
+      })
+    }
 
     const reportsWithCounts = (data || []).map((r: any) => ({
       ...r,
