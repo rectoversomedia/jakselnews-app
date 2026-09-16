@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Script from "next/script";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import "./globals.css";
@@ -104,6 +105,28 @@ export default function RootLayout({
             <BottomNav />
           </LanguageProvider>
         </ThemeProvider>
+
+        {/* Google Analytics 4 */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=G-FPGHXR7H16`}
+        />
+        <Script
+          id="ga4-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-FPGHXR7H16', {
+                send_page_view: true,
+                page_title: document.title,
+                cookie_flags: 'SameSite=None;Secure',
+              });
+            `,
+          }}
+        />
       </body>
     </html>
   );

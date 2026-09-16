@@ -15,6 +15,8 @@ import {
 } from '@phosphor-icons/react';
 import { wp, WPPost, getFeaturedImage, formatPostDate, stripHtml } from '@/lib/wordpress';
 import Header from '@/components/layout/Header';
+import { useGA4 } from '@/hooks/useGA4';
+import { trackSearch } from '@/lib/ga4';
 
 function rewriteWpUrl(url: string): string {
   return url
@@ -26,6 +28,7 @@ export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
+  useGA4();
 
   const [query, setQuery] = useState(initialQuery);
   const [inputValue, setInputValue] = useState(initialQuery);
@@ -89,6 +92,17 @@ export default function SearchPage() {
 
     return () => clearTimeout(timer);
   }, [inputValue, query, performSearch]);
+
+  // Track search in GA4
+  useEffect(() => {
+    if (hasSearched && query.trim()) {
+      trackSearch({
+        searchTerm: query.trim(),
+        resultCount: results.length,
+        searchType: 'all',
+      });
+    }
+  }, [hasSearched, query, results.length]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

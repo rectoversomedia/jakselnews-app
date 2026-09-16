@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { wp, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
 import { ArticleShareButton } from "@/components/ArticleShareButton";
+import { ArticleGA4Tracker } from "@/components/ga4/ArticleGA4Tracker";
 
 interface PageProps {
   params: { slug: string };
@@ -93,6 +94,14 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-[60px] lg:pt-[72px]">
+      {/* GA4 Tracker */}
+      <ArticleGA4Tracker
+        articleId={post.id}
+        articleTitle={title}
+        articleSlug={params.slug}
+        category={category?.name}
+        publishedDate={post.date}
+      />
       {/* Back Button */}
       <div className="px-4 py-3 bg-white border-b">
         <Link
@@ -168,7 +177,7 @@ export default async function ArticlePage({ params }: PageProps) {
                 </svg>
                 Simpan
               </button>
-              <ArticleShareButton title={title} />
+              <ArticleShareButton title={title} articleId={post.id} articleSlug={params.slug} />
             </div>
           </div>
 

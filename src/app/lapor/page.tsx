@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   MapPin,
@@ -20,6 +20,11 @@ import {
 import Header from '@/components/layout/Header';
 import BottomNav from '@/components/layout/BottomNav';
 import { api } from '@/lib/api';
+import { useGA4 } from '@/hooks/useGA4';
+import {
+  trackLaporanFormStart,
+  trackLaporanSubmit,
+} from '@/lib/ga4';
 
 const kecamatanList = [
   'Cilandak', 'Jagakarsa', 'Kebayoran Baru', 'Kebayoran Lama',
@@ -56,6 +61,12 @@ export default function LaporPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  useGA4();
+
+  // Track form start on mount
+  useEffect(() => {
+    trackLaporanFormStart();
+  }, []);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -157,6 +168,13 @@ export default function LaporPage() {
 
     if (result.success) {
       setSubmitted(true);
+      trackLaporanSubmit({
+        category: formData.type === 'custom' ? formData.customCategory : formData.type,
+        kecamatan: formData.kecamatan || undefined,
+        kelurahan: formData.kelurahan || undefined,
+        hasMedia: false,
+        mediaCount: 0,
+      });
     } else {
       alert(result.error || 'Gagal mengirim laporan. Silakan coba lagi.');
     }

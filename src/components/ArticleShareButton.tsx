@@ -2,15 +2,26 @@
 
 import { useState } from 'react';
 import { SharePopup } from '@/components/SharePopup';
+import { trackArticleShare } from '@/lib/ga4';
 
-export function ArticleShareButton({ title }: { title: string }) {
+interface ArticleShareButtonProps {
+  title: string;
+  articleId?: string | number;
+  articleSlug?: string;
+}
+
+export function ArticleShareButton({ title, articleId, articleSlug }: ArticleShareButtonProps) {
   const [showShare, setShowShare] = useState(false);
   const url = typeof window !== 'undefined' ? window.location.href : '';
+
+  const handleOpen = () => {
+    setShowShare(true);
+  };
 
   return (
     <>
       <button
-        onClick={() => setShowShare(true)}
+        onClick={handleOpen}
         className="flex items-center gap-1.5 text-gray-500 hover:text-red-500 transition-colors"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor">
@@ -23,6 +34,11 @@ export function ArticleShareButton({ title }: { title: string }) {
         onClose={() => setShowShare(false)}
         url={url}
         title={title}
+        onShare={(platform) => {
+          if (articleId) {
+            trackArticleShare({ articleId, articleTitle: title, platform });
+          }
+        }}
       />
     </>
   );

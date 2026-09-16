@@ -17,6 +17,12 @@ import {
 } from '@phosphor-icons/react';
 import Header from '@/components/layout/Header';
 import { api, Report, Comment } from '@/lib/api';
+import { useGA4 } from '@/hooks/useGA4';
+import {
+  trackReportUpvote,
+  trackReportShare,
+  trackCommentSubmit,
+} from '@/lib/ga4';
 
 function timeAgo(dateStr: string): string {
   const date = new Date(dateStr);
@@ -82,13 +88,21 @@ function ShareModal({
   onClose,
   title,
   url,
+  reportId,
 }: {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   url: string;
+  reportId?: string;
 }) {
   const [copied, setCopied] = useState(false);
+
+  const handleShare = (platform: 'whatsapp' | 'facebook' | 'instagram' | 'copy_link') => {
+    if (reportId) {
+      trackReportShare({ reportId, platform });
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -148,6 +162,7 @@ function ShareModal({
   const handleCopy = async () => {
     await navigator.clipboard.writeText(url);
     setCopied(true);
+    handleShare('copy_link');
     setTimeout(() => {
       setCopied(false);
       onClose();
@@ -175,6 +190,11 @@ function ShareModal({
                 href={option.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                  const platform = option.name === 'X' ? 'copy_link' :
+                    (option.name.toLowerCase() as 'whatsapp' | 'facebook' | 'instagram');
+                  handleShare(platform);
+                }}
                 className="flex flex-col items-center gap-2 group"
               >
                 <div className={`w-14 h-14 ${option.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
@@ -264,6 +284,11 @@ function CommentsModal({
       setComments(prev => [...prev, res.data as Comment]);
       setNewComment('');
       setSubmitMsg('Komentar terkirim!');
+      trackCommentSubmit({
+        contentType: 'report',
+        contentId: report.id,
+        commentLength: newComment.trim().length,
+      });
       setTimeout(() => setSubmitMsg(''), 2000);
     } else {
       setSubmitMsg('Gagal mengirim.');
@@ -411,6 +436,7 @@ function ReportCard({
     if (!isLiked) {
       setLocalLikes(prev => prev + 1);
       onLike(report.id);
+      trackReportUpvote(report.id, report.type);
     }
   };
 
@@ -504,6 +530,7 @@ export default function InfoTerkiniPage() {
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [activeCommentReport, setActiveCommentReport] = useState<Report | null>(null);
   const [activeShareReport, setActiveShareReport] = useState<Report | null>(null);
+  useGA4();
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
@@ -612,6 +639,7 @@ export default function InfoTerkiniPage() {
           onClose={() => setActiveShareReport(null)}
           title={`Laporan ${categoryLabels[activeShareReport.type] || activeShareReport.type}: ${activeShareReport.description.substring(0, 60)}...`}
           url={shareUrl}
+          reportId={activeShareReport.id}
         />
       )}
     </main>
