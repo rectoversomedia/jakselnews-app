@@ -8,6 +8,7 @@ import { Metadata } from "next";
 import { wp, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
 import { ArticleShareButton } from "@/components/ArticleShareButton";
 import { ArticleGA4Tracker } from "@/components/ga4/ArticleGA4Tracker";
+import { ArticleSchema, BreadcrumbSchema } from "@/components/StructuredData";
 
 interface PageProps {
   params: { slug: string };
@@ -33,17 +34,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = stripHtml(post.title.rendered);
   const description = stripHtml(post.excerpt.rendered).slice(0, 160);
   const featuredImage = rewriteWpUrl(getFeaturedImage(post, "large"));
+  const category = getPostCategory(post);
+  const canonicalUrl = `https://dev.jakselnews.com/artikel/${params.slug}`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical,
+    },
     openGraph: {
       title,
       description,
       type: "article",
-      images: featuredImage ? [{ url: featuredImage }] : [],
+      url: canonicalUrl,
+      siteName: "Jakselnews",
+      images: featuredImage ? [{ url: featuredImage, alt: title }] : [],
       publishedTime: post.date,
       modifiedTime: post.modified,
+      authors: ["Jakselnews"],
+      tags: category ? [category.name] : [],
+      section: category?.name,
     },
     twitter: {
       card: "summary_large_image",
@@ -91,9 +102,29 @@ export default async function ArticlePage({ params }: PageProps) {
   const title = stripHtml(post.title.rendered);
   const date = formatPostDate(post.date);
   const contentHtml = rewriteImageUrls(post.content.rendered);
+  const articleUrl = `https://dev.jakselnews.com/artikel/${params.slug}`;
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-[60px] lg:pt-[72px]">
+      {/* Structured Data */}
+      <ArticleSchema
+        title={title}
+        description={stripHtml(post.excerpt.rendered).slice(0, 300)}
+        url={articleUrl}
+        imageUrl={featuredImage ?? undefined}
+        author="Tim Jakselnews"
+        datePublished={post.date}
+        dateModified={post.modified}
+        category={category?.name}
+        section={category?.name ?? "news"}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Beranda", url: "https://dev.jakselnews.com" },
+          { name: "Artikel", url: "https://dev.jakselnews.com/artikel" },
+          { name: title, url: articleUrl },
+        ]}
+      />
       {/* GA4 Tracker */}
       <ArticleGA4Tracker
         articleId={post.id}

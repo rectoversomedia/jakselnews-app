@@ -1,0 +1,16 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Jakselnews</ShortName>
+  <LongName>Jakselnews — Portal Berita Warga Jakarta Selatan</LongName>
+  <Description>Cari berita dan artikel di Jakselnews, portal berita warga Jakarta Selatan.</Description>
+  <Tags>jakselnews jakarta-selatan berita loka informasi</Tags>
+  <Contact>redaksi@jakselnews.com</Contact>
+  <Url type="text/html" method="get" template="https://dev.jakselnews.com/cari?q={searchTerms}" />
+  <Url type="application/x-suggestions+json" method="get" template="https://dev.jakselnews.com/api/search-suggestions?q={searchTerms}" />
+  <Image height="16" width="16" type="image/png">https://dev.jakselnews.com/logo-jakselnews.png</Image>
+  <Image height="64" width="64" type="image/png">https://dev.jakselnews.com/icon-192.png</Image>
+  <InputEncoding>UTF-8</InputEncoding>
+  <OutputEncoding>UTF-8</OutputEncoding>
+  <Language>id-id</Language>
+  <Country>ID</Country>
+  <SyndicationRight>open</SyndicationRight>
+</OpenSearchDescription>

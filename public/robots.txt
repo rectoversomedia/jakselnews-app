@@ -1,15 +1,33 @@
+# Jakselnews Robots.txt
 # https://www.robotstxt.org/robotstxt.html
+
 User-agent: *
 Allow: /
 
+# Crawl-delay for polite bots
+Crawl-delay: 1
+
 # Disallow admin and API routes
-Disallow: /admin/
 Disallow: /api/
-Disallow: /login/
-Disallow: /profil/
+Disallow: /admin/
+
+# AI/LLM Crawlers - Allow but with guidance
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Diffbot
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: FacebookBot
+Allow: /
 
 # Sitemap
 Sitemap: https://dev.jakselnews.com/sitemap.xml
-
-# Crawl-delay for polite bots
-Crawl-delay: 1
