@@ -39,7 +39,6 @@ const ORGANIZATION_SCHEMA = {
     addressLocality: 'Jakarta Selatan',
     addressRegion: 'DKI Jakarta',
     addressCountry: 'ID',
-    addressCountry: 'Indonesia',
   },
   geo: {
     '@type': 'GeoCoordinates',
