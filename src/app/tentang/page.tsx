@@ -13,6 +13,8 @@ import {
   Users,
   Newspaper,
   Warning,
+  PenNib,
+  Certificate,
 } from '@phosphor-icons/react/dist/ssr';
 
 export default function TentangPage() {
@@ -41,6 +43,17 @@ export default function TentangPage() {
       icon: MapPin,
       title: language === 'id' ? 'Hyperlocal' : 'Hyperlocal',
       desc: language === 'id' ? 'Fokus pada berita Jakarta Selatan' : 'Focused on South Jakarta news',
+    },
+  ];
+
+  const editorialTeam = [
+    {
+      name: 'Tim Redaksi Jakselnews',
+      role: language === 'id' ? 'Redaksi Utama' : 'Editorial Team',
+      bio: language === 'id'
+        ? 'Tim redaksi yang terdiri dari warga Jakarta Selatan yang berkomitmen menghadirkan berita akurat dan relevan untuk masyarakat.'
+        : 'Editorial team composed of South Jakarta residents committed to delivering accurate and relevant news for the community.',
+      type: 'Organization',
     },
   ];
 
@@ -115,6 +128,42 @@ export default function TentangPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Redaksi & E-E-A-T */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <Certificate size={20} className="text-red-500" />
+            {language === 'id' ? 'Standar Berita' : 'Editorial Standards'}
+          </h2>
+          <div className="space-y-4">
+            {editorialTeam.map((member, i) => (
+              <div key={i} className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
+                  <PenNib size={24} className="text-red-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">{member.name}</h3>
+                  <p className="text-sm text-red-500 font-medium mb-1">{member.role}</p>
+                  <p className="text-sm text-gray-500">{member.bio}</p>
+                </div>
+              </div>
+            ))}
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {language === 'id'
+                  ? 'Jakselnews beroperasi di bawah Pedoman Pemberitaan Media Siber (PERS) dan menjunjung prinsip akurasi, keadilan, dan akuntabilitas. Semua berita diverifikasi dari sumber primer sebelum dipublikasikan.'
+                  : 'Jakselnews operates under Indonesian Press Council guidelines (PERS) and upholds principles of accuracy, fairness, and accountability. All news is verified from primary sources before publication.'}
+              </p>
+              <a
+                href="/pedoman-media-siber"
+                className="inline-flex items-center gap-1 text-sm text-red-500 font-medium mt-2 hover:underline"
+              >
+                <Certificate size={14} />
+                {language === 'id' ? 'Baca Pedoman Media Siber' : 'Read Press Code'}
+              </a>
+            </div>
           </div>
         </div>
 

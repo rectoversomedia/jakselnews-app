@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import { wp, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from '@/lib/wordpress';
 import Link from 'next/link';
@@ -32,10 +33,30 @@ interface PageProps {
   params: { slug: string };
 }
 
-export const metadata = {
-  title: 'Kategori | Jakselnews',
-  description: 'Kategori berita Jakselnews',
-};
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const meta = categoryMeta[params.slug];
+  if (!meta) return { title: 'Kategori Tidak Ditemukan | Jakselnews' };
+
+  return {
+    title: `${meta.title} | Jakselnews`,
+    description: `Baca berita dan informasi ${meta.description.toLowerCase()} di Jakselnews — portal berita warga Jakarta Selatan.`,
+    alternates: {
+      canonical: `https://jakselnews.com/kategori/${params.slug}`,
+    },
+    openGraph: {
+      title: `${meta.title} | Jakselnews`,
+      description: `Baca berita dan informasi ${meta.description.toLowerCase()} di Jakselnews.`,
+      url: `https://jakselnews.com/kategori/${params.slug}`,
+      type: 'website',
+      siteName: 'Jakselnews',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${meta.title} | Jakselnews`,
+      description: `Baca berita dan informasi ${meta.description.toLowerCase()} di Jakselnews.`,
+    },
+  };
+}
 
 const categoryMeta: Record<string, { title: string; description: string; emoji: string }> = {
   'jaksel': { title: 'Jaksel', description: 'Berita dan informasi seputar Jakarta Selatan', emoji: '📍' },

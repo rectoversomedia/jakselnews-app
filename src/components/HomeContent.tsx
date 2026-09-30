@@ -664,6 +664,8 @@ function ArtikelTerbaruSection() {
                   src={getFeaturedImageUrl(featured)}
                   alt={stripHtml(featured.title.rendered)}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  fetchPriority="high"
+                  loading="eager"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 

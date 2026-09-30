@@ -158,6 +158,8 @@ export default async function ArticlePage({ params }: PageProps) {
                 alt={title}
                 className="w-full h-auto object-cover"
                 style={{ maxHeight: '420px' }}
+                fetchPriority="high"
+                loading="eager"
               />
             ) : (
               <div className="w-full aspect-video bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
