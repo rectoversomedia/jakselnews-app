@@ -355,7 +355,7 @@ function PeringatanSection() {
   const [loading, setLoading] = useState(true);
 
   const handleUpvote = async (id: string | number) => {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com';
     try {
       const res = await fetch(`${baseUrl}/api/alerts/upvote`, {
         method: 'POST',
@@ -374,7 +374,7 @@ function PeringatanSection() {
   useEffect(() => {
     async function loadAlerts() {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com';
         const res = await fetch(`${baseUrl}/api/alerts`);
         const data = await res.json();
         if (data.success && data.data) {
@@ -900,7 +900,7 @@ function MobileSections() {
   useEffect(() => {
     async function fetchAlerts() {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com';
         const res = await fetch(`${baseUrl}/api/alerts`);
         const data = await res.json();
         if (data.success && data.data) {
@@ -934,7 +934,7 @@ function MobileSections() {
   }, []);
 
   const handleMobileUpvote = async (id: string | number) => {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com';
     try {
       const res = await fetch(`${baseUrl}/api/alerts/upvote`, {
         method: 'POST',

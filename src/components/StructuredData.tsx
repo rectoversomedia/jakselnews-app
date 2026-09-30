@@ -5,19 +5,19 @@ import Head from 'next/head';
 const ORGANIZATION_SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'NewsMediaOrganization',
-  '@id': 'https://dev.jakselnews.com/#organization',
+  '@id': 'https://jakselnews.com/#organization',
   name: 'Jakselnews',
   alternateName: 'Jakselnews.com',
-  url: 'https://dev.jakselnews.com',
+  url: 'https://jakselnews.com',
   logo: {
     '@type': 'ImageObject',
-    url: 'https://dev.jakselnews.com/logo-utama.png',
+    url: 'https://jakselnews.com/logo-utama.png',
     width: 400,
     height: 104,
   },
   image: {
     '@type': 'ImageObject',
-    url: 'https://dev.jakselnews.com/logo-jakselnews.png',
+    url: 'https://jakselnews.com/logo-jakselnews.png',
     width: 512,
     height: 512,
   },
@@ -62,15 +62,15 @@ const ORGANIZATION_SCHEMA = {
     { '@type': 'Language', name: 'Indonesian', alternateName: 'id', inCode: 'id-ID' },
   ],
   publisher: {
-    '@id': 'https://dev.jakselnews.com/#organization',
+    '@id': 'https://jakselnews.com/#organization',
   },
 };
 
 const WEBSITE_SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  '@id': 'https://dev.jakselnews.com/#website',
-  url: 'https://dev.jakselnews.com',
+  '@id': 'https://jakselnews.com/#website',
+  url: 'https://jakselnews.com',
   name: 'Jakselnews — Portal Berita Warga Jakarta Selatan',
   description: 'Portal berita warga Jakarta Selatan. Kabar terkini, layanan publik, dan informasi penting seputar Jaksel langsung dari warga.',
   inLanguage: 'id-ID',
@@ -88,14 +88,14 @@ const WEBSITE_SCHEMA = {
     },
   },
   publisher: {
-    '@id': 'https://dev.jakselnews.com/#organization',
+    '@id': 'https://jakselnews.com/#organization',
   },
   potentialAction: [
     {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://dev.jakselnews.com/cari?q={search_term_string}',
+        urlTemplate: 'https://jakselnews.com/cari?q={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
       description: 'Cari berita dan artikel di Jakselnews',
@@ -104,7 +104,7 @@ const WEBSITE_SCHEMA = {
       '@type': 'ContactAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://dev.jakselnews.com/lapor',
+        urlTemplate: 'https://jakselnews.com/lapor',
       },
       description: 'Laporkan kejadian di Jakarta Selatan',
     },
@@ -178,14 +178,14 @@ export function ArticleSchema({
     author: {
       '@type': 'Organization',
       name: author || 'Tim Jakselnews',
-      url: 'https://dev.jakselnews.com',
+      url: 'https://jakselnews.com',
     },
     publisher: {
-      '@id': 'https://dev.jakselnews.com/#organization',
+      '@id': 'https://jakselnews.com/#organization',
     },
     copyrightYear: new Date(datePublished).getFullYear().toString(),
     copyrightHolder: {
-      '@id': 'https://dev.jakselnews.com/#organization',
+      '@id': 'https://jakselnews.com/#organization',
     },
     wordCount: description.split(' ').length * 10, // rough estimate
     timeRequired: 'PT5M',
@@ -263,10 +263,10 @@ export function LocalBusinessSchema() {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    '@id': 'https://dev.jakselnews.com/#localbusiness',
+    '@id': 'https://jakselnews.com/#localbusiness',
     name: 'Jakselnews',
     description: 'Portal berita hyperlocal warga Jakarta Selatan',
-    url: 'https://dev.jakselnews.com',
+    url: 'https://jakselnews.com',
     areaServed: {
       '@type': 'City',
       name: 'South Jakarta',
@@ -314,13 +314,13 @@ export function ReportSchema({
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Report',
-    '@id': `https://dev.jakselnews.com/info-terkini`,
+    '@id': `https://jakselnews.com/info-terkini`,
     headline: title,
     description: description,
     datePublished,
     inLanguage: 'id-ID',
     publisher: {
-      '@id': 'https://dev.jakselnews.com/#organization',
+      '@id': 'https://jakselnews.com/#organization',
     },
     about: location
       ? {

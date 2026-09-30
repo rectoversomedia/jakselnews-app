@@ -16,20 +16,20 @@ const BottomNav = dynamic(() => import("@/components/layout/BottomNav").then(mod
 });
 
 export const metadata = {
-  metadataBase: new URL('https://dev.jakselnews.com'),
+  metadataBase: new URL('https://jakselnews.com'),
   title: {
     default: "Jakselnews — Portal Berita Warga Jakarta Selatan",
     template: "%s | Jakselnews",
   },
   description: "Portal berita warga Jakarta Selatan. Kabar terkini, layanan publik, dan informasi penting seputar Jaksel langsung dari warga.",
   keywords: ["jakselnews", "jakarta selatan", "berita jaksel", "hyperlocal", "portal jaksel", "berita jakarta selatan", "berita jakarta", "laporan warga"],
-  authors: [{ name: "Jakselnews", url: "https://dev.jakselnews.com" }],
+  authors: [{ name: "Jakselnews", url: "https://jakselnews.com" }],
   creator: "Jakselnews",
   publisher: "Jakselnews",
   openGraph: {
     title: "Jakselnews — Portal Berita Warga Jakarta Selatan",
     description: "Portal berita warga Jakarta Selatan. Kabar terkini, layanan publik, dan informasi penting seputar Jaksel langsung dari warga.",
-    url: "https://dev.jakselnews.com",
+    url: "https://jakselnews.com",
     type: "website",
     locale: "id_ID",
     alternateLocale: "ms_MY",
@@ -63,11 +63,11 @@ export const metadata = {
     },
   },
   alternates: {
-    canonical: "https://dev.jakselnews.com",
+    canonical: "https://jakselnews.com",
     languages: {
-      "id-ID": "https://dev.jakselnews.com",
-      "ms-MY": "https://dev.jakselnews.com",
-      "x-default": "https://dev.jakselnews.com",
+      "id-ID": "https://jakselnews.com",
+      "ms-MY": "https://jakselnews.com",
+      "x-default": "https://jakselnews.com",
     },
   },
   icons: {

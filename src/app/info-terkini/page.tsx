@@ -558,7 +558,7 @@ export default function InfoTerkiniPage() {
     });
   };
 
-  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://dev.jakselnews.com'}/info-terkini`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com'}/info-terkini`;
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0">

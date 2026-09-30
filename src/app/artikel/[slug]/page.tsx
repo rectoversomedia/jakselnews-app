@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = stripHtml(post.excerpt.rendered).slice(0, 160);
   const featuredImage = rewriteWpUrl(getFeaturedImage(post, "large"));
   const category = getPostCategory(post);
-  const canonicalUrl = `https://dev.jakselnews.com/artikel/${params.slug}`;
+  const canonicalUrl = `https://jakselnews.com/artikel/${params.slug}`;
 
   return {
     title,
@@ -102,7 +102,7 @@ export default async function ArticlePage({ params }: PageProps) {
   const title = stripHtml(post.title.rendered);
   const date = formatPostDate(post.date);
   const contentHtml = rewriteImageUrls(post.content.rendered);
-  const articleUrl = `https://dev.jakselnews.com/artikel/${params.slug}`;
+  const articleUrl = `https://jakselnews.com/artikel/${params.slug}`;
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-[60px] lg:pt-[72px]">
@@ -120,8 +120,8 @@ export default async function ArticlePage({ params }: PageProps) {
       />
       <BreadcrumbSchema
         items={[
-          { name: "Beranda", url: "https://dev.jakselnews.com" },
-          { name: "Artikel", url: "https://dev.jakselnews.com/artikel" },
+          { name: "Beranda", url: "https://jakselnews.com" },
+          { name: "Artikel", url: "https://jakselnews.com/artikel" },
           { name: title, url: articleUrl },
         ]}
       />

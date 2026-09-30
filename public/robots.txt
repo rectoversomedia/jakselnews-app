@@ -30,4 +30,4 @@ User-agent: FacebookBot
 Allow: /
 
 # Sitemap
-Sitemap: https://dev.jakselnews.com/sitemap.xml
+Sitemap: https://jakselnews.com/sitemap.xml
