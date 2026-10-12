@@ -1,14 +1,85 @@
-// ISR: revalidate every 60s — fast for subsequent visitors
-export const revalidate = 60;
+// Dynamic rendering — always fresh from WordPress
+export const dynamic = 'force-dynamic';
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-import { wp, getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
+import https from "https";
+import { getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
 import { ArticleShareButton } from "@/components/ArticleShareButton";
 import { ArticleGA4Tracker } from "@/components/ga4/ArticleGA4Tracker";
 import { ArticleSchema, BreadcrumbSchema } from "@/components/StructuredData";
+
+const WP_OLD_HOST = "153.92.8.164";
+const WP_DOMAIN = "www.jakselnews.com";
+
+async function fetchWpPost(slug: string): Promise<any | null> {
+  return new Promise((resolve) => {
+    const wpPath = `/wp-json/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed=1&status=publish`;
+    const options = {
+      hostname: WP_OLD_HOST,
+      port: 443,
+      path: wpPath,
+      method: "GET",
+      headers: {
+        Host: WP_DOMAIN,
+        Accept: "application/json",
+        "User-Agent": "Jakselnews-SSR/1.0",
+      },
+      rejectUnauthorized: false,
+      servername: WP_DOMAIN,
+    };
+    const req = https.request(options, (res) => {
+      let body = "";
+      res.on("data", (chunk) => { body += chunk; });
+      res.on("end", () => {
+        try {
+          const data = JSON.parse(body);
+          resolve(Array.isArray(data) && data.length > 0 ? data[0] : null);
+        } catch {
+          resolve(null);
+        }
+      });
+    });
+    req.on("error", () => resolve(null));
+    req.setTimeout(10000, () => { req.destroy(); resolve(null); });
+    req.end();
+  });
+}
+
+async function fetchWpPosts(perPage: number): Promise<any[]> {
+  return new Promise((resolve) => {
+    const wpPath = `/wp-json/wp/v2/posts?_embed=1&status=publish&per_page=${perPage}`;
+    const options = {
+      hostname: WP_OLD_HOST,
+      port: 443,
+      path: wpPath,
+      method: "GET",
+      headers: {
+        Host: WP_DOMAIN,
+        Accept: "application/json",
+        "User-Agent": "Jakselnews-SSR/1.0",
+      },
+      rejectUnauthorized: false,
+      servername: WP_DOMAIN,
+    };
+    const req = https.request(options, (res) => {
+      let body = "";
+      res.on("data", (chunk) => { body += chunk; });
+      res.on("end", () => {
+        try {
+          resolve(JSON.parse(body) || []);
+        } catch {
+          resolve([]);
+        }
+      });
+    });
+    req.on("error", () => resolve([]));
+    req.setTimeout(10000, () => { req.destroy(); resolve([]); });
+    req.end();
+  });
+}
 
 interface PageProps {
   params: { slug: string };
@@ -21,18 +92,27 @@ function rewriteWpUrl(url: string | null): string | null {
     .replace(/https:\/\/www\.jakselnews\.com\//g, '/api/wp-image/');
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const result = await wp.getPost(params.slug);
+function rewriteImageUrls(html: string): string {
+  return html
+    .replace(/https:\/\/jakselnews\.com\/wp-content\//g, '/api/wp-image/wp-content/')
+    .replace(/https:\/\/www\.jakselnews\.com\/wp-content\//g, '/api/wp-image/wp-content/')
+    .replace(/src="\/wp-content\//g, 'src="/api/wp-image/wp-content/')
+    .replace(/src="https:\/\/[^"]+wp-content\//g, (match) => {
+      return match.replace(/https:\/\/[^/]+/, '/api/wp-image');
+    });
+}
 
-  if (!result.success || !result.data) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const post = await fetchWpPost(params.slug);
+
+  if (!post) {
     return {
       title: "Artikel Tidak Ditemukan | Jakselnews",
     };
   }
 
-  const post = result.data;
-  const title = stripHtml(post.title.rendered);
-  const description = stripHtml(post.excerpt.rendered).slice(0, 160);
+  const title = stripHtml(post.title?.rendered || "");
+  const description = stripHtml(post.excerpt?.rendered || "").slice(0, 160);
   const featuredImage = rewriteWpUrl(getFeaturedImage(post, "large"));
   const category = getPostCategory(post);
   const canonicalUrl = `https://jakselnews.com/artikel/${params.slug}`;
@@ -66,50 +146,33 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ArticlePage({ params }: PageProps) {
-  // Parallel fetch: post + related articles (same category) simultaneously
-  const [result, relatedResult] = await Promise.all([
-    wp.getPost(params.slug),
-    wp.getPosts({ perPage: 7 }), // fetch more to filter
+  const [post, allPosts] = await Promise.all([
+    fetchWpPost(params.slug),
+    fetchWpPosts(20),
   ]);
 
-  if (!result.success || !result.data) {
+  if (!post) {
     notFound();
   }
 
-  // Rewrite WP image URLs: old WP host domain -> our image proxy
-  function rewriteImageUrls(html: string): string {
-    return html
-      .replace(/https:\/\/jakselnews\.com\/wp-content\//g, '/api/wp-image/wp-content/')
-      .replace(/https:\/\/www\.jakselnews\.com\/wp-content\//g, '/api/wp-image/wp-content/')
-      .replace(/src="\/wp-content\//g, 'src="/api/wp-image/wp-content/')
-      .replace(/src="https:\/\/[^"]+wp-content\//g, (match) => {
-        return match.replace(/https:\/\/[^/]+/, '/api/wp-image');
-      });
-  }
-
-  const post = result.data;
-  const postCategory = getPostCategory(post);
-
-  // Related articles: same category, exclude current post
-  const relatedArticles = relatedResult.success
-    ? relatedResult.data
-        .filter(p => p.id !== post.id && p.categories?.includes(postCategory?.id ?? -1))
+  const relatedArticles = allPosts
+    ? allPosts
+        .filter((p: any) => p.id !== post.id && p.categories?.includes(post.categories?.[0]))
         .slice(0, 5)
     : [];
 
   const featuredImage = rewriteWpUrl(getFeaturedImage(post, "large"));
   const category = getPostCategory(post);
-  const title = stripHtml(post.title.rendered);
+  const title = stripHtml(post.title?.rendered || "");
   const date = formatPostDate(post.date);
-  const contentHtml = rewriteImageUrls(post.content.rendered);
+  const contentHtml = rewriteImageUrls(post.content?.rendered || "");
   const articleUrl = `https://jakselnews.com/artikel/${params.slug}`;
 
   return (
     <main className="min-h-screen bg-gray-50 pb-20 lg:pb-0 pt-[60px] lg:pt-[72px]">
-      {/* Structured Data */}
       <ArticleSchema
         title={title}
-        description={stripHtml(post.excerpt.rendered).slice(0, 300)}
+        description={stripHtml(post.excerpt?.rendered || "").slice(0, 300)}
         url={articleUrl}
         imageUrl={featuredImage ?? undefined}
         author="Tim Jakselnews"
@@ -125,7 +188,6 @@ export default async function ArticlePage({ params }: PageProps) {
           { name: title, url: articleUrl },
         ]}
       />
-      {/* GA4 Tracker */}
       <ArticleGA4Tracker
         articleId={post.id}
         articleTitle={title}
@@ -133,7 +195,6 @@ export default async function ArticlePage({ params }: PageProps) {
         category={category?.name}
         publishedDate={post.date}
       />
-      {/* Back Button */}
       <div className="px-4 py-3 bg-white border-b">
         <Link
           href="/artikel"
@@ -146,13 +207,10 @@ export default async function ArticlePage({ params }: PageProps) {
         </Link>
       </div>
 
-      {/* Featured Image — constrained max-width so it doesn't stretch full-screen */}
       <div className="w-full bg-gray-100 overflow-hidden">
         <div className="max-w-3xl mx-auto">
           <div className="overflow-hidden">
             {featuredImage ? (
-              // Use regular img so CSS can properly constrain dimensions
-              // Next.js Image fill+aspect-ratio causes stretching on some images
               <img
                 src={featuredImage}
                 alt={title}
@@ -170,10 +228,8 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Article Content */}
       <div className="px-4 py-6">
         <div className="max-w-2xl mx-auto">
-          {/* Category Badge */}
           {category && (
             <Link
               href={`/kategori/${category.slug}`}
@@ -183,12 +239,10 @@ export default async function ArticlePage({ params }: PageProps) {
             </Link>
           )}
 
-          {/* Title */}
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {title}
           </h1>
 
-          {/* Meta Info */}
           <div className="flex items-center gap-4 text-sm text-gray-500 pb-4 border-b border-gray-200">
             <span className="flex items-center gap-1.5">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="currentColor">
@@ -214,7 +268,6 @@ export default async function ArticlePage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Article Body */}
           <div
             className="mt-6 text-gray-700 leading-relaxed space-y-4 prose prose-sm md:prose-base max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-img:rounded-xl prose-img:shadow-md article-content"
             dangerouslySetInnerHTML={{ __html: contentHtml }}
@@ -222,7 +275,6 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Artikel Terkait */}
       {relatedArticles.length > 0 && (
         <div className="bg-white border-t">
           <div className="max-w-2xl mx-auto px-4 py-6">
@@ -233,8 +285,8 @@ export default async function ArticlePage({ params }: PageProps) {
               Artikel Terkait
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {relatedArticles.map((article) => {
-                const articleTitle = stripHtml(article.title.rendered);
+              {relatedArticles.map((article: any) => {
+                const articleTitle = stripHtml(article.title?.rendered || "");
                 const articleImage = rewriteWpUrl(getFeaturedImage(article, "medium"));
                 const articleDate = formatPostDate(article.date);
                 return (
@@ -269,7 +321,6 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       )}
 
-      {/* Bottom Navigation Spacer */}
       <div className="h-4 lg:hidden" />
     </main>
   );
