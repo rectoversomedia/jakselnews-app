@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
 import https from "https";
-import { getFeaturedImage, getPostCategory, formatPostDate, stripHtml } from "@/lib/wordpress";
+import { getFeaturedImage, getPostCategory, getPostAuthor, formatPostDate, stripHtml } from "@/lib/wordpress";
 import { ArticleShareButton } from "@/components/ArticleShareButton";
 import { ArticleGA4Tracker } from "@/components/ga4/ArticleGA4Tracker";
 import { ArticleSchema, BreadcrumbSchema } from "@/components/StructuredData";
@@ -163,6 +163,8 @@ export default async function ArticlePage({ params }: PageProps) {
 
   const featuredImage = rewriteWpUrl(getFeaturedImage(post, "large"));
   const category = getPostCategory(post);
+  const author = getPostAuthor(post);
+  const authorName = author?.name || "Tim Jakselnews";
   const title = stripHtml(post.title?.rendered || "");
   const date = formatPostDate(post.date);
   const contentHtml = rewriteImageUrls(post.content?.rendered || "");
@@ -175,7 +177,7 @@ export default async function ArticlePage({ params }: PageProps) {
         description={stripHtml(post.excerpt?.rendered || "").slice(0, 300)}
         url={articleUrl}
         imageUrl={featuredImage ?? undefined}
-        author="Tim Jakselnews"
+        author={authorName}
         datePublished={post.date}
         dateModified={post.modified}
         category={category?.name}
@@ -193,6 +195,7 @@ export default async function ArticlePage({ params }: PageProps) {
         articleTitle={title}
         articleSlug={params.slug}
         category={category?.name}
+        author={authorName}
         publishedDate={post.date}
       />
       <div className="px-4 py-3 bg-white border-b">
