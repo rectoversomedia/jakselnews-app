@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { wp } from '@/lib/wordpress';
 
-const BASE_URL = 'https://jakselnews.com';
+const BASE_URL = 'https://www.jakselnews.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [

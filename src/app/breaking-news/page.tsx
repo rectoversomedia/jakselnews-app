@@ -80,7 +80,7 @@ function UGCCard({ report, onLike }: { report: UGCReport; onLike: (id: string) =
     return `${diffDays} hari lalu`;
   };
 
-  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://jakselnews.com'}/lapor/${report.id}`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.jakselnews.com'}/lapor/${report.id}`;
 
   const handleShare = async () => {
     if (navigator.share) {

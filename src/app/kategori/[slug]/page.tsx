@@ -41,12 +41,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${meta.title} | Jakselnews`,
     description: `Baca berita dan informasi ${meta.description.toLowerCase()} di Jakselnews — portal berita warga Jakarta Selatan.`,
     alternates: {
-      canonical: `https://jakselnews.com/kategori/${params.slug}`,
+      canonical: `https://www.jakselnews.com/kategori/${params.slug}`,
     },
     openGraph: {
       title: `${meta.title} | Jakselnews`,
       description: `Baca berita dan informasi ${meta.description.toLowerCase()} di Jakselnews.`,
-      url: `https://jakselnews.com/kategori/${params.slug}`,
+      url: `https://www.jakselnews.com/kategori/${params.slug}`,
       type: 'website',
       siteName: 'Jakselnews',
     },

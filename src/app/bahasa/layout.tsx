@@ -4,7 +4,7 @@ export const metadata: Metadata = {
   title: 'Bahasa | Jakselnews',
   description: 'Pilih bahasa antarmuka Jakselnews.',
   alternates: {
-    canonical: 'https://jakselnews.com/bahasa',
+    canonical: 'https://www.jakselnews.com/bahasa',
   },
 };
 

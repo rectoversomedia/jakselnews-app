@@ -4,12 +4,12 @@ export const metadata: Metadata = {
   title: 'Info Terkini | Jakselnews',
   description: 'Info terkini dan laporan warga dari Jakarta Selatan — langsung dari warga untuk warga Jaksel.',
   alternates: {
-    canonical: 'https://jakselnews.com/info-terkini',
+    canonical: 'https://www.jakselnews.com/info-terkini',
   },
   openGraph: {
     title: 'Info Terkini | Jakselnews',
     description: 'Info terkini dan laporan warga dari Jakarta Selatan.',
-    url: 'https://jakselnews.com/info-terkini',
+    url: 'https://www.jakselnews.com/info-terkini',
     type: 'website',
     siteName: 'Jakselnews',
   },
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
 };
 
 const breadcrumbItems = [
-  { name: 'Beranda', url: 'https://jakselnews.com' },
-  { name: 'Info Terkini', url: 'https://jakselnews.com/info-terkini' },
+  { name: 'Beranda', url: 'https://www.jakselnews.com' },
+  { name: 'Info Terkini', url: 'https://www.jakselnews.com/info-terkini' },
 ];
 
 const breadcrumbSchemaScript = JSON.stringify({

@@ -4,12 +4,12 @@ export const metadata: Metadata = {
   title: 'Pedoman Media Siber | Jakselnews',
   description: 'Pedoman Pemberitaan Media Siber (PERS) yang dipatuhi oleh Jakselnews dalam pemberitaan.',
   alternates: {
-    canonical: 'https://jakselnews.com/pedoman-media-siber',
+    canonical: 'https://www.jakselnews.com/pedoman-media-siber',
   },
   openGraph: {
     title: 'Pedoman Media Siber | Jakselnews',
     description: 'Pedoman Pemberitaan Media Siber Jakselnews.',
-    url: 'https://jakselnews.com/pedoman-media-siber',
+    url: 'https://www.jakselnews.com/pedoman-media-siber',
     type: 'website',
     siteName: 'Jakselnews',
   },

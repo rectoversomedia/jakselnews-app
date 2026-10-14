@@ -4,12 +4,12 @@ export const metadata: Metadata = {
   title: 'Breaking News | Jakselnews',
   description: 'Laporan warga terkini dan breaking news dari Jakarta Selatan. Langsung dari warga untuk warga Jaksel.',
   alternates: {
-    canonical: 'https://jakselnews.com/breaking-news',
+    canonical: 'https://www.jakselnews.com/breaking-news',
   },
   openGraph: {
     title: 'Breaking News | Jakselnews',
     description: 'Laporan warga terkini dan breaking news dari Jakarta Selatan.',
-    url: 'https://jakselnews.com/breaking-news',
+    url: 'https://www.jakselnews.com/breaking-news',
     type: 'website',
     siteName: 'Jakselnews',
   },

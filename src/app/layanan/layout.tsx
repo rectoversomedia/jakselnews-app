@@ -4,12 +4,12 @@ export const metadata: Metadata = {
   title: 'Layanan Publik | Jakselnews',
   description: 'Kumpulan nomor hotline dan tautan layanan publik Jakarta Selatan — dari kesehatan, transportasi, hingga darurat. Langsung dari warga untuk warga.',
   alternates: {
-    canonical: 'https://jakselnews.com/layanan',
+    canonical: 'https://www.jakselnews.com/layanan',
   },
   openGraph: {
     title: 'Layanan Publik Jakarta Selatan | Jakselnews',
     description: 'Nomor hotline dan tautan layanan publik Jakarta Selatan.',
-    url: 'https://jakselnews.com/layanan',
+    url: 'https://www.jakselnews.com/layanan',
     type: 'website',
     siteName: 'Jakselnews',
   },
