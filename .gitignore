@@ -71,3 +71,6 @@ Thumbs.db
 # NOTE: server/ and dist/ are NOT ignored
 # They are needed for Docker image builds
 # ===========================================
+
+# Vercel CLI accidental files
+jakselnews-app
